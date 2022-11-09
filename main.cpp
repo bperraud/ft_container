@@ -59,6 +59,10 @@ int main(int argc, char** argv) {
 
 		container->insert(4);
 
+		std::cout << "container[0] : " << container->at(0) << std::endl;
+
+		std::cout << "container[0] : " << container[0] << std::endl;
+
 		BST<int> tree;
 		tree.insert(4);
 		tree.insert(0);
@@ -70,11 +74,8 @@ int main(int argc, char** argv) {
 		std::vector<int> vec(90);
 
 		std::cout << vec.max_size() << std::endl;
-
 		std::cout << vec.capacity() << std::endl;
-
 		std::cout << vec.size() << std::endl;
-
 
 		std::cout << tree.exists(-4) << std::endl;
 		std::cout << tree.exists(89) << std::endl;
@@ -87,6 +88,7 @@ int main(int argc, char** argv) {
 	}
 
 	const int seed = atoi(argv[1]);
+
 	srand(seed);
 
 	ft::vector<std::string> vector_str;

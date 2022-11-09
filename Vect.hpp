@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/09 01:20:05 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/09 02:00:10 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,10 @@ Vect<T>& Vect<T>::operator= (const Vect& v) {
 
 template <typename T>
 inline std::ostream& operator<< (std::ostream& out, const Vect<T>& v)
-{out << "[ "; v._dsp(out); out << ']'; return out;}
+{
+	out << "vect output ";
+	out << "[ "; v._dsp(out); out << ']'; return out;
+}
 
 
 #endif // _VECT_H_
