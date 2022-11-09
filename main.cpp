@@ -4,6 +4,9 @@
 
 
 #include "BST.hpp"
+#include "Vect.hpp"
+#include "Cont.hpp"
+
 
 #if 1 //CREATE A REAL STL EXAMPLE
 	#include <map>
@@ -52,9 +55,11 @@ int main(int argc, char** argv) {
 	if (argc != 2)
 	{
 
-		BST<int> tree;
+		Cont<int> *container = new Cont<int>(30) ;
 
-		tree.insert(4);
+		container->insert(4);
+
+		BST<int> tree;
 		tree.insert(4);
 		tree.insert(0);
 		tree.insert(-4);
@@ -62,9 +67,17 @@ int main(int argc, char** argv) {
 		tree.insert(2);
 		tree.insert(89);
 
-		std::cout << tree.exists(-4) << std::endl;
-		std::cout << tree.exists(2) << std::endl;
+		std::vector<int> vec(90);
 
+		std::cout << vec.max_size() << std::endl;
+
+		std::cout << vec.capacity() << std::endl;
+
+		std::cout << vec.size() << std::endl;
+
+
+		std::cout << tree.exists(-4) << std::endl;
+		std::cout << tree.exists(89) << std::endl;
 		std::cout << tree << std::endl;
 
 		std::cerr << "Usage: ./test seed" << std::endl;
@@ -72,9 +85,9 @@ int main(int argc, char** argv) {
 		std::cerr << "Count value:" << COUNT << std::endl;
 		return 1;
 	}
+
 	const int seed = atoi(argv[1]);
 	srand(seed);
-
 
 	ft::vector<std::string> vector_str;
 	ft::vector<int> vector_int;
