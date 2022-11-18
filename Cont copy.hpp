@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:58 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/18 17:10:49 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/18 15:14:03 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ const typename Cont_base<T>::Info Cont_base<T>::_EMPTY;     // Info _EMPTY attri
 // Embedded class Info =======================================================
 
 template <typename T>
-class Info {
+class Cont_base<T>::Info {
 //class Info  {
     std::ptrdiff_t _index;
     const T _data;
@@ -105,20 +105,22 @@ public:
 template <typename T>
 class Ptr2Info {
 
-    const Info<T> *_ptr;
+	typedef typename Cont_base<T>::Info	Info;
+
+    const Info *_ptr;
 
     void _dsp (std::ostream& out) const
 	{out << (_ptr ? *_ptr : 0);}
     //{out << (_ptr ? *_ptr : _EMPTY);}
 public:
 	// Static methods
-	static const Info<T>* getPtr (const Ptr2Info& p) {return p._ptr;}
-    static const Info<T>*& getPtr (Ptr2Info& p) {return p._ptr;}
+	static const Info* getPtr (const Ptr2Info& p) {return p._ptr;}
+    static const Info*& getPtr (Ptr2Info& p) {return p._ptr;}
 
     // Constructors & casts
 	Ptr2Info () : _ptr (0) {};
-    Ptr2Info(T i) : _ptr(new Info<T>(i))  {};       // implicit cast from T to Ptr2Info
-	operator const Info<T>& () const {return *_ptr;}        // implicit cast
+    Ptr2Info(T i) : _ptr(new Info(i))  {};       // implicit cast from T to Ptr2Info
+	operator const Info& () const {return *_ptr;}        // implicit cast
 	//{return _ptr ? *_ptr : _EMPTY;}
     operator const T& () const {return *_ptr;}        // implicit cast from const T& to const *Info
     //{return _ptr ? *_ptr : _EMPTY;}
@@ -139,7 +141,7 @@ namespace _Cont_base {
 // Main class ================================================================
 
 
-#include "Iterator.hpp"
+//#include "Iterator.hpp"
 
 
 template <typename T>

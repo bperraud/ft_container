@@ -3,10 +3,6 @@
 #include <deque>
 
 
-#include "BST.hpp"
-#include "Vect.hpp"
-#include "Cont.hpp"
-
 
 #if 1 //CREATE A REAL STL EXAMPLE
 	#include <map>
@@ -51,11 +47,23 @@ public:
 	iterator end() { return this->c.end(); }
 };
 
+#include "BST.hpp"
+#include "Vect.hpp"
+#include "Cont.hpp"
+#include "Vector.hpp"
+
 int main(int argc, char** argv) {
 	if (argc != 2)
 	{
 
 		Cont<int> *container = new Cont<int>(30) ;
+
+		Vector<int> *vect = new Vector<int>(1);
+
+		Info<int> info;
+
+		std::cout << vect->at(0) << std::endl;
+
 
 		container->insert(4);
 
