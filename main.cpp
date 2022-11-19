@@ -58,6 +58,8 @@ int main(int argc, char** argv) {
 
 		Cont<int> *container = new Cont<int>(30) ;
 
+		Cont<int>::iterator it;
+
 		Vector<int> *vect = new Vector<int>(1);
 
 		Info<int> info;

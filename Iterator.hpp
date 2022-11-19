@@ -38,7 +38,6 @@ namespace fte {
   /// operations.
   struct random_access_iterator_tag : public bidirectional_iterator_tag {};
 
-
 	template < typename I >
 	struct iterator_traits {
 		typedef typename I::iterator_category iterator_category;
@@ -91,28 +90,21 @@ public:
     typedef typename T::iterator_category iterator_category;
 	*/
 
-	typedef It                                            iterator_type;
-    typedef typename iterator_traits<It>::difference_type difference_type;
-    typedef typename iterator_traits<It>::reference       reference;
-    typedef typename iterator_traits<It>::pointer         pointer;
+	typedef It												iterator_type;
+	typedef typename iterator_traits<It>::value_type		value_type;
+    typedef typename iterator_traits<It>::difference_type	difference_type;
+    typedef typename iterator_traits<It>::reference			reference;
+    typedef typename iterator_traits<It>::pointer			pointer;
 
 protected:
     It current;
 
 public:
-    public:
-    reverse_iterator();
+	reverse_iterator();
     explicit reverse_iterator(It itr) : current(itr) {}
 
 	template <typename U>
     explicit reverse_iterator(const U& other) : current(other.base()) {}
-
-	/*	ony in c11
-     decltype(auto) operator*() const
-    {
-        return *std::prev(current); // <== returns the content of prev
-    }
-	*/
 
     reverse_iterator& operator++() { --current; return *this; }
     reverse_iterator operator++(int) { It tmp = *this; ++(*this); return tmp; }
@@ -125,6 +117,62 @@ public:
     // Other member functions, friend functions, and member typedefs are not shown here.
 };
 
+
+template <typename T>
+class normal_iterator
+{
+
+protected:
+	typedef iterator_traits<T>		__traits_type;
+	T _it;
+
+public:
+	typedef T                               value_type;
+	typedef T &                    			reference;
+	typedef T *                    			pointer;
+	typedef std::ptrdiff_t                  difference_type;
+	typedef std::random_access_iterator_tag iterator_category;
+
+public:
+	normal_iterator() : _it( T() ) {}
+	normal_iterator( const normal_iterator &other ) : _it( other._it ) {}
+	normal_iterator( const T &other ) : _it( other ) {}
+
+	T base() const { return _it; }
+
+	normal_iterator &operator=( const normal_iterator &other ) {
+		_it = other._it;
+		return *this;
+	}
+
+	normal_iterator &operator++() {
+		_it++;
+		return *this;
+	}
+	normal_iterator  operator++( int ) { return _it++; }
+	normal_iterator &operator--() {
+		_it--;
+		return *this;
+	}
+	normal_iterator operator--( int ) { return _it--; }
+
+
+	reference operator*() { return *_it; }
+	pointer operator->() { return _it; }
+
+	template < typename U >
+	bool operator==( const normal_iterator< U > &other ) const {
+		return T( *this ) == U( other );
+	}
+	bool operator==( const T &other ) const { return T( *this ) == other; }
+
+	template < typename U >
+	bool operator!=( const normal_iterator< U > &other ) const {
+		return !( *this == other );
+	}
+	bool operator!=( const T &other ) const { return !( *this == other ); }
+
+};
 
 } // namespace ft
 
