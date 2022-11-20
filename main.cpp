@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
 
 		//Cont<int>::reverse_iterator itr;		// compile pas car pas dans Cont
 
-		Vector<int> *vect = new Vector<int>(1);
+		vector<int> *vect = new vector<int>(1);
 
 		Info<int> info;
 
