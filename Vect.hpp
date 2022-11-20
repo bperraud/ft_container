@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/09 02:00:10 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/20 20:36:46 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 
 template <typename T>
 class Vect {
+protected:
     std::size_t _size;
     T *_val;
     inline static T* _cp (const Vect&);

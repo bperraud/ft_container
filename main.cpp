@@ -72,7 +72,15 @@ int main(int argc, char** argv) {
 
 		//Cont<int>::reverse_iterator itr;		// compile pas car pas dans Cont
 
-		vector<int> *vect = new vector<int>(1);
+		vector<int> *vect = new vector<int>(5);
+
+		vect->operator[](2) = 3;
+		vector<int>::iterator ite;
+
+		for (ite = vect->begin(); ite != vect->end(); ite++) {
+			std::cout << "elem :" << *ite << std::endl;
+		}
+
 
 		Info<int> info;
 

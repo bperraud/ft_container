@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:58 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/20 01:36:13 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/20 20:47:21 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,7 @@ public:
 template <typename T>
 class Cont<T>::iterator {
 protected:
-	T _it;
+	T* _it;
 
 public:
 	typedef T                               value_type;
@@ -213,7 +213,7 @@ public:
 		_it++;
 		return *this;
 	}
-	iterator  operator++( int ) { return _it++; }
+	//iterator  operator++( int ) { return _it++; }
 	iterator &operator--() {
 		_it--;
 		return *this;
