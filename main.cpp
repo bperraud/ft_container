@@ -52,13 +52,25 @@ public:
 #include "Cont.hpp"
 #include "Vector.hpp"
 
+#include "Iterator.hpp"
+
 int main(int argc, char** argv) {
 	if (argc != 2)
 	{
 
 		Cont<int> *container = new Cont<int>(30) ;
 
+		/*
+		ft::vector<int>::iterator it;
+		ft::vector<int>::reverse_iterator itr;
+		ft::reverse_iterator<ft::vector<int>::iterator> iter;
+		*/
+
 		Cont<int>::iterator it;
+
+		reverse_iterator<Cont<int>::iterator> iter;
+
+		//Cont<int>::reverse_iterator itr;		// compile pas car pas dans Cont
 
 		Vector<int> *vect = new Vector<int>(1);
 

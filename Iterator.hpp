@@ -15,7 +15,7 @@
 
 //#include <iterator>
 
-namespace fte {
+//namespace fte {
 
 /*
    *  @defgroup iterator_tags Iterator Tags
@@ -100,7 +100,7 @@ protected:
     It current;
 
 public:
-	reverse_iterator();
+	reverse_iterator() {};
     explicit reverse_iterator(It itr) : current(itr) {}
 
 	template <typename U>
@@ -174,6 +174,6 @@ public:
 
 };
 
-} // namespace ft
+//} // namespace ft
 
 #endif
