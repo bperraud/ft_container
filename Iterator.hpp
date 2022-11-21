@@ -15,7 +15,7 @@
 
 //#include <iterator>
 
-//namespace fte {
+namespace ft {
 
 /*
    *  @defgroup iterator_tags Iterator Tags
@@ -82,39 +82,63 @@ template <typename It>
 class reverse_iterator {
 
 public:
-	/*
-    typedef typename T::value_type        value_type;
-    typedef typename T::reference         reference;
-    typedef typename T::pointer           pointer;
-    typedef typename T::difference_type   difference_type;
-    typedef typename T::iterator_category iterator_category;
-	*/
 
+    typedef typename It::value_type        value_type;
+    typedef typename It::reference         reference;
+    typedef typename It::pointer           pointer;
+    typedef typename It::difference_type   difference_type;
+    typedef typename It::iterator_category iterator_category;
+
+	/*
 	typedef It												iterator_type;
 	typedef typename iterator_traits<It>::value_type		value_type;
     typedef typename iterator_traits<It>::difference_type	difference_type;
     typedef typename iterator_traits<It>::reference			reference;
     typedef typename iterator_traits<It>::pointer			pointer;
+	*/
 
 protected:
-    It current;
+    It _it;
 
 public:
 	reverse_iterator() {};
-    explicit reverse_iterator(It itr) : current(itr) {}
+	reverse_iterator(It itr) : _it(itr) {}
+
+	// garder les conversions implicit ??
 
 	template <typename U>
-    explicit reverse_iterator(const U& other) : current(other.base()) {}
+    //explicit reverse_iterator(const U& other) : _it(other.base()) {}
+	//reverse_iterator(const U& other) : _it(other.base()) {}
 
-    reverse_iterator& operator++() { --current; return *this; }
-    reverse_iterator operator++(int) { It tmp = *this; ++(*this); return tmp; }
+	reverse_iterator &operator=( const It &other ) {
+		_it = other._it;
+		return *this;
+	}
 
-    reverse_iterator& operator--() { ++current; return *this; }
-    reverse_iterator operator--(int) { It tmp = *this; --(*this); return tmp; }
+	reverse_iterator operator+( difference_type n ) const { return _it + n; }
+	reverse_iterator operator-( difference_type n ) const { return _it - n; }
 
-    It base() const { return current; }
+    reverse_iterator& operator++() { --_it; return *this; }
+    reverse_iterator operator++(int) { reverse_iterator tmp = *this; ++(*this); return tmp; }
 
-    // Other member functions, friend functions, and member typedefs are not shown here.
+    reverse_iterator& operator--() { ++_it; return *this; }
+    reverse_iterator operator--(int) { reverse_iterator tmp = *this; --(*this); return tmp; }
+
+    It base() const { return _it; }
+
+	reference operator*() { return *_it; }
+	reference operator*() const { return *_it;}
+	pointer operator->() { return _it; }
+	pointer operator->() const { return _it ;};
+
+	bool operator>( const reverse_iterator &other ) const { return (_it > other.operator->()); };
+    bool operator<( const reverse_iterator &other ) const { return (_it < other.operator->()); };
+	bool operator>=( const reverse_iterator &other ) const { return (_it >= other.operator->()); };
+	bool operator<=( const reverse_iterator &other ) const { return (_it <= other.operator->()); };
+	bool operator==( const reverse_iterator& other ) const { return _it == other._it; }
+	bool operator!=( const reverse_iterator& other ) const { return _it != other._it; }
+
+
 };
 
 
@@ -174,6 +198,6 @@ public:
 
 };
 
-//} // namespace ft
+} // namespace ft
 
 #endif

@@ -14,6 +14,7 @@
 #define VECT_H
 
 #include "Vect.hpp"
+#include "Iterator.hpp"
 
 template <typename T>
 class vector : public Vect<T> {
@@ -99,12 +100,12 @@ public:
     typedef normal_iterator <T>						iterator;
     typedef normal_iterator <const T>				const_iterator;
 
-	/*
+
     typedef ft::reverse_iterator< iterator >         reverse_iterator;
     typedef ft::reverse_iterator< const_iterator >   const_reverse_iterator;
     typedef std::ptrdiff_t                           difference_type;
     typedef std::size_t                              size_type;
-	*/
+
 
 public:
 	vector () : Vect<T>() {};
@@ -118,11 +119,14 @@ public:
         return *this;
     }
 
-	iterator begin() {return iterator(this->operator[](0)) ;}
-	iterator end() { return iterator(this->operator[](Vect<T>::_size-1)) ;}
+	iterator begin() {return iterator(this->operator[](0)); }
+	iterator end() { return begin() + Vect<T>::_size; }
 
-	const_iterator begin() const {;return const_iterator(this->operator[](0)) ;}
-	const_iterator end() const  { return const_iterator(this->operator[](Vect<T>::_size-1)) ;}
+	reverse_iterator rbegin() {return reverse_iterator(begin() + Vect<T>::_size - 1);}
+	reverse_iterator rend() { return reverse_iterator(this->operator[](0)) - 1; }
+
+	const_iterator begin() const { return const_iterator(this->operator[](0)); }
+	const_iterator end() const  { return const_iterator(begin() + Vect<T>::_size); }
 };
 
 

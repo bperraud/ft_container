@@ -16,14 +16,30 @@ int main() {
 		ft::vector<int>::reverse_iterator itr;
 		ft::reverse_iterator<ft::vector<int>::iterator> iter;
 		*/
-		reverse_iterator<Cont<int>::iterator> iter;
+		ft::reverse_iterator<Cont<int>::iterator> iter;
 
 		//Cont<int>::reverse_iterator itr;		// compile pas car pas dans Cont
 
 		vector<int> *vect = new vector<int>(5);
 
-		vect->operator[](2) = 3;
-		const vector<int>::const_iterator ite = vect->begin();
+
+		vect->operator[](0) = 2;
+		vect->operator[](1) = 3;
+		vect->operator[](4) = 5;
+
+		vector<int>::reverse_iterator ite = vect->rbegin();
+		vector<int>::reverse_iterator o = ite + 1;
+		std::cout << "begin " << *o << std::endl;
+
+		for (vector<int>::reverse_iterator i = vect->rbegin(); i != vect->rend(); i++ )
+			std::cout << *i << std::endl;
+
+		std::cout << "classic " << std::endl;
+		for (vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )
+			std::cout << *it << std::endl;
+
+		std::cout << "vec end : " << *vect->rend() << std::endl;
+
 
 		(void) ite;
 		//vector<int>::iterator ite = vect->begin();
