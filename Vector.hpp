@@ -18,7 +18,7 @@
 
 
 template <typename T, typename Allocator = std::allocator<T> >
-class vector : public Vect<T> {
+class vector : public Vect<typename Allocator::value_type> {
 
 	// iterator class
 	template <typename U>
@@ -90,11 +90,11 @@ class vector : public Vect<T> {
 public:
 	typedef T                                        value_type;
 
-    //typedef Allocator                                allocator_type;
-    typedef typename Allocator::reference       reference;
-    typedef typename Allocator::const_reference const_reference;
-    typedef typename Allocator::pointer         pointer;
-    typedef typename Allocator::const_pointer   const_pointer;
+    typedef Allocator                                allocator_type;
+    typedef typename allocator_type::reference       reference;
+    typedef typename allocator_type::const_reference const_reference;
+    typedef typename allocator_type::pointer         pointer;
+    typedef typename allocator_type::const_pointer   const_pointer;
 
     typedef normal_iterator <T>						iterator;
     typedef normal_iterator <const T>				const_iterator;
@@ -106,15 +106,16 @@ public:
     typedef std::size_t								size_type;
 
 private:
-	Allocator	_alloc;
-	size_type	_capacity;
+	allocator_type	_alloc;
+	size_type		_capacity;
 
 public:
 	vector () : Vect<T>() , _capacity(0){
 		//_alloc = new Allocator() ;
 	};
 	explicit vector (std::size_t d) : Vect<T>(d), _capacity(0) {
-		//_alloc = new Allocator() ;
+		_alloc = allocator_type();
+		reserve(d);
 	}
 
 	vector( const vector &other ) {
@@ -144,7 +145,9 @@ public:
 		if (n > _capacity)
 		{
 			try {
-				_alloc.allocate(n, this->operator[](0));
+				//pointer tmp = _alloc.allocate(n, this->getVal());
+				//this->operator[](0) = tmp;
+				this->setVal(_alloc.allocate(n));
 			}
 			catch (std::bad_alloc const&) {
 				;

@@ -25,10 +25,11 @@ int main() {
 
 		std::cout << "capacity " << vect->capacity() << std::endl;
 
-		vect->reserve(10);
-
 		vect->operator[](0) = 2;
 		vect->operator[](1) = 3;
+
+
+		std::cout << "ici " << std::endl;
 
 		std::cout << "capacity " << vect->capacity() << std::endl;
 
