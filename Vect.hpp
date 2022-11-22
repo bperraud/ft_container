@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/23 00:16:18 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/23 00:33:43 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,13 @@ protected:
     std::size_t _size;
     T *_val;
     inline static T* _cp (const Vect&);
-	T* cp (T *alloc, T val, std::size_t capacity);
 protected:
     //virtual void _dsp (std::ostream& out) const {out << *_val ;} ;
 public:
+
+	T* cp (T *alloc, T val, std::size_t capacity);
+
+
     // Constructors
     Vect ();   // Tableau vide
     explicit Vect (std::size_t d) : _size(d), _val(0) {}

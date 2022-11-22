@@ -118,7 +118,7 @@ public:
 	vector () : Vect<T>() , _capacity(0){
 		//_alloc = new Allocator() ;
 	};
-	explicit vector (std::size_t d) : Vect<T>(d), _capacity(0) {
+	explicit vector (std::size_t d) : _capacity(0), _vector(d) {
 		_alloc = allocator_type();
 		reserve(d);
 	}
@@ -127,50 +127,54 @@ public:
         *this = other;
     }
 
+	// operators
 	vector &operator=( const vector &other ) {
         return *this;
     }
 
-	iterator begin() {return iterator(this->operator[](0)); }
-	iterator end() { return begin() + Vect<T>::_size; }
+	T& operator[] (std::ptrdiff_t idx) { return _vector.operator[](idx);}
 
-	reverse_iterator rbegin() {return reverse_iterator(begin() + Vect<T>::_size - 1);}
+	iterator begin() {return iterator(this->operator[](0)); }
+	iterator end() { return begin() + _vector.dim(); }
+
+	reverse_iterator rbegin() {return reverse_iterator(begin() + _vector.dim() - 1);}
 	reverse_iterator rend() { return reverse_iterator(this->operator[](0)) + 1; }
 
 	const_iterator begin() const { return const_iterator(this->operator[](0)); }
-	const_iterator end() const  { return const_iterator(begin() + Vect<T>::_size); }
+	const_iterator end() const  { return const_iterator(begin() + _vector.dim()); }
 
 	// Capacity
-	size_type	size () const { return Vect<T>::_size;}
-	bool		empty () const {return Vect<T>::_size == 0;}
+	size_type	size () const { return _vector.dim();}
+	bool		empty () const {return _vector.dim() == 0;}
 	size_type	capacity() const { return _capacity; }
 	size_type	max_size () const {return _alloc.max_size();}
 
 	void		reserve (size_type n) {
 		if (n > _capacity)
 		{
-			this->setVal(_alloc.allocate(n));
+			_vector.setVal(_alloc.allocate(n));
 			_capacity = n;
 		}
 	}
 
 	void resize (size_type n, value_type val = value_type()) {
-		if (n < Vect<T>::_size)
+		if (n < _vector.dim())
 		{
-			for (std::size_t i = 0; i < _size; ++i)
-				_alloc.destroy()
+			for (std::size_t i = 0; i <  _vector.dim(); ++i)
+				//_alloc.destroy()
+				;
 		}
 		if (n > _capacity)
 		{
 			pointer ptr = _alloc.allocate(n);
-			this->cp(ptr, val, n);
-			_alloc.deallocate(this->getVal(), _capacity);
-			this->setVal(ptr);
+			_vector.cp(ptr, val, n);
+			_alloc.deallocate(_vector.getVal(), _capacity);
+			_vector.setVal(ptr);
 			_capacity = n;
 		}
 	}
 
-	virtual ~vector() { _alloc.deallocate(this->getVal(), _capacity);}
+	virtual ~vector() { _alloc.deallocate(_vector.getVal(), _capacity);}
 
 };
 
