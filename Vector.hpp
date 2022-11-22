@@ -113,9 +113,10 @@ public:
 	vector () : Vect<T>() , _capacity(0){
 		//_alloc = new Allocator() ;
 	};
-	explicit vector (std::size_t d) : Vect<T>(d), _capacity(0) {
-		//_alloc = new Allocator() ;
-	}
+
+	//explicit vector (std::size_t d) : Vect<T>(d), _capacity(0) {}
+
+	explicit vector (std::size_t d) : Vect<T>(d, _alloc), _capacity(0) {}
 
 	vector( const vector &other ) {
         *this = other;

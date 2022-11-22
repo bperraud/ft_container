@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/22 01:39:17 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/22 01:51:44 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ public:
     // Constructors
     Vect ();   // Tableau vide
     explicit Vect (std::size_t d) : _size(d), _val(new T[d]) {}
+	explicit Vect (std::size_t d, std::allocator<T> alloc) : _size(d), _val(alloc.allocate(d)) {}
+
+
     // Getters
     std::size_t dim () const {return _size;}
     const T& operator[] (std::ptrdiff_t) const;
