@@ -16,16 +16,21 @@ int main() {
 		ft::vector<int>::reverse_iterator itr;
 		ft::reverse_iterator<ft::vector<int>::iterator> iter;
 		*/
-		ft::reverse_iterator<Cont<int>::iterator> iter;
+
+		//ft::reverse_iterator<Cont<int>::iterator> iter;
 
 		//Cont<int>::reverse_iterator itr;		// compile pas car pas dans Cont
 
 		vector<int> *vect = new vector<int>(5);
 
+		std::cout << "capacity " << vect->capacity() << std::endl;
+
+		vect->reserve(10);
 
 		vect->operator[](0) = 2;
 		vect->operator[](1) = 3;
-		vect->operator[](4) = 5;
+
+		std::cout << "capacity " << vect->capacity() << std::endl;
 
 		vector<int>::reverse_iterator ite = vect->rbegin();
 		vector<int>::reverse_iterator o = ite + 1;
@@ -40,6 +45,8 @@ int main() {
 
 		std::cout << "vec end : " << *vect->rend() << std::endl;
 
+
+		std::cout << vect->max_size() << std::endl;
 
 		(void) ite;
 		//vector<int>::iterator ite = vect->begin();

@@ -115,8 +115,8 @@ public:
 		return *this;
 	}
 
-	reverse_iterator operator+( difference_type n ) const { return _it + n; }
-	reverse_iterator operator-( difference_type n ) const { return _it - n; }
+	reverse_iterator operator+( difference_type n ) const { return _it - n; }
+	reverse_iterator operator-( difference_type n ) const { return _it + n; }
 
     reverse_iterator& operator++() { --_it; return *this; }
     reverse_iterator operator++(int) { reverse_iterator tmp = *this; ++(*this); return tmp; }

@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:58 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/18 15:14:03 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/22 00:46:42 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,13 @@ std::ostream& operator<< (std::ostream& out, const _Cont_base::_Base<U>& b)
 // A_BSTract base class =======================================================
 
 
+//template <typename T>
+
 template <typename T>
-class Cont_base { // a_BSTract
-public:
+class Cont_base {
+private:
     class Info;               // make class Info local
-    class Ptr2_Info;
+    class Ptr2Info;
 protected:
     static const Info _EMPTY;
     // Access methods
@@ -54,17 +56,17 @@ protected:
     static const Info* _ptr (const Ptr2Info& p) {return p._ptr;}
     static const Info*& _ptr (Ptr2Info& p) {return p._ptr;}
 	*/
+
     // Implementation
-    std::size_t _used;
+    std::size_t _size;
     virtual void _dsp (std::ostream&) const = 0;
     // Non virtual assignations => protected
     Cont_base& operator= (const Cont_base&);
 
 public:
     // Getter
-    std::size_t used () const  {return _used;};
     // Constructors & destructor
-    Cont_base () : _used (0) {};
+    Cont_base () : _size (0) {};
     Cont_base (const Cont_base&);
     virtual ~Cont_base ();
 };
@@ -103,9 +105,9 @@ public:
 // Embedded class Ptr2Info ===================================================
 
 template <typename T>
-class Ptr2Info {
+class Cont_base<T>::Ptr2Info {
 
-	typedef typename Cont_base<T>::Info	Info;
+	typedef Cont_base<T>::Info Info;
 
     const Info *_ptr;
 
@@ -140,23 +142,17 @@ namespace _Cont_base {
 
 // Main class ================================================================
 
-
-//#include "Iterator.hpp"
-
-
 template <typename T>
-class Cont : public BST<Info<T> >, public Vect<Ptr2Info<T> >{
+class Cont : public BST<typename Cont_base<T>::Info>, public Vect<typename Cont_base<T>::Ptr2Info>{
 
 
 public:
-	//Iterator	const_iterator;
 
-public:
+	typedef BST<typename Cont_base<T>::Info>		_BST;
+	typedef Vect<typename Cont_base<T>::Ptr2Info>	_Vect;
 
-	typedef Vect<Ptr2Info<T> >	_Vect;
-	typedef Ptr2Info<T> 		_Ptr2Info;
-	typedef BST<Info<T>	>		_BST;
-	typedef Info<T> 			_Info;
+	typedef typename Cont_base<T>::Ptr2Info 		_Ptr2Info;
+	typedef typename Cont_base<T>::Info 			_Info;
 
 
     // Constructors
@@ -188,13 +184,14 @@ public:
     friend inline std::ostream& operator<< (std::ostream&, const Cont<U>&);
 };
 
+
 // Constructors ============================================================
 
 
 // Setters =================================================================
 
 template<typename T>
-Ptr2Info<T>& Cont<T>::operator[](std::ptrdiff_t idx) {
+typename Cont_base<T>::Ptr2Info& Cont<T>::operator[](std::ptrdiff_t idx) {
     if (_Vect::operator[](idx).isEmpty()){          // value are constant in Cont context, no change allowed for element
         return _Vect::operator[](idx);
     }
@@ -202,7 +199,7 @@ Ptr2Info<T>& Cont<T>::operator[](std::ptrdiff_t idx) {
 }
 
 template<typename T>
-const Info<T>& Cont<T>::insert(const T& v) {      // [-Wreturn-type] warning because no explicit return, prevents using insert two times
+const typename Cont_base<T>::Info& Cont<T>::insert(const T& v) {      // [-Wreturn-type] warning because no explicit return, prevents using insert two times
     std::ptrdiff_t idx = 0;
     if (idx == -1){                 // implicit conversion to _Info with default index -1
         throw std::domain_error("no index specified");
@@ -255,7 +252,7 @@ bool Cont<T>::erase(const T &v) {
 // Getters ===================================================================
 
 template<typename T>
-const Info<T>& Cont<T>::find(const T &v) const {
+const typename Cont_base<T>::Info& Cont<T>::find(const T &v) const {
     std::ptrdiff_t idx = Cont_base<T>::_index(v);
     if (idx == -1){
         return _BST::find(v);
@@ -292,7 +289,7 @@ inline std::ostream &operator<<(std::ostream &out, const Cont<U> &c){
 template<typename T>
 Cont<T>& Cont<T>::operator=(const Cont &v)  {
     if (this != &v){
-        Cont::operator=(v);                 // explicit call to copy assignement operator of Cont_Base for _used
+        Cont::operator=(v);                 // explicit call to copy assignement operator of Cont_Base for _size
         _BST::operator=(v) ;                        // explicit call to copy assignement operator of _BST
         _Vect::operator=(v) ;                       // explicit call to copy assignement operator of _Vect
     }

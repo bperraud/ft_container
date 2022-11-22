@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/20 20:36:46 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/22 01:39:17 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ public:
     // Setters
     virtual T& operator[] (std::ptrdiff_t);
     // Copies & transfers
-    Vect (const Vect& v) : _size(v._size), _val(_cp(v)) { std::cout << "constructeur de copie dans vect.hpp " << std::endl;}
+    Vect (const Vect& v) : _size(v._size), _val(_cp(v)) {}
     inline Vect& operator= (const Vect&);
     // Destructor
     virtual ~Vect ()  {delete[] _val;}
@@ -72,7 +72,7 @@ const T &Vect<T>::at(std::ptrdiff_t idx) const {
 template <typename T>
 T& Vect<T>::operator[] (std::ptrdiff_t idx) {
     if (std::size_t(idx) >= _size)
-        throw std::domain_error("Vect::op[]: index out of range");
+		throw std::domain_error("Vect::op[]: index out of range");
     return _val[idx];
 }
 

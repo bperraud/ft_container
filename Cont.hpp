@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:58 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/20 20:47:21 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/22 00:17:13 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,51 +185,6 @@ public:
     friend inline std::ostream& operator<< (std::ostream&, const Cont<U>&);
 };
 
-template <typename T>
-class Cont<T>::iterator {
-protected:
-	T* _it;
-
-public:
-	typedef T                               value_type;
-	typedef T &                    			reference;
-	typedef T *                    			pointer;
-	typedef std::ptrdiff_t                  difference_type;
-	typedef std::random_access_iterator_tag iterator_category;
-
-public:
-	iterator() : _it( T() ) {}
-	iterator( const iterator &other ) : _it( other._it ) {}
-	iterator( const T &other ) : _it( other ) {}
-
-	T base() const { return _it; }
-
-	iterator &operator=( const iterator &other ) {
-		_it = other._it;
-		return *this;
-	}
-
-	iterator &operator++() {
-		_it++;
-		return *this;
-	}
-	//iterator  operator++( int ) { return _it++; }
-	iterator &operator--() {
-		_it--;
-		return *this;
-	}
-	iterator operator--( int ) { return _it--; }
-
-
-	reference operator*() { return *_it; }
-	pointer operator->() { return _it; }
-
-
-	bool operator==( const T &other ) const { return T( *this ) == other; }
-
-	bool operator!=( const T &other ) const { return !( *this == other ); }
-
-};
 
 // Constructors ============================================================
 
