@@ -40,16 +40,22 @@ int main() {
 		for (vector<int>::reverse_iterator i = vect->rbegin(); i != vect->rend(); i++ )
 			std::cout << *i << std::endl;
 
-		std::cout << "classic " << std::endl;
-		for (vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )
-			std::cout << *it << std::endl;
-
 		std::cout << "vec end : " << *vect->rend() << std::endl;
 
 
 		std::cout << vect->max_size() << std::endl;
 
+		vect->resize(10);
+
+		std::cout << "classic " << std::endl;
+		for (vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )
+			std::cout << *it << std::endl;
+
+		std::cout << "vec size : " << vect->size() << std::endl;
+
 		(void) ite;
+
+		delete vect;
 		//vector<int>::iterator ite = vect->begin();
 
 

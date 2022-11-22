@@ -18,7 +18,7 @@
 
 
 template <typename T, typename Allocator = std::allocator<T> >
-class vector : public Vect<typename Allocator::value_type> {
+class vector {
 
 	// iterator class
 	template <typename U>
@@ -105,9 +105,14 @@ public:
     typedef std::ptrdiff_t							difference_type;
     typedef std::size_t								size_type;
 
+	typedef Vect<typename Allocator::value_type>	vector_type;
+
+	//typedef typename Vect<T>::_size						_size;
+
 private:
-	allocator_type	_alloc;
-	size_type		_capacity;
+	allocator_type			_alloc;
+	size_type				_capacity;
+	vector_type				_vector;
 
 public:
 	vector () : Vect<T>() , _capacity(0){
@@ -144,19 +149,29 @@ public:
 	void		reserve (size_type n) {
 		if (n > _capacity)
 		{
-			try {
-				//pointer tmp = _alloc.allocate(n, this->getVal());
-				//this->operator[](0) = tmp;
-				this->setVal(_alloc.allocate(n));
-			}
-			catch (std::bad_alloc const&) {
-				;
-			}
+			this->setVal(_alloc.allocate(n));
+			_capacity = n;
 		}
 	}
 
+	void resize (size_type n, value_type val = value_type()) {
+		if (n < Vect<T>::_size)
+		{
+			for (std::size_t i = 0; i < _size; ++i)
+				_alloc.destroy()
+		}
+		if (n > _capacity)
+		{
+			pointer ptr = _alloc.allocate(n);
+			this->cp(ptr, val, n);
+			_alloc.deallocate(this->getVal(), _capacity);
+			this->setVal(ptr);
+			_capacity = n;
+		}
+	}
+
+	virtual ~vector() { _alloc.deallocate(this->getVal(), _capacity);}
+
 };
-
-
 
 #endif

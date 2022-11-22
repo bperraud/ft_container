@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/22 14:33:48 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/23 00:16:18 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ protected:
     std::size_t _size;
     T *_val;
     inline static T* _cp (const Vect&);
+	T* cp (T *alloc, T val, std::size_t capacity);
 protected:
     //virtual void _dsp (std::ostream& out) const {out << *_val ;} ;
 public:
@@ -42,7 +43,7 @@ public:
     Vect (const Vect& v) : _size(v._size), _val(_cp(v)) {}
     inline Vect& operator= (const Vect&);
     // Destructor
-    virtual ~Vect ()  {delete[] _val;}
+    //virtual ~Vect ()  {delete[] _val;}
     // Associated function
     template <typename U>
     friend inline std::ostream& operator<< (std::ostream&, const Vect<U>&);
@@ -80,11 +81,24 @@ T& Vect<T>::operator[] (std::ptrdiff_t idx) {
 
 // Copies & transfers ========================================================
 
+
+// utile ?
 template <typename T>
 T* Vect<T>::_cp (const Vect<T>& v) {
-    T *res = new T[v._size];
+	T *res = new T[v._size];
     for (std::size_t i = 0; i < v._size; ++i) res[i] = v._val[i];
     return res;
+}
+
+template <typename T>
+T* Vect<T>::cp (T *alloc, T val, std::size_t capacity) {
+    for (std::size_t i = 0; i < _size; ++i) alloc[i] = _val[i];
+	for (std::size_t n = _size; n < capacity; ++n)
+	{
+		alloc[n] = val;
+		_size++;
+	}
+    return _val;
 }
 
 template <typename T>
@@ -104,8 +118,3 @@ inline std::ostream& operator<< (std::ostream& out, const Vect<T>& v)
 
 
 #endif // _VECT_H_
-
-
-
-
-
