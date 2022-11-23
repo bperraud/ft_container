@@ -45,7 +45,18 @@ int main() {
 
 		std::cout << vect->max_size() << std::endl;
 
+
+		vect->reserve(20);
+
 		vect->resize(10);
+
+		std::cout << "classic " << std::endl;
+		for (vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )
+			std::cout << *it << std::endl;
+
+		std::cout << "vec size : " << vect->size() << std::endl;
+
+		vect->resize(3);
 
 		std::cout << "classic " << std::endl;
 		for (vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )

@@ -107,20 +107,19 @@ public:
 
 	typedef Vect<typename Allocator::value_type>	vector_type;
 
-	//typedef typename Vect<T>::_size						_size;
-
 private:
 	allocator_type			_alloc;
 	size_type				_capacity;
 	vector_type				_vector;
 
 public:
-	vector () : Vect<T>() , _capacity(0){
+	vector () : _capacity(0), _vector(){
 		//_alloc = new Allocator() ;
 	};
-	explicit vector (std::size_t d) : _capacity(0), _vector(d) {
+
+	explicit vector (std::size_t d) : _capacity(d), _vector(d) {
 		_alloc = allocator_type();
-		reserve(d);
+		_vector.setVal(_alloc.allocate(d));
 	}
 
 	vector( const vector &other ) {
@@ -152,19 +151,21 @@ public:
 	void		reserve (size_type n) {
 		if (n > _capacity)
 		{
-			_vector.setVal(_alloc.allocate(n));
+			pointer ptr = _alloc.allocate(n);
+			_vector.cp(ptr, 0, _capacity);
+			_vector.setVal(ptr);
 			_capacity = n;
 		}
 	}
 
 	void resize (size_type n, value_type val = value_type()) {
+		pointer data = _vector.getVal();
 		if (n < _vector.dim())
 		{
-			for (std::size_t i = 0; i <  _vector.dim(); ++i)
-				//_alloc.destroy()
-				;
+			for (std::size_t i = n; i < _vector.dim(); ++i)
+				_alloc.destroy(data + i);
 		}
-		if (n > _capacity)
+		else if (n > _capacity)
 		{
 			pointer ptr = _alloc.allocate(n);
 			_vector.cp(ptr, val, n);
@@ -172,6 +173,12 @@ public:
 			_vector.setVal(ptr);
 			_capacity = n;
 		}
+		else if (n > _vector.dim())
+		{
+			for (std::size_t i = _vector.dim(); i < n; ++i)
+				data[i] = val;
+		}
+		_vector.setDim(n);
 	}
 
 	virtual ~vector() { _alloc.deallocate(_vector.getVal(), _capacity);}

@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/23 00:33:43 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/23 01:03:20 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@ protected:
 public:
 
 	T* cp (T *alloc, T val, std::size_t capacity);
-
-
     // Constructors
     Vect ();   // Tableau vide
     explicit Vect (std::size_t d) : _size(d), _val(0) {}
@@ -42,6 +40,7 @@ public:
     // Setters
     virtual T& operator[] (std::ptrdiff_t);
 	void setVal(T *alloc) {_val = alloc;};
+	void setDim(std::size_t d) {_size = d;};
     // Copies & transfers
     Vect (const Vect& v) : _size(v._size), _val(_cp(v)) {}
     inline Vect& operator= (const Vect&);
