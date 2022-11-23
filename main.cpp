@@ -64,6 +64,8 @@ int main() {
 
 		std::cout << "vec size : " << vect->size() << std::endl;
 
+		std::cout << "vec back : " << vect->back() << std::endl;
+
 		(void) ite;
 
 		delete vect;

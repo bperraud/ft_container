@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/23 01:03:20 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/23 02:05:54 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,30 +22,31 @@ template <typename T>
 class Vect {
 protected:
     std::size_t _size;
-    T *_val;
+    T *_data;
     inline static T* _cp (const Vect&);
 protected:
-    //virtual void _dsp (std::ostream& out) const {out << *_val ;} ;
+    //virtual void _dsp (std::ostream& out) const {out << *_data ;} ;
 public:
 
 	T* cp (T *alloc, T val, std::size_t capacity);
     // Constructors
     Vect ();   // Tableau vide
-    explicit Vect (std::size_t d) : _size(d), _val(0) {}
+    explicit Vect (std::size_t d) : _size(d), _data(0) {}
     // Getters
     std::size_t dim () const {return _size;}
-	T*	getVal() const { return _val;}
+	T*	getData() const { return _data;}
     const T& operator[] (std::ptrdiff_t) const;
+	inline T& at(std::ptrdiff_t) ;
     inline const T& at(std::ptrdiff_t) const;
     // Setters
     virtual T& operator[] (std::ptrdiff_t);
-	void setVal(T *alloc) {_val = alloc;};
+	void setVal(T *alloc) {_data = alloc;};
 	void setDim(std::size_t d) {_size = d;};
     // Copies & transfers
-    Vect (const Vect& v) : _size(v._size), _val(_cp(v)) {}
+    Vect (const Vect& v) : _size(v._size), _data(_cp(v)) {}
     inline Vect& operator= (const Vect&);
     // Destructor
-    //virtual ~Vect ()  {delete[] _val;}
+    //virtual ~Vect ()  {delete[] _data;}
     // Associated function
     template <typename U>
     friend inline std::ostream& operator<< (std::ostream&, const Vect<U>&);
@@ -54,7 +55,7 @@ public:
 // Constructors ============================================================
 
 template <typename T>
-Vect<T>::Vect () : _size(0), _val(0) {
+Vect<T>::Vect () : _size(0), _data(0) {
 
 }
 
@@ -62,14 +63,21 @@ Vect<T>::Vect () : _size(0), _val(0) {
 
 template <typename T>
 const T& Vect<T>::operator[] (std::ptrdiff_t idx) const {
-    return _val[idx];
+    return _data[idx];
 }
 
 template<typename T>
 const T &Vect<T>::at(std::ptrdiff_t idx) const {
     if (std::size_t(idx) >= _size)
         throw std::domain_error("Vect::at(i): index out of range");
-    return _val[idx];
+    return _data[idx];
+}
+
+template<typename T>
+T &Vect<T>::at(std::ptrdiff_t idx) {
+    if (std::size_t(idx) >= _size)
+        throw std::domain_error("Vect::at(i): index out of range");
+    return _data[idx];
 }
 
 // Setters ===================================================================
@@ -78,7 +86,7 @@ template <typename T>
 T& Vect<T>::operator[] (std::ptrdiff_t idx) {
     if (std::size_t(idx) >= _size)
 		throw std::domain_error("Vect::op[]: index out of range");
-    return _val[idx];
+    return _data[idx];
 }
 
 // Copies & transfers ========================================================
@@ -88,24 +96,24 @@ T& Vect<T>::operator[] (std::ptrdiff_t idx) {
 template <typename T>
 T* Vect<T>::_cp (const Vect<T>& v) {
 	T *res = new T[v._size];
-    for (std::size_t i = 0; i < v._size; ++i) res[i] = v._val[i];
+    for (std::size_t i = 0; i < v._size; ++i) res[i] = v._data[i];
     return res;
 }
 
 template <typename T>
 T* Vect<T>::cp (T *alloc, T val, std::size_t capacity) {
-    for (std::size_t i = 0; i < _size; ++i) alloc[i] = _val[i];
+    for (std::size_t i = 0; i < _size; ++i) alloc[i] = _data[i];
 	for (std::size_t n = _size; n < capacity; ++n)
 	{
 		alloc[n] = val;
 		_size++;
 	}
-    return _val;
+    return _data;
 }
 
 template <typename T>
 Vect<T>& Vect<T>::operator= (const Vect& v) {
-    if (this != &v) {delete[] _val; _size = v._size; _val = _cp(v);}
+    if (this != &v) {delete[] _data; _size = v._size; _data = _cp(v);}
     return *this;
 }
 

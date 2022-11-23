@@ -126,12 +126,11 @@ public:
         *this = other;
     }
 
+
 	// operators
 	vector &operator=( const vector &other ) {
         return *this;
     }
-
-	T& operator[] (std::ptrdiff_t idx) { return _vector.operator[](idx);}
 
 	iterator begin() {return iterator(this->operator[](0)); }
 	iterator end() { return begin() + _vector.dim(); }
@@ -159,7 +158,7 @@ public:
 	}
 
 	void resize (size_type n, value_type val = value_type()) {
-		pointer data = _vector.getVal();
+		pointer data = _vector.getData();
 		if (n < _vector.dim())
 		{
 			for (std::size_t i = n; i < _vector.dim(); ++i)
@@ -169,7 +168,7 @@ public:
 		{
 			pointer ptr = _alloc.allocate(n);
 			_vector.cp(ptr, val, n);
-			_alloc.deallocate(_vector.getVal(), _capacity);
+			_alloc.deallocate(_vector.getData(), _capacity);
 			_vector.setVal(ptr);
 			_capacity = n;
 		}
@@ -181,7 +180,23 @@ public:
 		_vector.setDim(n);
 	}
 
-	virtual ~vector() { _alloc.deallocate(_vector.getVal(), _capacity);}
+	//Element access
+	reference			operator[] (std::ptrdiff_t idx) { return _vector.operator[](idx);}
+	reference			at (size_type n) {return _vector.at(n);}
+	const_reference		at (size_type n) const {return _vector.at(n);}
+	value_type* 		data() {return _vector.getData();}
+	const value_type*	data() const {return _vector.getData();}
+	reference 			front() {return _vector.at(0);}
+	const_reference 	front() const {return _vector.at(0);}
+	reference 			back() {return _vector.at(_vector.dim() - 1);}
+	const_reference		back() const {return _vector.at(_vector.dim() - 1);}
+
+	//Modifiers
+
+	//Allocator
+	allocator_type get_allocator() const { return _alloc;}
+
+	virtual ~vector() { _alloc.deallocate(_vector.getData(), _capacity);}
 
 };
 
