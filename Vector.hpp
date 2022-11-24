@@ -112,20 +112,35 @@ private:
 	size_type				_capacity;
 	vector_type				_vector;
 
+
+	// copy vect.data in new allocate of size n and fill with val
+	void	reallocate(size_type n) {
+		pointer ptr = _alloc.allocate(n);
+		_vector.cp(ptr);
+		_alloc.deallocate(_vector.getData(), _capacity);
+		_vector.setVal(ptr);
+		_capacity = n;
+	}
+
+	void	increase_capacity(size_type n) {
+		while (_capacity < n)
+			_capacity *= 2;
+	}
+
 public:
-	vector () : _capacity(0), _vector(){
+	vector () : _capacity(10), _vector(){
 		//_alloc = new Allocator() ;
 	};
 
 	explicit vector (std::size_t d) : _capacity(d), _vector(d) {
 		_alloc = allocator_type();
 		_vector.setVal(_alloc.allocate(d));
+		//reserve(d);
 	}
 
 	vector( const vector &other ) {
         *this = other;
     }
-
 
 	// operators
 	vector &operator=( const vector &other ) {
@@ -151,7 +166,7 @@ public:
 		if (n > _capacity)
 		{
 			pointer ptr = _alloc.allocate(n);
-			_vector.cp(ptr, 0, _capacity);
+			_vector.cp(ptr);
 			_vector.setVal(ptr);
 			_capacity = n;
 		}
@@ -166,11 +181,8 @@ public:
 		}
 		else if (n > _capacity)
 		{
-			pointer ptr = _alloc.allocate(n);
-			_vector.cp(ptr, val, n);
-			_alloc.deallocate(_vector.getData(), _capacity);
-			_vector.setVal(ptr);
-			_capacity = n;
+			reallocate(n);
+			_vector.fill(n, _capacity, val);
 		}
 		else if (n > _vector.dim())
 		{
@@ -192,6 +204,40 @@ public:
 	const_reference		back() const {return _vector.at(_vector.dim() - 1);}
 
 	//Modifiers
+	void push_back (const value_type& val) {
+		if (_vector.dim() + 1 > _capacity)
+		{
+			increase_capacity(_vector.dim() + 1);
+			reallocate(_capacity);
+		}
+		_vector.setDim(_vector.dim() + 1);
+		_vector.operator[](_vector.dim() - 1) = val;
+	}
+
+	void pop_back() {
+		if (!empty())
+		{
+			_alloc.destroy(_vector.getLast());
+			_vector.setDim(_vector.dim() - 1);
+		}
+	}
+
+	iterator insert (iterator position, const value_type& val) {
+		if (_vector.dim() + 1 > _capacity)
+		{
+			increase_capacity();
+			reallocate(_capacity);
+		}
+		return position;
+	}
+
+
+    void insert (iterator position, size_type n, const value_type& val) {
+		if (_vector.dim() + n > _capacity)
+			reallocate(_capacity * 2, val);
+	}
+
+	template <class InputIterator> void insert (iterator position, InputIterator first, InputIterator last);
 
 	//Allocator
 	allocator_type get_allocator() const { return _alloc;}

@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/23 02:05:54 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/24 21:18:25 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,17 @@ protected:
     //virtual void _dsp (std::ostream& out) const {out << *_data ;} ;
 public:
 
-	T* cp (T *alloc, T val, std::size_t capacity);
+	T* cp (T *alloc);
+	void	fill(std::ptrdiff_t, std::size_t n, T val);
     // Constructors
     Vect ();   // Tableau vide
     explicit Vect (std::size_t d) : _size(d), _data(0) {}
     // Getters
     std::size_t dim () const {return _size;}
-	T*	getData() const { return _data;}
+	T* getData() { return _data;}
+	//const T* getData() const { return _data;}
     const T& operator[] (std::ptrdiff_t) const;
+	T* getLast() const { return _data + _size - 1;}
 	inline T& at(std::ptrdiff_t) ;
     inline const T& at(std::ptrdiff_t) const;
     // Setters
@@ -68,6 +71,7 @@ const T& Vect<T>::operator[] (std::ptrdiff_t idx) const {
 
 template<typename T>
 const T &Vect<T>::at(std::ptrdiff_t idx) const {
+	std::cout << "at" << std::endl;
     if (std::size_t(idx) >= _size)
         throw std::domain_error("Vect::at(i): index out of range");
     return _data[idx];
@@ -101,14 +105,21 @@ T* Vect<T>::_cp (const Vect<T>& v) {
 }
 
 template <typename T>
-T* Vect<T>::cp (T *alloc, T val, std::size_t capacity) {
+T* Vect<T>::cp (T *alloc) {
     for (std::size_t i = 0; i < _size; ++i) alloc[i] = _data[i];
+	/*
 	for (std::size_t n = _size; n < capacity; ++n)
 	{
 		alloc[n] = val;
-		_size++;
 	}
+	*/
     return _data;
+}
+
+template <typename T>
+void Vect<T>::fill(std::ptrdiff_t pos, std::size_t n, T val) {
+	for (std::size_t i = pos; i < n; ++i)
+		_data[i] = val;
 }
 
 template <typename T>

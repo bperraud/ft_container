@@ -23,32 +23,37 @@ int main() {
 
 		vector<int> *vect = new vector<int>(5);
 
-		std::cout << "capacity " << vect->capacity() << std::endl;
-
 		vect->operator[](0) = 2;
 		vect->operator[](1) = 3;
 
+		std::cout << "capacity " << vect->capacity() << std::endl;
+		std::cout << "size " << vect->size() << std::endl;
 
-		std::cout << "ici " << std::endl;
+		vect->push_back(8);
+
+		std::cout << "size " << vect->size() << std::endl;
+
+		vect->push_back(-9);
 
 		std::cout << "capacity " << vect->capacity() << std::endl;
+		std::cout << "size " << vect->size() << std::endl;
 
 		vector<int>::reverse_iterator ite = vect->rbegin();
 		vector<int>::reverse_iterator o = ite + 1;
 		std::cout << "begin " << *o << std::endl;
 
+
 		for (vector<int>::reverse_iterator i = vect->rbegin(); i != vect->rend(); i++ )
 			std::cout << *i << std::endl;
 
+		std::cout << "size :" << vect->size() << std::endl;
 		std::cout << "vec end : " << *vect->rend() << std::endl;
-
-
-		std::cout << vect->max_size() << std::endl;
-
+		std::cout << "max size : " << vect->max_size() << std::endl;
 
 		vect->reserve(20);
-
 		vect->resize(10);
+
+		vect->pop_back();
 
 		std::cout << "classic " << std::endl;
 		for (vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )
@@ -63,7 +68,6 @@ int main() {
 			std::cout << *it << std::endl;
 
 		std::cout << "vec size : " << vect->size() << std::endl;
-
 		std::cout << "vec back : " << vect->back() << std::endl;
 
 		(void) ite;
