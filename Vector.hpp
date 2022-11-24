@@ -162,12 +162,19 @@ public:
 
 	iterator begin() {return iterator(data()); }
 	iterator end() { return iterator(data() + _vector.dim()); }
+	const_iterator begin() const { return const_iterator(data()); }
+	const_iterator end() const  { return const_iterator(begin() + _vector.dim()); }
 
 	reverse_iterator rbegin() {return reverse_iterator(begin() + _vector.dim() - 1);}
 	reverse_iterator rend() { return reverse_iterator(data() - 1); }
+	const_reverse_iterator rbegin() const {return const_reverse_iterator(begin() + _vector.dim() - 1);}
+	const_reverse_iterator rend() const { return const_reverse_iterator(data() - 1); }
 
-	const_iterator begin() const { return const_iterator(data()); }
-	const_iterator end() const  { return const_iterator(begin() + _vector.dim()); }
+	const_iterator cbegin() const { return const_iterator(data());}
+    const_iterator cend() const { return const_iterator(begin() + _vector.dim()); }
+    const_reverse_iterator crbegin() const {return const_reverse_iterator(begin() + _vector.dim() - 1);}
+    const_reverse_iterator crend() const { return const_reverse_iterator(data() - 1); }
+
 
 	// Capacity
 	size_type	size () const { return _vector.dim();}
@@ -238,26 +245,18 @@ public:
 	iterator insert (iterator position, const value_type& val) {
 		typename iterator::difference_type i = position - begin();
 		if (_capacity < _vector.dim() + 1)
-		{
 			increase_capacity(_vector.dim() + 1);
-			reallocate(_capacity, i, 1, val);	// reallocate and copy until position
-		}
-		else
-			reallocate(_capacity, i, 1, val);
-		return position;
+		reallocate(_capacity, i, 1, val);	// reallocate and copy until position
+		return begin() + i;
 	}
 
 
     void insert (iterator position, size_type n, const value_type& val) {
-		std::cout << "INSERT" << std::endl;
+		// test pour n > 0
 		typename iterator::difference_type i = position - begin();
 		if (_vector.dim() + n > _capacity)
-		{
 			increase_capacity(_vector.dim() + n);
-			reallocate(_capacity, i, n, val);
-		}
-		else
-			reallocate(_capacity, i, n, val);
+		reallocate(_capacity, i, n, val);
 	}
 
 	/*
@@ -271,6 +270,25 @@ public:
 		//cp_and_move ()
 	}
 	*/
+
+	void clear() {
+		resize(0);
+	}
+
+	iterator erase (iterator position) {
+
+
+	}
+
+	iterator erase (iterator first, iterator last) {
+		pointer data = _vector.getData();
+		typename iterator::difference_type start = first - begin();
+		//std::size_t start = first - begin();
+		for (typename iterator::difference_type i = start; i < last - begin(); ++i)
+			_alloc.destroy(data + i);
+		_vector.move_back(start, last - first);
+		return begin() + start;
+	}
 
 	//Allocator
 	allocator_type get_allocator() const { return _alloc;}

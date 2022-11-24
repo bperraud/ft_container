@@ -32,7 +32,9 @@ int main() {
 		vect->push_back(8);
 		vect->insert(vect->begin(), -1);
 		vect->insert(vect->begin(), -2);
-		vect->insert(vect->begin(), 10, -10);
+		//vect->insert(vect->begin(), -10, -10);
+
+		vect->insert(vect->begin(), 1, -10);
 		vect->push_back(-9);
 
 		for (vector<int>::reverse_iterator i = vect->rbegin(); i != vect->rend(); i++ )
@@ -62,6 +64,13 @@ int main() {
 		std::cout << "vec size : " << vect->size() << std::endl;
 		std::cout << "vec back : " << vect->back() << std::endl;
 
+
+		//vect->clear();
+
+		//vect->erase(vect->begin() + 1, vect->end() - 1);
+
+		for (vector<int>::const_iterator y = vect->begin(); y != vect->end(); y++ )
+			std::cout << *y << std::endl;
 
 		delete vect;
 		//vector<int>::iterator ite = vect->begin();
@@ -96,5 +105,5 @@ int main() {
 		std::cerr << "Count value:" << COUNT << std::endl;
 		*/
 
-	return 1;
+	return 0;
 }
