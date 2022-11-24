@@ -31,25 +31,20 @@ int main() {
 
 		vect->push_back(8);
 		vect->insert(vect->begin(), -1);
+		vect->insert(vect->begin(), -2);
+		vect->insert(vect->begin(), 10, -10);
 		vect->push_back(-9);
-
-
-		vector<int>::reverse_iterator ite = vect->rbegin();
-		vector<int>::reverse_iterator o = ite + 1;
-		std::cout << "begin " << *o << std::endl;
-
 
 		for (vector<int>::reverse_iterator i = vect->rbegin(); i != vect->rend(); i++ )
 			std::cout << *i << std::endl;
 
-
 		std::cout << "size :" << vect->size() << std::endl;
-		std::cout << "vec end : " << *vect->rend() << std::endl;
+		std::cout << "vec rbegin : " << *vect->rbegin() << std::endl;
+		std::cout << "vec rend : " << *vect->rend() << std::endl;
 		std::cout << "max size : " << vect->max_size() << std::endl;
 
 		vect->reserve(20);
 		vect->resize(10);
-
 		vect->pop_back();
 
 		std::cout << "classic " << std::endl;

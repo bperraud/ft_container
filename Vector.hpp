@@ -38,7 +38,9 @@ class vector {
 		normal_iterator() : _it(U()) {}
 		normal_iterator( pointer i ) : _it(i) {}
 		normal_iterator( const normal_iterator &other ) : _it( other._it ) {}
-		normal_iterator( U &i ) : _it( &i ) {}
+
+		// bizarre ça non ?
+		explicit normal_iterator( U &i ) : _it( &i ) {}
 
 		normal_iterator &operator=( const normal_iterator &other ) {
 			_it = other._it;
@@ -158,13 +160,13 @@ public:
         return *this;
     }
 
-	iterator begin() {return iterator(this->operator[](0)); }
-	iterator end() { return begin() + _vector.dim(); }
+	iterator begin() {return iterator(data()); }
+	iterator end() { return iterator(data() + _vector.dim()); }
 
 	reverse_iterator rbegin() {return reverse_iterator(begin() + _vector.dim() - 1);}
-	reverse_iterator rend() { return reverse_iterator(this->operator[](0)) + 1; }
+	reverse_iterator rend() { return reverse_iterator(data() - 1); }
 
-	const_iterator begin() const { return const_iterator(this->operator[](0)); }
+	const_iterator begin() const { return const_iterator(data()); }
 	const_iterator end() const  { return const_iterator(begin() + _vector.dim()); }
 
 	// Capacity
@@ -247,21 +249,28 @@ public:
 
 
     void insert (iterator position, size_type n, const value_type& val) {
+		std::cout << "INSERT" << std::endl;
 		typename iterator::difference_type i = position - begin();
 		if (_vector.dim() + n > _capacity)
 		{
-			increase_capacity(_vector.dim() + 1);
+			increase_capacity(_vector.dim() + n);
 			reallocate(_capacity, i, n, val);
 		}
 		else
 			reallocate(_capacity, i, n, val);
 	}
 
+	/*
 	template <class InputIterator> void insert (iterator position, InputIterator first, InputIterator last) {
+		std::cout << "PAS LE BON" << std::endl;
 		typename iterator::difference_type i = position - begin();
-		size_type n = std::distance( first, last );
+		//size_type n = std::distance( first, last );
+		(void) i;
+		(void) first;
+		(void) last;
 		//cp_and_move ()
 	}
+	*/
 
 	//Allocator
 	allocator_type get_allocator() const { return _alloc;}
