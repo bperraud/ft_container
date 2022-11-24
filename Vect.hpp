@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/24 21:18:25 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/24 22:46:30 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,23 @@ protected:
 public:
 
 	T* cp (T *alloc);
+
+
+	//T* cp_and_move (T *alloc, std::ptrdiff_t start, std::size_t range, const &T val) {
+	T* cp_and_move (T *alloc, std::ptrdiff_t start, std::size_t range, T val) {
+		for (unsigned int i = 0; i < start; ++i) alloc[i] = _data[i];			// copy until start
+		for (unsigned int u = start; u < start + range; ++u) {
+			alloc[u] = val;	// insert new val
+			_size += 1;
+		}
+		for (std::size_t n = start + range; n < _size + range; ++n)				// decallage du reste
+		{
+			alloc[n] = _data[n - range];
+		}
+		return _data;
+	}
+
+
 	void	fill(std::ptrdiff_t, std::size_t n, T val);
     // Constructors
     Vect ();   // Tableau vide
@@ -106,13 +123,7 @@ T* Vect<T>::_cp (const Vect<T>& v) {
 
 template <typename T>
 T* Vect<T>::cp (T *alloc) {
-    for (std::size_t i = 0; i < _size; ++i) alloc[i] = _data[i];
-	/*
-	for (std::size_t n = _size; n < capacity; ++n)
-	{
-		alloc[n] = val;
-	}
-	*/
+    for (unsigned int i = 0; i < _size; ++i) alloc[i] = _data[i];
     return _data;
 }
 

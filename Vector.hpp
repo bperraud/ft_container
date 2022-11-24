@@ -44,6 +44,11 @@ class vector {
 			_it = other._it;
 			return *this;
 		}
+
+		difference_type operator-( const normal_iterator &other ) const { return _it - other._it; }
+		difference_type operator+( const normal_iterator &other ) const { return _it + other._it; }
+
+		// util ?
 		normal_iterator operator+( difference_type n ) const { return _it + n; }
 		/*
 		iterator operator+(difference_type lhs, const iterator &other) {
@@ -72,7 +77,6 @@ class vector {
 		reference operator*() const { return *_it;}
 		pointer operator->() { return _it; }
 		pointer operator->() const { return _it ;};
-
 
         bool operator>( const normal_iterator &other ) const { return (_it > other.operator->()); };
         bool operator<( const normal_iterator &other ) const { return (_it < other.operator->()); };
@@ -113,10 +117,17 @@ private:
 	vector_type				_vector;
 
 
-	// copy vect.data in new allocate of size n and fill with val
 	void	reallocate(size_type n) {
 		pointer ptr = _alloc.allocate(n);
 		_vector.cp(ptr);
+		_alloc.deallocate(_vector.getData(), _capacity);
+		_vector.setVal(ptr);
+		_capacity = n;
+	}
+
+	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, const value_type& val) {
+		pointer ptr = _alloc.allocate(n);
+		_vector.cp_and_move(ptr, start, range, val);
 		_alloc.deallocate(_vector.getData(), _capacity);
 		_vector.setVal(ptr);
 		_capacity = n;
@@ -205,7 +216,7 @@ public:
 
 	//Modifiers
 	void push_back (const value_type& val) {
-		if (_vector.dim() + 1 > _capacity)
+		if (_capacity < _vector.dim() + 1)
 		{
 			increase_capacity(_vector.dim() + 1);
 			reallocate(_capacity);
@@ -223,21 +234,34 @@ public:
 	}
 
 	iterator insert (iterator position, const value_type& val) {
-		if (_vector.dim() + 1 > _capacity)
+		typename iterator::difference_type i = position - begin();
+		if (_capacity < _vector.dim() + 1)
 		{
-			increase_capacity();
-			reallocate(_capacity);
+			increase_capacity(_vector.dim() + 1);
+			reallocate(_capacity, i, 1, val);	// reallocate and copy until position
 		}
+		else
+			reallocate(_capacity, i, 1, val);
 		return position;
 	}
 
 
     void insert (iterator position, size_type n, const value_type& val) {
+		typename iterator::difference_type i = position - begin();
 		if (_vector.dim() + n > _capacity)
-			reallocate(_capacity * 2, val);
+		{
+			increase_capacity(_vector.dim() + 1);
+			reallocate(_capacity, i, n, val);
+		}
+		else
+			reallocate(_capacity, i, n, val);
 	}
 
-	template <class InputIterator> void insert (iterator position, InputIterator first, InputIterator last);
+	template <class InputIterator> void insert (iterator position, InputIterator first, InputIterator last) {
+		typename iterator::difference_type i = position - begin();
+		size_type n = std::distance( first, last );
+		//cp_and_move ()
+	}
 
 	//Allocator
 	allocator_type get_allocator() const { return _alloc;}

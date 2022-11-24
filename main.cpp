@@ -30,13 +30,9 @@ int main() {
 		std::cout << "size " << vect->size() << std::endl;
 
 		vect->push_back(8);
-
-		std::cout << "size " << vect->size() << std::endl;
-
+		vect->insert(vect->begin(), -1);
 		vect->push_back(-9);
 
-		std::cout << "capacity " << vect->capacity() << std::endl;
-		std::cout << "size " << vect->size() << std::endl;
 
 		vector<int>::reverse_iterator ite = vect->rbegin();
 		vector<int>::reverse_iterator o = ite + 1;
@@ -45,6 +41,7 @@ int main() {
 
 		for (vector<int>::reverse_iterator i = vect->rbegin(); i != vect->rend(); i++ )
 			std::cout << *i << std::endl;
+
 
 		std::cout << "size :" << vect->size() << std::endl;
 		std::cout << "vec end : " << *vect->rend() << std::endl;
@@ -70,7 +67,6 @@ int main() {
 		std::cout << "vec size : " << vect->size() << std::endl;
 		std::cout << "vec back : " << vect->back() << std::endl;
 
-		(void) ite;
 
 		delete vect;
 		//vector<int>::iterator ite = vect->begin();
