@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/25 00:46:59 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/25 01:17:19 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,13 @@ public:
 	}
 
 	void move_back (std::ptrdiff_t start, std::size_t range) {
-		for (std::size_t n = start; n < start + range; ++n){
+		std::cout << "start : " << start << std::endl;
+		std::cout << "range : " << range << std::endl;
+		//for (std::size_t n = start; n < start + range; ++n){
+		for (std::size_t n = start; n < start + _size ; ++n){
 			_data[n] = _data[n + range];
-			_size--;
 		}
+		_size -= range;
 	}
 
 

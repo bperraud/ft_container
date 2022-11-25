@@ -55,7 +55,7 @@ int main() {
 
 		std::cout << "vec size : " << vect->size() << std::endl;
 
-		vect->resize(3);
+		vect->resize(5);
 
 		std::cout << "classic " << std::endl;
 		for (vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )
@@ -66,6 +66,10 @@ int main() {
 
 
 		//vect->clear();
+
+		//vect->erase(vect->begin());
+
+		vect->erase(vect->begin());
 
 		//vect->erase(vect->begin() + 1, vect->end() - 1);
 

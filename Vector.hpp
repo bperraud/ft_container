@@ -47,6 +47,9 @@ class vector {
 			return *this;
 		}
 
+		//normal_iterator operator-( const normal_iterator &other ) const { return _it - other._it; }
+		//normal_iterator operator+( const normal_iterator &other ) const { return _it + other._it; }
+
 		difference_type operator-( const normal_iterator &other ) const { return _it - other._it; }
 		difference_type operator+( const normal_iterator &other ) const { return _it + other._it; }
 
@@ -242,6 +245,8 @@ public:
 		}
 	}
 
+	// gestion d'erreur !
+
 	iterator insert (iterator position, const value_type& val) {
 		typename iterator::difference_type i = position - begin();
 		if (_capacity < _vector.dim() + 1)
@@ -276,14 +281,14 @@ public:
 	}
 
 	iterator erase (iterator position) {
-
-
+		typename iterator::difference_type start = position - begin();
+		erase(position , position + 1);
+		return begin() + start;
 	}
 
 	iterator erase (iterator first, iterator last) {
 		pointer data = _vector.getData();
 		typename iterator::difference_type start = first - begin();
-		//std::size_t start = first - begin();
 		for (typename iterator::difference_type i = start; i < last - begin(); ++i)
 			_alloc.destroy(data + i);
 		_vector.move_back(start, last - first);
