@@ -55,7 +55,11 @@ int main() {
 
 		std::cout << "vec size : " << vect->size() << std::endl;
 
-		vect->resize(5);
+		//vect->resize(5);
+
+		//vect->assign(5, 5);
+
+		vect->assign(vect->begin(), vect->begin() + 2);
 
 		std::cout << "classic " << std::endl;
 		for (vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )

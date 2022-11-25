@@ -39,6 +39,8 @@ class vector {
 		normal_iterator( pointer i ) : _it(i) {}
 		normal_iterator( const normal_iterator &other ) : _it( other._it ) {}
 
+		//explicit value_type( normal_iterator o) { return *o._it; }
+
 		// bizarre ça non ?
 		explicit normal_iterator( U &i ) : _it( &i ) {}
 
@@ -227,6 +229,31 @@ public:
 	const_reference		back() const {return _vector.at(_vector.dim() - 1);}
 
 	//Modifiers
+
+
+	template <class InputIterator>
+	void assign (InputIterator first, InputIterator last) {
+		pointer data = _vector.getData();
+		typename iterator::difference_type range = last - first;
+		resize(range);
+		for (std::size_t i = 0; i < _vector.dim(); ++i)
+		{
+			_alloc.destroy(data + i);
+			data[i] = *(first + i);
+		}
+	}
+
+
+	void assign (size_type n, const value_type& val) {
+		resize(n);
+		pointer data = _vector.getData();
+		for (std::size_t i = 0; i < _vector.dim(); ++i)
+		{
+			_alloc.destroy(data + i);
+			data[i] = val;
+		}
+	}
+
 	void push_back (const value_type& val) {
 		if (_capacity < _vector.dim() + 1)
 		{
@@ -245,7 +272,7 @@ public:
 		}
 	}
 
-	// gestion d'erreur !
+	// manque gestion d'erreur !
 
 	iterator insert (iterator position, const value_type& val) {
 		typename iterator::difference_type i = position - begin();
@@ -265,7 +292,8 @@ public:
 	}
 
 	/*
-	template <class InputIterator> void insert (iterator position, InputIterator first, InputIterator last) {
+	template <class InputIterator>
+	void insert (iterator position, InputIterator first, InputIterator last) {
 		std::cout << "PAS LE BON" << std::endl;
 		typename iterator::difference_type i = position - begin();
 		//size_type n = std::distance( first, last );
