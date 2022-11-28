@@ -59,7 +59,7 @@ int main() {
 
 		//vect->assign(5, 5);
 
-		vect->assign(vect->begin(), vect->begin() + 2);
+		vect->assign(vect->begin(), vect->end());
 
 		std::cout << "classic " << std::endl;
 		for (vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )

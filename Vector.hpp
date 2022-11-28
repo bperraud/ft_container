@@ -16,6 +16,7 @@
 #include "Vect.hpp"
 #include "Iterator.hpp"
 
+#include "type_traits.hpp" // for enable_if
 
 template <typename T, typename Allocator = std::allocator<T> >
 class vector {
@@ -37,12 +38,14 @@ class vector {
 	public:
 		normal_iterator() : _it(U()) {}
 		normal_iterator( pointer i ) : _it(i) {}
+
+		//normal_iterator( const normal_iterator &other ) : _it( other._it ) {}
 		normal_iterator( const normal_iterator &other ) : _it( other._it ) {}
 
 		//explicit value_type( normal_iterator o) { return *o._it; }
 
 		// bizarre ça non ?
-		explicit normal_iterator( U &i ) : _it( &i ) {}
+		//normal_iterator( U &i ) : _it( &i ) {}
 
 		normal_iterator &operator=( const normal_iterator &other ) {
 			_it = other._it;
@@ -229,10 +232,8 @@ public:
 	const_reference		back() const {return _vector.at(_vector.dim() - 1);}
 
 	//Modifiers
-
-
 	template <class InputIterator>
-	void assign (InputIterator first, InputIterator last) {
+	void assign (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
 		pointer data = _vector.getData();
 		typename iterator::difference_type range = last - first;
 		resize(range);
@@ -242,7 +243,6 @@ public:
 			data[i] = *(first + i);
 		}
 	}
-
 
 	void assign (size_type n, const value_type& val) {
 		resize(n);
@@ -273,7 +273,6 @@ public:
 	}
 
 	// manque gestion d'erreur !
-
 	iterator insert (iterator position, const value_type& val) {
 		typename iterator::difference_type i = position - begin();
 		if (_capacity < _vector.dim() + 1)
@@ -291,18 +290,17 @@ public:
 		reallocate(_capacity, i, n, val);
 	}
 
-	/*
+
 	template <class InputIterator>
-	void insert (iterator position, InputIterator first, InputIterator last) {
+	void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
 		std::cout << "PAS LE BON" << std::endl;
 		typename iterator::difference_type i = position - begin();
-		//size_type n = std::distance( first, last );
+		size_type n = std::distance( first, last );
 		(void) i;
 		(void) first;
 		(void) last;
 		//cp_and_move ()
 	}
-	*/
 
 	void clear() {
 		resize(0);
@@ -329,5 +327,8 @@ public:
 	virtual ~vector() { _alloc.deallocate(_vector.getData(), _capacity);}
 
 };
+
+
+
 
 #endif
