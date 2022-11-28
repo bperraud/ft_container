@@ -10,6 +10,7 @@
 
 #include "Iterator.hpp"
 
+
 int main() {
 		/*
 		ft::vector<int>::iterator it;
@@ -21,7 +22,7 @@ int main() {
 
 		//Cont<int>::reverse_iterator itr;		// compile pas car pas dans Cont
 
-		vector<int> *vect = new vector<int>(5);
+		ft::vector<int> *vect = new ft::vector<int>(5);
 
 		vect->operator[](0) = 2;
 		vect->operator[](1) = 3;
@@ -35,7 +36,7 @@ int main() {
 		vect->insert(vect->begin(), -2);
 		vect->insert(vect->begin(), vect->begin() , vect->begin() + 3);
 
-		for (vector<int>::reverse_iterator i = vect->rbegin(); i != vect->rend(); i++ )
+		for (ft::vector<int>::reverse_iterator i = vect->rbegin(); i != vect->rend(); i++ )
 			std::cout << *i << std::endl;
 
 		std::cout << "size :" << vect->size() << std::endl;
@@ -48,7 +49,7 @@ int main() {
 		vect->pop_back();
 
 		std::cout << "classic " << std::endl;
-		for (vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )
+		for (ft::vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )
 			std::cout << *it << std::endl;
 
 		std::cout << "vec size : " << vect->size() << std::endl;
@@ -60,7 +61,7 @@ int main() {
 		vect->assign(vect->begin(), vect->end());
 
 		std::cout << "classic " << std::endl;
-		for (vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )
+		for (ft::vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )
 			std::cout << *it << std::endl;
 
 		std::cout << "vec size : " << vect->size() << std::endl;
@@ -71,18 +72,18 @@ int main() {
 		//vect->erase(vect->begin());
 		//vect->erase(vect->begin() + 1, vect->end() - 1);
 
-		vector<int> *vec = new vector<int>();
-		vec->insert(vec->begin(), 5, 5);
+		ft::vector<int> *vec = new ft::vector<int>();
+
 		//vec->push_back(6);
 
 		vect->swap(*vec);
 
-		for (vector<int>::const_iterator y = vect->begin(); y != vect->end(); y++ )
+		for (ft::vector<int>::const_iterator y = vect->begin(); y != vect->end(); y++ )
 			std::cout << *y << std::endl;
 
 		std::cout << "deuxieme" << std::endl;
 
-		for (vector<int>::const_iterator iter = vec->begin(); iter != vec->end(); iter++ )
+		for (ft::vector<int>::const_iterator iter = vec->begin(); iter != vec->end(); iter++ )
 			std::cout << *iter << std::endl;
 
 		delete vec;

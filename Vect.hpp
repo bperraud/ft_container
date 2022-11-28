@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/28 18:15:10 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/28 22:03:04 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,10 @@ public:
 
 	T* cp (T *alloc);
 
-
 	//T* cp_and_move (T *alloc, std::ptrdiff_t start, std::size_t range, const &T val) {
 	T* cp_and_move (T *alloc, std::ptrdiff_t start, std::size_t range, T val) {
+		if (range < 0)
+        	throw std::length_error("vector::negative range");
 		for (unsigned int i = 0; i < start; ++i) alloc[i] = _data[i];			// copy until start
 		for (unsigned int u = start; u < start + range; ++u) {
 			alloc[u] = val;	// insert new val
@@ -46,6 +47,8 @@ public:
 	}
 
 	T* cp_and_move (T *alloc, std::ptrdiff_t start, std::size_t range, T* val) {
+		if (range < 0)
+        	throw std::length_error("vector::negative range");
 		for (unsigned int i = 0; i < start; ++i) alloc[i] = _data[i];			// copy until start
 		for (unsigned int u = start; u < start + range; ++u) {
 			alloc[u] = val[u];	// insert new val
@@ -59,9 +62,8 @@ public:
 	}
 
 	void move_back (std::ptrdiff_t start, std::size_t range) {
-		std::cout << "start : " << start << std::endl;
-		std::cout << "range : " << range << std::endl;
-		//for (std::size_t n = start; n < start + range; ++n){
+		if (range < 0)
+        	throw std::length_error("vector::negative range");
 		for (std::size_t n = start; n < start + _size ; ++n){
 			_data[n] = _data[n + range];
 		}
