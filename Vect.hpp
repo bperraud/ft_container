@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/25 01:17:19 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/28 17:45:06 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,19 @@ public:
 		for (unsigned int i = 0; i < start; ++i) alloc[i] = _data[i];			// copy until start
 		for (unsigned int u = start; u < start + range; ++u) {
 			alloc[u] = val;	// insert new val
+			_size += 1;
+		}
+		for (std::size_t n = start + range; n < _size + range; ++n)				// decallage du reste
+		{
+			alloc[n] = _data[n - range];
+		}
+		return _data;
+	}
+
+	T* cp_and_move (T *alloc, std::ptrdiff_t start, std::size_t range, T* val) {
+		for (unsigned int i = 0; i < start; ++i) alloc[i] = _data[i];			// copy until start
+		for (unsigned int u = start; u < start + range; ++u) {
+			alloc[u] = val[u];	// insert new val
 			_size += 1;
 		}
 		for (std::size_t n = start + range; n < _size + range; ++n)				// decallage du reste

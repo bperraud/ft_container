@@ -30,12 +30,10 @@ int main() {
 		std::cout << "size " << vect->size() << std::endl;
 
 		vect->push_back(8);
+		vect->push_back(-9);
 		vect->insert(vect->begin(), -1);
 		vect->insert(vect->begin(), -2);
-		//vect->insert(vect->begin(), -10, -10);
-
-		vect->insert(vect->begin(), 1, -10);
-		vect->push_back(-9);
+		vect->insert(vect->begin(), vect->begin() , vect->begin() + 3);
 
 		for (vector<int>::reverse_iterator i = vect->rbegin(); i != vect->rend(); i++ )
 			std::cout << *i << std::endl;

@@ -66,11 +66,6 @@ class vector {
 		}
 		*/
 		normal_iterator operator-( difference_type n ) const { return _it - n; }
-		/*
-		difference_type operator-( const Iterator &other ) const {
-			return _p - other._p;
-		}
-		*/
 
 		normal_iterator &operator++() {
 			_it++;
@@ -136,6 +131,14 @@ private:
 	}
 
 	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, const value_type& val) {
+		pointer ptr = _alloc.allocate(n);
+		_vector.cp_and_move(ptr, start, range, val);
+		_alloc.deallocate(_vector.getData(), _capacity);
+		_vector.setVal(ptr);
+		_capacity = n;
+	}
+
+	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, pointer val) {
 		pointer ptr = _alloc.allocate(n);
 		_vector.cp_and_move(ptr, start, range, val);
 		_alloc.deallocate(_vector.getData(), _capacity);
@@ -234,7 +237,7 @@ public:
 	//Modifiers
 	template <class InputIterator>
 	void assign (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
-		pointer data = _vector.getData();
+		pointer data = this->data();
 		typename iterator::difference_type range = last - first;
 		resize(range);
 		for (std::size_t i = 0; i < _vector.dim(); ++i)
@@ -246,7 +249,7 @@ public:
 
 	void assign (size_type n, const value_type& val) {
 		resize(n);
-		pointer data = _vector.getData();
+		pointer data = data();
 		for (std::size_t i = 0; i < _vector.dim(); ++i)
 		{
 			_alloc.destroy(data + i);
@@ -265,11 +268,8 @@ public:
 	}
 
 	void pop_back() {
-		if (!empty())
-		{
-			_alloc.destroy(_vector.getLast());
-			_vector.setDim(_vector.dim() - 1);
-		}
+		_alloc.destroy(_vector.getLast());
+		_vector.setDim(_vector.dim() - 1);
 	}
 
 	// manque gestion d'erreur !
@@ -283,7 +283,7 @@ public:
 
 
     void insert (iterator position, size_type n, const value_type& val) {
-		// test pour n > 0
+		// test si n > 0
 		typename iterator::difference_type i = position - begin();
 		if (_vector.dim() + n > _capacity)
 			increase_capacity(_vector.dim() + n);
@@ -293,13 +293,12 @@ public:
 
 	template <class InputIterator>
 	void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
-		std::cout << "PAS LE BON" << std::endl;
 		typename iterator::difference_type i = position - begin();
+		typename iterator::difference_type begin_copy = first - begin();
 		size_type n = std::distance( first, last );
-		(void) i;
-		(void) first;
-		(void) last;
-		//cp_and_move ()
+		if (_vector.dim() + n > _capacity)
+			increase_capacity(_vector.dim() + n);
+		reallocate(_capacity, i, n, data() + begin_copy);
 	}
 
 	void clear() {
@@ -313,7 +312,7 @@ public:
 	}
 
 	iterator erase (iterator first, iterator last) {
-		pointer data = _vector.getData();
+		pointer data = this->data();
 		typename iterator::difference_type start = first - begin();
 		for (typename iterator::difference_type i = start; i < last - begin(); ++i)
 			_alloc.destroy(data + i);
