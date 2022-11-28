@@ -120,28 +120,29 @@ private:
 	size_type				_capacity;
 	vector_type				_vector;
 
+
+	void	deallocate(size_type n, pointer ptr) {
+		_alloc.deallocate(this->data(), _capacity);
+		_vector.setVal(ptr);
+		_capacity = n;
+	}
+
 	void	reallocate(size_type n) {
 		pointer ptr = _alloc.allocate(n);
 		_vector.cp(ptr);
-		_alloc.deallocate(_vector.getData(), _capacity);
-		_vector.setVal(ptr);
-		_capacity = n;
+		deallocate(n, ptr);
 	}
 
 	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, const value_type& val) {
 		pointer ptr = _alloc.allocate(n);
 		_vector.cp_and_move(ptr, start, range, val);
-		_alloc.deallocate(_vector.getData(), _capacity);
-		_vector.setVal(ptr);
-		_capacity = n;
+		deallocate(n, ptr);
 	}
 
 	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, pointer val) {
 		pointer ptr = _alloc.allocate(n);
 		_vector.cp_and_move(ptr, start, range, val);
-		_alloc.deallocate(_vector.getData(), _capacity);
-		_vector.setVal(ptr);
-		_capacity = n;
+		deallocate(n, ptr);
 	}
 
 	void	increase_capacity(size_type n) {
@@ -196,6 +197,8 @@ public:
 	size_type	capacity() const { return _capacity; }
 
 	void		reserve (size_type n) {
+		if (n < 0 || n > this->max_size())
+			throw std::length_error("vector::resize");
 		if (n > _capacity)
 		{
 			pointer ptr = _alloc.allocate(n);
@@ -206,6 +209,8 @@ public:
 	}
 
 	void resize (size_type n, value_type val = value_type()) {
+		if (n < 0 || n > this->max_size())
+			throw std::length_error("vector::resize");
 		pointer data = this->data();
 		if (n < _vector.dim())
 		{
@@ -287,7 +292,6 @@ public:
 		_vector.setDim(_vector.dim() - 1);
 	}
 
-	// manque gestion d'erreur !
 	iterator insert (iterator position, const value_type& val) {
 		typename iterator::difference_type i = position - begin();
 		if (_capacity < _vector.dim() + 1)
@@ -296,8 +300,9 @@ public:
 		return begin() + i;
 	}
 
-    void insert (iterator position, size_type n, const value_type& val) {
-		// test si n > 0
+	void insert (iterator position, size_type n, const value_type& val) {
+		if (n < 0 || n > this->max_size())
+			throw std::length_error("vector::insert");
 		typename iterator::difference_type i = position - begin();
 		if (_vector.dim() + n > _capacity)
 			increase_capacity(_vector.dim() + n);

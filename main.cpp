@@ -66,13 +66,13 @@ int main() {
 		std::cout << "vec size : " << vect->size() << std::endl;
 		std::cout << "vec back : " << vect->back() << std::endl;
 
-
 		//vect->clear();
 		//vect->erase(vect->begin());
 		//vect->erase(vect->begin());
 		//vect->erase(vect->begin() + 1, vect->end() - 1);
 
-		vector<int> *vec = new vector<int>(5);
+		vector<int> *vec = new vector<int>();
+		vec->insert(vec->begin(), 5, 5);
 		//vec->push_back(6);
 
 		vect->swap(*vec);
