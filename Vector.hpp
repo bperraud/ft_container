@@ -120,6 +120,7 @@ private:
 	size_type				_capacity;
 	vector_type				_vector;
 
+	/* ---------------------------- Private Method ------------------------------ */
 
 	void	deallocate(size_type n, pointer ptr) {
 		_alloc.deallocate(this->data(), _capacity);
@@ -198,7 +199,7 @@ public:
 
 	void		reserve (size_type n) {
 		if (n < 0 || n > this->max_size())
-			throw std::length_error("vector::resize");
+			throw std::length_error("vector::reserve");
 		if (n > _capacity)
 		{
 			pointer ptr = _alloc.allocate(n);
@@ -345,10 +346,16 @@ public:
 	}
 
 	 /* -------------------------------- Allocator ------------------------------- */
+
 	allocator_type get_allocator() const { return _alloc;}
 
 	virtual ~vector() { _alloc.deallocate(_vector.getData(), _capacity);}
 
 };
+
+template <class T, class Alloc>
+void swap (vector<T,Alloc>& x, vector<T,Alloc>& y) {
+	x.swap(y);
+}
 
 #endif
