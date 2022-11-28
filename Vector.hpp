@@ -108,7 +108,6 @@ public:
     typedef normal_iterator <T>						iterator;
     typedef normal_iterator <const T>				const_iterator;
 
-
     typedef ft::reverse_iterator< iterator >		reverse_iterator;
     typedef ft::reverse_iterator< const_iterator >	const_reverse_iterator;
     typedef std::ptrdiff_t							difference_type;
@@ -120,7 +119,6 @@ private:
 	allocator_type			_alloc;
 	size_type				_capacity;
 	vector_type				_vector;
-
 
 	void	reallocate(size_type n) {
 		pointer ptr = _alloc.allocate(n);
@@ -152,46 +150,50 @@ private:
 	}
 
 public:
+
+	/* ------------------------------ Construction ------------------------------ */
+
 	vector () : _capacity(10), _vector(){
-		//_alloc = new Allocator() ;
+		_alloc = allocator_type();
+		_vector.setVal(_alloc.allocate(10));
 	};
 
 	explicit vector (std::size_t d) : _capacity(d), _vector(d) {
 		_alloc = allocator_type();
 		_vector.setVal(_alloc.allocate(d));
-		//reserve(d);
 	}
 
-	vector( const vector &other ) {
-        *this = other;
+	vector( const vector &other ) : _alloc( other._alloc ), _capacity(other._capacity), _vector(){
+		_vector.setVal(_alloc.allocate(other._capacity));
+		*this = other;
     }
 
-	// operators
 	vector &operator=( const vector &other ) {
+		assign(other.begin(), other.end());
         return *this;
     }
+
+	/* -------------------------------- Iterators ------------------------------- */
 
 	iterator begin() {return iterator(data()); }
 	iterator end() { return iterator(data() + _vector.dim()); }
 	const_iterator begin() const { return const_iterator(data()); }
 	const_iterator end() const  { return const_iterator(begin() + _vector.dim()); }
-
 	reverse_iterator rbegin() {return reverse_iterator(begin() + _vector.dim() - 1);}
 	reverse_iterator rend() { return reverse_iterator(data() - 1); }
 	const_reverse_iterator rbegin() const {return const_reverse_iterator(begin() + _vector.dim() - 1);}
 	const_reverse_iterator rend() const { return const_reverse_iterator(data() - 1); }
-
 	const_iterator cbegin() const { return const_iterator(data());}
-    const_iterator cend() const { return const_iterator(begin() + _vector.dim()); }
-    const_reverse_iterator crbegin() const {return const_reverse_iterator(begin() + _vector.dim() - 1);}
-    const_reverse_iterator crend() const { return const_reverse_iterator(data() - 1); }
+	const_iterator cend() const { return const_iterator(begin() + _vector.dim()); }
+	const_reverse_iterator crbegin() const {return const_reverse_iterator(begin() + _vector.dim() - 1);}
+	const_reverse_iterator crend() const { return const_reverse_iterator(data() - 1); }
 
+	/* -------------------------------- Capacity -------------------------------- */
 
-	// Capacity
 	size_type	size () const { return _vector.dim();}
+	size_type	max_size () const {return _alloc.max_size();}
 	bool		empty () const {return _vector.dim() == 0;}
 	size_type	capacity() const { return _capacity; }
-	size_type	max_size () const {return _alloc.max_size();}
 
 	void		reserve (size_type n) {
 		if (n > _capacity)
@@ -204,7 +206,7 @@ public:
 	}
 
 	void resize (size_type n, value_type val = value_type()) {
-		pointer data = _vector.getData();
+		pointer data = this->data();
 		if (n < _vector.dim())
 		{
 			for (std::size_t i = n; i < _vector.dim(); ++i)
@@ -223,23 +225,36 @@ public:
 		_vector.setDim(n);
 	}
 
-	//Element access
+	void shrink_to_fit() {
+		size_t n = _vector.dim();
+		if (n < _capacity)
+		{
+			pointer ptr = _alloc.allocate(n);
+			_vector.cp(ptr);
+			_vector.setVal(ptr);
+			_capacity = n;
+		}
+	}
+
+	/* ----------------------------- Element access ----------------------------- */
+
 	reference			operator[] (std::ptrdiff_t idx) { return _vector.operator[](idx);}
 	reference			at (size_type n) {return _vector.at(n);}
 	const_reference		at (size_type n) const {return _vector.at(n);}
-	value_type* 		data() {return _vector.getData();}
-	const value_type*	data() const {return _vector.getData();}
 	reference 			front() {return _vector.at(0);}
 	const_reference 	front() const {return _vector.at(0);}
 	reference 			back() {return _vector.at(_vector.dim() - 1);}
 	const_reference		back() const {return _vector.at(_vector.dim() - 1);}
+	value_type* 		data() {return _vector.getData();}
+	const value_type*	data() const {return _vector.getData();}
 
-	//Modifiers
+	/* -------------------------------- Modifiers ------------------------------- */
+
 	template <class InputIterator>
 	void assign (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
-		pointer data = this->data();
 		typename iterator::difference_type range = last - first;
 		resize(range);
+		pointer data = this->data();
 		for (std::size_t i = 0; i < _vector.dim(); ++i)
 		{
 			_alloc.destroy(data + i);
@@ -281,7 +296,6 @@ public:
 		return begin() + i;
 	}
 
-
     void insert (iterator position, size_type n, const value_type& val) {
 		// test si n > 0
 		typename iterator::difference_type i = position - begin();
@@ -289,7 +303,6 @@ public:
 			increase_capacity(_vector.dim() + n);
 		reallocate(_capacity, i, n, val);
 	}
-
 
 	template <class InputIterator>
 	void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
@@ -299,10 +312,6 @@ public:
 		if (_vector.dim() + n > _capacity)
 			increase_capacity(_vector.dim() + n);
 		reallocate(_capacity, i, n, data() + begin_copy);
-	}
-
-	void clear() {
-		resize(0);
 	}
 
 	iterator erase (iterator position) {
@@ -320,14 +329,21 @@ public:
 		return begin() + start;
 	}
 
-	//Allocator
+	void swap (vector& x) {
+		vector y = *this;
+		*this = x;
+		x = y;
+	}
+
+	void clear() {
+		resize(0);
+	}
+
+	 /* -------------------------------- Allocator ------------------------------- */
 	allocator_type get_allocator() const { return _alloc;}
 
 	virtual ~vector() { _alloc.deallocate(_vector.getData(), _capacity);}
 
 };
-
-
-
 
 #endif

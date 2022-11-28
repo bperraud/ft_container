@@ -68,16 +68,24 @@ int main() {
 
 
 		//vect->clear();
-
 		//vect->erase(vect->begin());
-
-		vect->erase(vect->begin());
-
+		//vect->erase(vect->begin());
 		//vect->erase(vect->begin() + 1, vect->end() - 1);
+
+		vector<int> *vec = new vector<int>(5);
+		//vec->push_back(6);
+
+		vect->swap(*vec);
 
 		for (vector<int>::const_iterator y = vect->begin(); y != vect->end(); y++ )
 			std::cout << *y << std::endl;
 
+		std::cout << "deuxieme" << std::endl;
+
+		for (vector<int>::const_iterator iter = vec->begin(); iter != vec->end(); iter++ )
+			std::cout << *iter << std::endl;
+
+		delete vec;
 		delete vect;
 		//vector<int>::iterator ite = vect->begin();
 

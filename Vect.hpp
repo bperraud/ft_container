@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/28 17:45:06 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/28 18:15:10 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ public:
     // Getters
     std::size_t dim () const {return _size;}
 	T* getData() { return _data;}
+	T* getData() const { return _data;}
 	//const T* getData() const { return _data;}
     const T& operator[] (std::ptrdiff_t) const;
 	T* getLast() const { return _data + _size - 1;}
