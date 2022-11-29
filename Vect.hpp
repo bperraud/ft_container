@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/29 15:49:48 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/29 15:59:28 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,8 +157,10 @@ T* Vect<T>::cp (T *alloc) {
 
 template <typename T>
 void Vect<T>::fill(std::ptrdiff_t pos, std::size_t n, T val) {
-	for (std::size_t i = pos; i < n; ++i)
+	for (std::size_t i = pos; i < n; ++i) {
 		_data[i] = val;
+		_size++;
+	}
 }
 
 template <typename T>
