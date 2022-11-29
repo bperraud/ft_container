@@ -51,13 +51,15 @@ class vector {
 
 		//normal_iterator operator-( const normal_iterator &other ) const { return _it - other._it; }
 		difference_type operator-( const normal_iterator &other ) const { return _it - other._it; }
+
+		normal_iterator operator-( difference_type n ) const { return _it - n; }
 		normal_iterator operator+( difference_type n ) const { return _it + n; }
 		/*
 		iterator operator+(difference_type lhs, const iterator &other) {
 			return lhs + other;
 		}
 		*/
-		normal_iterator operator-( difference_type n ) const { return _it - n; }
+
 		normal_iterator &operator++() {
 			_it++;
 			return *this;
@@ -73,6 +75,8 @@ class vector {
 		reference operator*() const { return *_it;}
 		pointer operator->() { return _it; }
 		pointer operator->() const { return _it ;};
+		reference operator[]( difference_type i ) { return _it[i]; }
+		reference operator[]( difference_type i ) const { return _it[i];}
 
         bool operator>( const normal_iterator &other ) const { return (_it > other.operator->()); };
         bool operator<( const normal_iterator &other ) const { return (_it < other.operator->()); };
@@ -81,6 +85,7 @@ class vector {
 		bool operator==( const normal_iterator& other ) const { return _it == other._it; }
 		bool operator!=( const normal_iterator& other ) const { return _it != other._it; }
 
+		pointer base() const { return _it; }
 		// convert T to const T for non-const to const assignation
 		operator normal_iterator< const U >() const {
             return ( normal_iterator< const U >( _it ) );
@@ -111,60 +116,34 @@ private:
 	size_type				_capacity;
 	vector_type				_vector;
 
-	/* ---------------------------- Private Method ------------------------------ */
-
-	void	deallocate(size_type n, pointer ptr) {
-		_alloc.deallocate(this->data(), _capacity);
-		_vector.setVal(ptr);
-		_capacity = n;
-	}
-
-	void	reallocate(size_type n) {
-		pointer ptr = _alloc.allocate(n);
-		_vector.cp(ptr);
-		deallocate(n, ptr);
-	}
-
-	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, const value_type& val) {
-		pointer ptr = _alloc.allocate(n);
-		_vector.cp_and_move(ptr, start, range, val);
-		deallocate(n, ptr);
-	}
-
-	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, pointer val) {
-		pointer ptr = _alloc.allocate(n);
-		_vector.cp_and_move(ptr, start, range, val);
-		deallocate(n, ptr);
-	}
-
-	void	increase_capacity(size_type n) {
-		if (n < 0)
-			throw std::length_error("vector::increase_capacity");
-		while (_capacity < n)
-			_capacity *= 2;
-	}
-
 public:
 
 	/* ------------------------------ Construction ------------------------------ */
 
-	vector () : _capacity(INIT_CAPA), _vector(){
-		_alloc = allocator_type();
+	explicit vector (const allocator_type &alloc = allocator_type()) : _alloc(alloc), _capacity(INIT_CAPA), _vector() {
 		_vector.setVal(_alloc.allocate(INIT_CAPA));
-	};
-
-	explicit vector (std::size_t d) : _capacity(d), _vector(d) {
-		_alloc = allocator_type();
-		_vector.setVal(_alloc.allocate(d));
 	}
 
-	vector( const vector &other ) : _alloc( other._alloc ), _capacity(other._capacity), _vector(){
-		_vector.setVal(_alloc.allocate(other._capacity));
-		*this = other;
+	explicit vector( size_type n, const value_type &val = value_type(), const allocator_type &alloc = allocator_type() )
+		: _alloc(alloc), _capacity(n), _vector() {
+		_vector.setVal(_alloc.allocate(n));
+		assign( n, val );
+	}
+
+	template < class InputIterator >
+	vector( InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true)
+		: _alloc(alloc), _capacity(INIT_CAPA), _vector() {
+		_vector.setVal(_alloc.allocate(INIT_CAPA));
+		assign( first, last );
+	}
+
+	vector( const vector &x ) : _alloc( x._alloc ), _capacity(x._capacity), _vector(){
+		_vector.setVal(_alloc.allocate(x._capacity));
+		*this = x;
     }
 
-	vector &operator=( const vector &other ) {
-		assign(other.begin(), other.end());
+	vector &operator=( const vector &x ) {
+		assign(x.begin(), x.end());
         return *this;
     }
 
@@ -190,16 +169,11 @@ public:
 	bool		empty () const {return _vector.dim() == 0;}
 	size_type	capacity() const { return _capacity; }
 
-	void		reserve (size_type n) {
+	void reserve (size_type n) {
 		if (n < 0 || n > this->max_size())
 			throw std::length_error("vector::reserve");
 		if (n > _capacity)
-		{
-			pointer ptr = _alloc.allocate(n);
-			_vector.cp(ptr);
-			_vector.setVal(ptr);
-			_capacity = n;
-		}
+			reallocate(n);
 	}
 
 	void resize (size_type n, value_type val = value_type()) {
@@ -210,18 +184,19 @@ public:
 		{
 			for (std::size_t i = n; i < _vector.dim(); ++i)
 				_alloc.destroy(data + i);
+			_vector.setDim(n);
 		}
 		else if (n > _capacity)
 		{
 			reallocate(n);
-			_vector.fill(n, _capacity, val);
+			//_vector.fill(n, _capacity, val);
+			_vector.fill(_vector.dim(), n, val);
+			_vector.setDim(n);
 		}
 		else if (n > _vector.dim())
 		{
-			for (std::size_t i = _vector.dim(); i < n; ++i)
-				data[i] = val;
+			this->insert(this->end(), n - _vector.dim(), val);	// update size
 		}
-		_vector.setDim(n);
 	}
 
 	void shrink_to_fit() {
@@ -238,6 +213,7 @@ public:
 	/* ----------------------------- Element access ----------------------------- */
 
 	reference			operator[] (std::ptrdiff_t idx) { return _vector.operator[](idx);}
+	const_reference		operator[] (std::ptrdiff_t idx) const { return _vector.operator[](idx);}
 	reference			at (size_type n) {return _vector.at(n);}
 	const_reference		at (size_type n) const {return _vector.at(n);}
 	reference 			front() {return _vector.at(0);}
@@ -251,7 +227,7 @@ public:
 
 	template <class InputIterator>
 	void assign (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
-		typename iterator::difference_type range = last - first;
+		size_t range = std::distance( first, last);
 		resize(range);
 		pointer data = this->data();
 		for (std::size_t i = 0; i < _vector.dim(); ++i)
@@ -263,7 +239,7 @@ public:
 
 	void assign (size_type n, const value_type& val) {
 		resize(n);
-		pointer data = data();
+		pointer data = this->data();
 		for (std::size_t i = 0; i < _vector.dim(); ++i)
 		{
 			_alloc.destroy(data + i);
@@ -307,16 +283,17 @@ public:
 	void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
 		if (first > last)
 			throw std::length_error("vector::insert");
-		typename iterator::difference_type i = position - begin();
-		typename iterator::difference_type begin_copy = first - begin();
-		size_type n = std::distance( first, last );
+		size_type position_offset = std::distance( begin(), position );
+		size_type begin_copy =  	std::distance( begin(), first );
+		size_type n = 				std::distance( first, last );
 		if (_vector.dim() + n > _capacity)
 			increase_capacity(_vector.dim() + n);
-		reallocate(_capacity, i, n, data() + begin_copy);
+		reallocate(_capacity, position_offset, n, data() + begin_copy);
+		//reallocate(_capacity, i, n, first.base());
 	}
 
 	iterator erase (iterator position) {
-		typename iterator::difference_type start = position - begin();
+		size_type start = std::distance(begin(), position);
 		erase(position , position + 1);
 		return begin() + start;
 	}
@@ -325,7 +302,7 @@ public:
 		if (first > last)
 			throw std::length_error("vector::erase");
 		pointer data = this->data();
-		typename iterator::difference_type start = first - begin();
+		size_type start = std::distance( begin(), first );
 		for (typename iterator::difference_type i = start; i < last - begin(); ++i)
 			_alloc.destroy(data + i);
 		_vector.move_back(start, last - first);
@@ -348,6 +325,42 @@ public:
 
 	virtual ~vector() { _alloc.deallocate(_vector.getData(), _capacity);}
 
+
+private:
+
+	/* ---------------------------- Private Method ------------------------------ */
+
+	void	deallocate(size_type n, pointer ptr) {
+		_alloc.deallocate(this->data(), _capacity);
+		_vector.setVal(ptr);
+		_capacity = n;
+	}
+
+	void	reallocate(size_type n) {		// reallocate n _capacity
+		pointer ptr = _alloc.allocate(n);
+		_vector.cp(ptr);
+		deallocate(n, ptr);
+	}
+
+	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, const value_type& val) {
+		pointer ptr = _alloc.allocate(n);
+		_vector.cp_and_move(ptr, start, range, val);
+		deallocate(n, ptr);
+	}
+
+	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, pointer val) {
+
+		pointer ptr = _alloc.allocate(n);
+		_vector.cp_and_move(ptr, start, range, val);
+		deallocate(n, ptr);
+	}
+
+	void	increase_capacity(size_type n) {
+		if (n < 0)
+			throw std::length_error("vector::increase_capacity");
+		while (_capacity < n)
+			_capacity *= 2;
+	}
 };
 
 

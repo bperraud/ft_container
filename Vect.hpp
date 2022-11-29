@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/28 22:03:04 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/29 15:49:48 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ public:
 
 	//T* cp_and_move (T *alloc, std::ptrdiff_t start, std::size_t range, const &T val) {
 	T* cp_and_move (T *alloc, std::ptrdiff_t start, std::size_t range, T val) {
+		std::size_t oldsize = _size;
 		if (range < 0)
         	throw std::length_error("vector::negative range");
 		for (unsigned int i = 0; i < start; ++i) alloc[i] = _data[i];			// copy until start
@@ -39,7 +40,7 @@ public:
 			alloc[u] = val;	// insert new val
 			_size += 1;
 		}
-		for (std::size_t n = start + range; n < _size + range; ++n)				// decallage du reste
+		for (std::size_t n = start + range; n < oldsize + range; ++n)			// decallage du reste
 		{
 			alloc[n] = _data[n - range];
 		}
@@ -47,6 +48,7 @@ public:
 	}
 
 	T* cp_and_move (T *alloc, std::ptrdiff_t start, std::size_t range, T* val) {
+		std::size_t oldsize = _size;
 		if (range < 0)
         	throw std::length_error("vector::negative range");
 		for (unsigned int i = 0; i < start; ++i) alloc[i] = _data[i];			// copy until start
@@ -54,7 +56,7 @@ public:
 			alloc[u] = val[u];	// insert new val
 			_size += 1;
 		}
-		for (std::size_t n = start + range; n < _size + range; ++n)				// decallage du reste
+		for (std::size_t n = start + range; n < oldsize + range; ++n)				// decallage du reste
 		{
 			alloc[n] = _data[n - range];
 		}
