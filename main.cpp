@@ -10,8 +10,6 @@
 
 #include "Iterator.hpp"
 
-
-
 #define TESTED_NAMESPACE ft
 #define T_SIZE_TYPE typename TESTED_NAMESPACE::vector<T>::size_type
 
@@ -42,11 +40,14 @@ void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true
 
 int		main(void)
 {
+	//Vect<TESTED_TYPE> vector(8);
+	//vector[2] = "salut" ;
+
+
 	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(8);
 	std::cout << "ici" << std::endl;
 	TESTED_NAMESPACE::vector<TESTED_TYPE> vct2;
 	TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin();
-
 
 	for (unsigned long int i = 0; i < vct.size(); ++i)
 		it[i] = std::string((vct.size() - i), i + 65);
@@ -69,14 +70,12 @@ int		main(void)
 	return (0);
 }
 
+
 */
 
 int main() {
-
 		//ft::reverse_iterator<Cont<int>::iterator> iter;
-
 		//Cont<int>::reverse_iterator itr;		// compile pas car pas dans Cont
-
 		//ft::vector<std::string> vct(8);
 
 		ft::vector<int> *vect = new ft::vector<int>(5);
@@ -100,11 +99,13 @@ int main() {
 		vect->insert(vect->begin(), -2);
 		vect->insert(vect->begin(), vect->begin() , vect->begin() + 3);
 
-		for (ft::vector<int>::reverse_iterator i = vect->rbegin(); i != vect->rend(); i++ )
+		for (ft::vector<int>::const_iterator i = vect->begin(); i != vect->end(); i++ )
 			std::cout << *i << std::endl;
 
+		std::cout << "reserve error " << std::endl;
 		vect->resize(15);
-		vect->reserve(200);
+
+		vect->reserve(50);
 
 		std::cout << "classic " << std::endl;
 		for (ft::vector<int>::iterator it = vect->begin(); it != vect->end(); it++ )
@@ -113,9 +114,7 @@ int main() {
 		std::cout << "vec size : " << vect->size() << std::endl;
 
 		//vect->resize(5);
-
 		//vect->assign(5, 5);
-
 		vect->assign(vect->begin(), vect->end());
 
 		std::cout << "classic " << std::endl;

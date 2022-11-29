@@ -179,9 +179,7 @@ public:
 	void resize (size_type n, value_type val = value_type()) {
 		if (n < 0 || n > this->max_size())
 			throw std::length_error("vector::resize");
-		if (n == _vector.dim())
-			return;
-		else if (n < _vector.dim())
+		if (n <= _vector.dim())
 		{
 			destroy(n, _vector.dim());
 			_vector.setDim(n);
@@ -230,8 +228,7 @@ public:
 	void push_back (const value_type& val) {
 		if (_capacity < _vector.dim() + 1)
 		{
-			increase_capacity(1);
-			reallocate(_capacity);
+			reallocate(increase_capacity(1));
 		}
 		_vector.setDim(_vector.dim() + 1);
 		_vector.operator[](_vector.dim() - 1) = val;
@@ -243,18 +240,18 @@ public:
 	}
 
 	iterator insert (iterator position, const value_type& val) {
-		typename iterator::difference_type i = position - begin();
-		increase_capacity(1);
-		reallocate(_capacity, i, 1, val);	// reallocate and copy until position
+		size_type i = std::distance(begin(), position);
+		reallocate(increase_capacity(1), i, 1, val);	// reallocate and copy until position
+		_vector.setDim(_vector.dim() + 1);
 		return begin() + i;
 	}
 
 	void insert (iterator position, size_type n, const value_type& val) {
 		if (n < 0 || n > this->max_size())
 			throw std::length_error("vector::insert");
-		typename iterator::difference_type i = position - begin();
-		increase_capacity(n);
-		reallocate(_capacity, i, n, val);
+		size_type i = std::distance(begin(), position);
+		reallocate(increase_capacity(n), i, n, val);
+		_vector.setDim(_vector.dim() + n);
 	}
 
 	template <class InputIterator>
@@ -264,8 +261,8 @@ public:
 		size_type position_offset = std::distance( begin(), position );
 		size_type begin_copy 	  = std::distance( begin(), first );
 		size_type n 			  = std::distance( first, last );
-		increase_capacity(n);
-		reallocate(_capacity, position_offset, n, data() + begin_copy);
+		reallocate(increase_capacity(n), position_offset, n, data() + begin_copy);
+		_vector.setDim(_vector.dim() + n);
 	}
 
 	iterator erase (iterator position) {
@@ -319,15 +316,15 @@ private:
 
 	void	reallocate(size_type n) {		// reallocate n _capacity
 		pointer ptr = _alloc.allocate(n);
-		std::copy(this->begin(), this->end(), ptr);
+		std::copy(begin(), end(), ptr);
 		deallocate(n, ptr);
 	}
 
 	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, const value_type& val) {
 		pointer ptr = _alloc.allocate(n);
-		_vector.cp_and_move(ptr, start, range, val);
-		//std::copy(start, start + range, ptr);
-		//std::copy(start + range, start,  ptr);
+		std::copy(begin(), begin() + start, ptr);
+		std::fill(ptr + start, ptr + start + range, val);
+		std::copy(begin() + start, begin() + _vector.dim() - start, ptr + start + range);
 		deallocate(n, ptr);
 	}
 
@@ -337,13 +334,13 @@ private:
 		deallocate(n, ptr);
 	}
 
-	bool	increase_capacity(size_type n) {	// increase capacity to add n element
-		size_t old_capacity = _capacity;
+	size_type	increase_capacity(size_type n) {	// increase capacity to add n element
 		if (n < 0)
 			throw std::length_error("vector::increase_capacity");
-		while (_vector.dim() + n > _capacity)
-			_capacity *= 2;
-		return	(old_capacity != _capacity);
+		size_t new_capacity = _capacity;
+		while (_vector.dim() + n > new_capacity)
+			new_capacity *= 2;
+		return new_capacity;
 	}
 };
 

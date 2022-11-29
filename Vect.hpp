@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/29 17:24:54 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/29 21:19:25 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ public:
 		for (unsigned int i = 0; i < start; ++i) alloc[i] = _data[i];			// copy until start
 		for (unsigned int u = start; u < start + range; ++u) {
 			alloc[u] = val;	// insert new val
-			_size += 1;
+			//_size += 1;
 		}
 		for (std::size_t n = start + range; n < oldsize + range; ++n)			// decallage du reste
 		{
@@ -50,7 +50,7 @@ public:
 		for (unsigned int i = 0; i < start; ++i) alloc[i] = _data[i];			// copy until start
 		for (unsigned int u = start; u < start + range; ++u) {
 			alloc[u] = val[u];	// insert new val
-			_size += 1;
+			//_size += 1;
 		}
 		for (std::size_t n = start + range; n < oldsize + range; ++n)				// decallage du reste
 		{
@@ -71,6 +71,7 @@ public:
     // Constructors
     Vect ();   // Tableau vide
     explicit Vect (std::size_t d) : _size(d), _data(0) {}
+	//explicit Vect (std::size_t d) : _size(d), _data(new T[d]) {}
     // Getters
     std::size_t dim () const {return _size;}
 	T* getData() { return _data;}
