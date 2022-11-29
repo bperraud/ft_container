@@ -128,7 +128,7 @@ int main() {
 		//vect->clear();
 		//vect->erase(vect->begin());
 		vect->erase(vect->begin());
-		//vect->erase(vect->begin() + 1, vect->end() - 1);
+		vect->erase(vect->begin() + 1, vect->end() - 1);
 
 		ft::vector<int> *vec = new ft::vector<int>();
 
@@ -147,7 +147,6 @@ int main() {
 		delete vec;
 		delete vect;
 		//vector<int>::iterator ite = vect->begin();
-
 
 
 		//Info<int> info;

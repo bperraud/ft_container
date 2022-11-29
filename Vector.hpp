@@ -181,9 +181,7 @@ public:
 			throw std::length_error("vector::resize");
 		if (n < _vector.dim())
 		{
-			pointer data = this->data();
-			for (std::size_t i = n; i < _vector.dim(); ++i)
-				_alloc.destroy(data + i);
+			destroy(n, _vector.dim());
 			_vector.setDim(n);
 		}
 		else if (n > _capacity)
@@ -193,7 +191,7 @@ public:
 		}
 		else if (n > _vector.dim())
 		{
-			this->insert(this->end(), n - _vector.dim(), val);	// update size
+			this->insert(this->end(), n - _vector.dim(), val);
 		}
 	}
 
@@ -246,15 +244,11 @@ public:
 	}
 
 	void push_back (const value_type& val) {
-		/*
 		if (_capacity < _vector.dim() + 1)
 		{
-			increase_capacity(_vector.dim() + 1);
+			increase_capacity(1);
 			reallocate(_capacity);
 		}
-		*/
-		increase_capacity(1);
-		reallocate(_capacity);
 		_vector.setDim(_vector.dim() + 1);
 		_vector.operator[](_vector.dim() - 1) = val;
 	}
@@ -299,10 +293,9 @@ public:
 	iterator erase (iterator first, iterator last) {
 		if (first > last)
 			throw std::length_error("vector::erase");
-		pointer data = this->data();
 		size_type start = std::distance( begin(), first );
-		for (typename iterator::difference_type i = start; i < last - begin(); ++i)
-			_alloc.destroy(data + i);
+		size_type range = std::distance( first, last );
+		destroy(start, range);
 		_vector.move_back(start, last - first);
 		return begin() + start;
 	}
@@ -327,6 +320,12 @@ public:
 private:
 
 	/* ------------------------------ Private Method ---------------------------- */
+
+	void	destroy(std::ptrdiff_t start, std::ptrdiff_t range){
+		pointer data = this->data();
+		for (std::ptrdiff_t i = start; i < range; ++i)
+			_alloc.destroy(data + i);
+	}
 
 	void	deallocate(size_type n, pointer ptr) {
 		_alloc.deallocate(this->data(), _capacity);

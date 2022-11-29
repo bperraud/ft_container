@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/29 15:59:28 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/29 16:21:18 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ public:
 		}
 		_size -= range;
 	}
-
 
 	void	fill(std::ptrdiff_t, std::size_t n, T val);
     // Constructors
