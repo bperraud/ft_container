@@ -240,12 +240,41 @@ public:
 	}
 
 	iterator insert (iterator position, const value_type& val) {
-		size_type i = std::distance(begin(), position);
-		reallocate(increase_capacity(1), i, 1, val);	// reallocate and copy until position
-		_vector.setDim(_vector.dim() + 1);
-		return begin() + i;
+		size_type range = std::distance(begin(), position);
+		insert(position, 1, val);
+		return begin() + range;
 	}
 
+
+	void insert (iterator position, size_type n, const value_type& val) {
+		if (n < 0 || n > this->max_size())
+			throw std::length_error("vector::insert");
+		size_type start = std::distance(begin(), position);
+		pointer ptr;
+		//if (_capacity < _vector.dim() + n)
+		if (true)
+		{
+			//ptr = reallocate(increase_capacity(n), start, n, val);
+			ptr = _alloc.allocate(increase_capacity(n));
+			std::copy(begin(), begin() + start, ptr);
+			std::fill(ptr + start, ptr + start + n, val);
+			std::copy(begin() + start, begin() + _vector.dim() - start, ptr + start + n);
+			_alloc.deallocate(this->data(), _capacity);
+			_vector.setVal(ptr);
+			_capacity = increase_capacity(n);
+		}
+		else
+		{
+			ptr = data();
+			_vector.move_up(start + n, n, std::distance(position, end()));
+			//std::copy(begin() + start, begin() + _vector.dim() - start, ptr + start + n);
+			std::fill(ptr + start, ptr + start + n, val);
+		}
+		_vector.setDim(_vector.dim() + n);
+	}
+
+
+	/*
 	void insert (iterator position, size_type n, const value_type& val) {
 		if (n < 0 || n > this->max_size())
 			throw std::length_error("vector::insert");
@@ -253,6 +282,7 @@ public:
 		reallocate(increase_capacity(n), i, n, val);
 		_vector.setDim(_vector.dim() + n);
 	}
+	*/
 
 	template <class InputIterator>
 	void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
@@ -277,7 +307,9 @@ public:
 		size_type start = std::distance( begin(), first );
 		size_type range = std::distance( first, last );
 		destroy(start, range);
-		_vector.move_back(start, last - first);
+		//_vector.move_back(start, last - first);
+		_vector.move_back(start, range, std::distance(last, end()));
+		_vector.setDim(_vector.dim() - range);
 		return begin() + start;
 	}
 
@@ -343,7 +375,6 @@ private:
 		return new_capacity;
 	}
 };
-
 
 template <class T, class Alloc>
 void swap (vector<T,Alloc>& x, vector<T,Alloc>& y) {

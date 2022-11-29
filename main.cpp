@@ -35,6 +35,8 @@ void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true
 	std::cout << "###############################################" << std::endl;
 }
 
+
+
 /*
 #define TESTED_TYPE std::string
 
@@ -91,7 +93,7 @@ int main() {
 
 		//vect->reserve(20);
 
-		vect->push_back(8);
+		//vect->push_back(8);
 		vect->push_back(-9);
 		vect->pop_back();
 
@@ -102,9 +104,9 @@ int main() {
 		for (ft::vector<int>::const_iterator i = vect->begin(); i != vect->end(); i++ )
 			std::cout << *i << std::endl;
 
-		std::cout << "reserve error " << std::endl;
 		vect->resize(15);
 
+		std::cout << "reserve error " << std::endl;
 		vect->reserve(50);
 
 		std::cout << "classic " << std::endl;
