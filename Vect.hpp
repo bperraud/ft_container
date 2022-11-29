@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/29 16:21:18 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/29 17:24:54 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,6 @@ protected:
 protected:
     //virtual void _dsp (std::ostream& out) const {out << *_data ;} ;
 public:
-
-	T* cp (T *alloc);
-
-	//T* cp_and_move (T *alloc, std::ptrdiff_t start, std::size_t range, const &T val) {
 	T* cp_and_move (T *alloc, std::ptrdiff_t start, std::size_t range, T val) {
 		std::size_t oldsize = _size;
 		if (range < 0)
@@ -72,7 +68,6 @@ public:
 		_size -= range;
 	}
 
-	void	fill(std::ptrdiff_t, std::size_t n, T val);
     // Constructors
     Vect ();   // Tableau vide
     explicit Vect (std::size_t d) : _size(d), _data(0) {}
@@ -146,20 +141,6 @@ T* Vect<T>::_cp (const Vect<T>& v) {
 	T *res = new T[v._size];
     for (std::size_t i = 0; i < v._size; ++i) res[i] = v._data[i];
     return res;
-}
-
-template <typename T>
-T* Vect<T>::cp (T *alloc) {
-    for (unsigned int i = 0; i < _size; ++i) alloc[i] = _data[i];
-    return _data;
-}
-
-template <typename T>
-void Vect<T>::fill(std::ptrdiff_t pos, std::size_t n, T val) {
-	for (std::size_t i = pos; i < n; ++i) {
-		_data[i] = val;
-		_size++;
-	}
 }
 
 template <typename T>

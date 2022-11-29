@@ -179,31 +179,15 @@ public:
 	void resize (size_type n, value_type val = value_type()) {
 		if (n < 0 || n > this->max_size())
 			throw std::length_error("vector::resize");
-		if (n < _vector.dim())
+		if (n == _vector.dim())
+			return;
+		else if (n < _vector.dim())
 		{
 			destroy(n, _vector.dim());
 			_vector.setDim(n);
 		}
-		else if (n > _capacity)
-		{
-			reallocate(n);
-			_vector.fill(_vector.dim(), n, val);
-		}
-		else if (n > _vector.dim())
-		{
-			this->insert(this->end(), n - _vector.dim(), val);
-		}
-	}
-
-	void shrink_to_fit() {
-		size_t n = _vector.dim();
-		if (n < _capacity)
-		{
-			pointer ptr = _alloc.allocate(n);
-			_vector.cp(ptr);
-			_vector.setVal(ptr);
-			_capacity = n;
-		}
+		else
+			insert(end(), n - _vector.dim(), val);
 	}
 
 	/* ----------------------------- Element access ----------------------------- */
@@ -278,8 +262,8 @@ public:
 		if (first > last)
 			throw std::length_error("vector::insert");
 		size_type position_offset = std::distance( begin(), position );
-		size_type begin_copy =  	std::distance( begin(), first );
-		size_type n = 				std::distance( first, last );
+		size_type begin_copy 	  = std::distance( begin(), first );
+		size_type n 			  = std::distance( first, last );
 		increase_capacity(n);
 		reallocate(_capacity, position_offset, n, data() + begin_copy);
 	}
@@ -335,13 +319,15 @@ private:
 
 	void	reallocate(size_type n) {		// reallocate n _capacity
 		pointer ptr = _alloc.allocate(n);
-		_vector.cp(ptr);
+		std::copy(this->begin(), this->end(), ptr);
 		deallocate(n, ptr);
 	}
 
 	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, const value_type& val) {
 		pointer ptr = _alloc.allocate(n);
 		_vector.cp_and_move(ptr, start, range, val);
+		//std::copy(start, start + range, ptr);
+		//std::copy(start + range, start,  ptr);
 		deallocate(n, ptr);
 	}
 

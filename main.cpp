@@ -103,8 +103,8 @@ int main() {
 		for (ft::vector<int>::reverse_iterator i = vect->rbegin(); i != vect->rend(); i++ )
 			std::cout << *i << std::endl;
 
-		vect->reserve(20);
-		vect->resize(10);
+		vect->resize(15);
+		vect->reserve(200);
 
 		std::cout << "classic " << std::endl;
 		for (ft::vector<int>::iterator it = vect->begin(); it != vect->end(); it++ )
