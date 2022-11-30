@@ -231,11 +231,11 @@ public:
 			reallocate(increase_capacity(1));
 		}
 		_vector.setDim(_vector.dim() + 1);
-		_vector.operator[](_vector.dim() - 1) = val;
+		back() = val;
 	}
 
 	void pop_back() {
-		_alloc.destroy(_vector.getLast());
+		_alloc.destroy(&back());
 		_vector.setDim(_vector.dim() - 1);
 	}
 
@@ -245,14 +245,12 @@ public:
 		return begin() + range;
 	}
 
-
 	void insert (iterator position, size_type n, const value_type& val) {
 		if (n < 0 || n > this->max_size())
 			throw std::length_error("vector::insert");
 		size_type start = std::distance(begin(), position);
 		pointer ptr;
-		//if (_capacity < _vector.dim() + n)
-		if (true)
+		if (_capacity < _vector.dim() + n)
 		{
 			//ptr = reallocate(increase_capacity(n), start, n, val);
 			ptr = _alloc.allocate(increase_capacity(n));
@@ -266,23 +264,11 @@ public:
 		else
 		{
 			ptr = data();
-			_vector.move_up(start + n, n, std::distance(position, end()));
-			//std::copy(begin() + start, begin() + _vector.dim() - start, ptr + start + n);
+			_vector.move_up(_vector.dim() - 1 + n, n, std::distance(position, end()) - 1);
 			std::fill(ptr + start, ptr + start + n, val);
 		}
 		_vector.setDim(_vector.dim() + n);
 	}
-
-
-	/*
-	void insert (iterator position, size_type n, const value_type& val) {
-		if (n < 0 || n > this->max_size())
-			throw std::length_error("vector::insert");
-		size_type i = std::distance(begin(), position);
-		reallocate(increase_capacity(n), i, n, val);
-		_vector.setDim(_vector.dim() + n);
-	}
-	*/
 
 	template <class InputIterator>
 	void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
@@ -352,17 +338,14 @@ private:
 		deallocate(n, ptr);
 	}
 
-	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, const value_type& val) {
-		pointer ptr = _alloc.allocate(n);
-		std::copy(begin(), begin() + start, ptr);
-		std::fill(ptr + start, ptr + start + range, val);
-		std::copy(begin() + start, begin() + _vector.dim() - start, ptr + start + range);
-		deallocate(n, ptr);
-	}
-
 	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, pointer val) {
 		pointer ptr = _alloc.allocate(n);
-		_vector.cp_and_move(ptr, start, range, val);
+		(void) range;
+		//_vector.cp_and_move(ptr, start, range, val);
+		std::copy(begin(), begin() + start, ptr);
+		//std::fill(ptr + start, ptr + start + n, val);
+		std::copy(val, val + range, ptr + start);
+		std::copy(begin() + start, begin() + _vector.dim() - start, ptr + start + range);
 		deallocate(n, ptr);
 	}
 

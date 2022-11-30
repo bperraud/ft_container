@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/29 23:36:54 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/30 01:46:28 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,7 @@ public:
 	void move_up (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
 		if (offset < 0)
         	throw std::length_error("vector::negative offset");
-		//for (std::size_t n = start; n < start + _size ; ++n){
-		for (std::size_t n = start; n < start + left ; ++n){
+		for (std::size_t n = start ; n > start - left; --n){
 			_data[n] = _data[n - offset];
 		}
 	}
@@ -84,7 +83,6 @@ public:
 	T* getData() const { return _data;}
 	//const T* getData() const { return _data;}
     const T& operator[] (std::ptrdiff_t) const;
-	T* getLast() const { return _data + _size - 1;}
 	inline T& at(std::ptrdiff_t) ;
     inline const T& at(std::ptrdiff_t) const;
     // Setters

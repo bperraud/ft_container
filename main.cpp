@@ -84,32 +84,33 @@ int main() {
 
 		vect->assign(2, 42);
 
-		vect->operator[](0) = 2;
-		vect->operator[](1) = 3;
-
 		std::cout << "main capacity " << vect->capacity() << std::endl;
 		std::cout << "main size " << vect->size() << std::endl;
 		std::cout << "main empty " << vect->empty() << std::endl;
 
 		//vect->reserve(20);
-
 		//vect->push_back(8);
 		vect->push_back(-9);
+		vect->push_back(3);
+		vect->push_back(45);
 		vect->pop_back();
 
 		vect->insert(vect->begin(), -1);		// sysmalloc ici !
 		vect->insert(vect->begin(), -2);
 		vect->insert(vect->begin(), vect->begin() , vect->begin() + 3);
 
+		std::cout << "main size " << vect->size() << std::endl;
+
 		for (ft::vector<int>::const_iterator i = vect->begin(); i != vect->end(); i++ )
-			std::cout << *i << std::endl;
+			std::cout << "i : " << *i << std::endl;
 
 		vect->resize(15);
-
-		std::cout << "reserve error " << std::endl;
 		vect->reserve(50);
 
 		std::cout << "classic " << std::endl;
+
+		std::cout << "vect->end() : " << *(vect->end()-1) << std::endl;
+
 		for (ft::vector<int>::iterator it = vect->begin(); it != vect->end(); it++ )
 			std::cout << *it << std::endl;
 
