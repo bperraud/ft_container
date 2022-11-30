@@ -93,11 +93,14 @@ int main() {
 		vect->push_back(-9);
 		vect->push_back(3);
 		vect->push_back(45);
-		vect->pop_back();
+		//vect->pop_back();
+
 
 		vect->insert(vect->begin(), -1);		// sysmalloc ici !
-		vect->insert(vect->begin(), -2);
-		vect->insert(vect->begin(), vect->begin() , vect->begin() + 3);
+		//vect->erase(vect->begin());
+		vect->erase(vect->begin() + 3);
+		//vect->insert(vect->begin(), -2);
+		//vect->insert(vect->begin(), vect->begin() , vect->begin() + 3);
 
 		std::cout << "main size " << vect->size() << std::endl;
 

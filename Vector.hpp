@@ -294,6 +294,7 @@ public:
 		size_type range = std::distance( first, last );
 		destroy(start, range);
 		//_vector.move_back(start, last - first);
+		//_vector.move_back(start, range, std::distance(last, end()) );
 		_vector.move_back(start, range, std::distance(last, end()));
 		_vector.setDim(_vector.dim() - range);
 		return begin() + start;

@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/30 01:46:28 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/11/30 02:05:22 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,9 @@ public:
 	void move_back (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
 		if (offset < 0)
         	throw std::length_error("vector::negative offset");
-		//for (std::size_t n = start; n < start + _size ; ++n){
-		for (std::size_t n = start; n < start + left ; ++n){
+		for (std::size_t n = start; n < start + left; ++n){
 			_data[n] = _data[n + offset];
+			//std::cout << "n : " << n << std::endl;
 		}
 	}
 
