@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/30 02:05:22 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/02 19:21:21 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,33 +28,6 @@ protected:
     //virtual void _dsp (std::ostream& out) const {out << *_data ;} ;
 public:
 
-	T* cp_and_move (T *alloc, std::ptrdiff_t start, std::size_t range, T* val) {
-		std::size_t oldsize = _size;
-		if (range < 0)
-        	throw std::length_error("vector::negative range");
-		for (unsigned int i = 0; i < start; ++i) alloc[i] = _data[i];			// copy until start
-		for (unsigned int u = start; u < start + range; ++u) {
-			alloc[u] = val[u];	// insert new val
-			//_size += 1;
-		}
-		for (std::size_t n = start + range; n < oldsize + range; ++n)				// decallage du reste
-		{
-			alloc[n] = _data[n - range];
-		}
-		return _data;
-	}
-
-
-	void move_back (std::ptrdiff_t start, std::size_t range) {
-		if (range < 0)
-        	throw std::length_error("vector::negative range");
-		//for (std::size_t n = start; n < start + _size ; ++n){
-		for (std::size_t n = start; n < start + range ; ++n){
-			_data[n] = _data[n + range];
-		}
-	}
-
-
 	void move_back (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
 		if (offset < 0)
         	throw std::length_error("vector::negative offset");
@@ -63,7 +36,6 @@ public:
 			//std::cout << "n : " << n << std::endl;
 		}
 	}
-
 
 	void move_up (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
 		if (offset < 0)

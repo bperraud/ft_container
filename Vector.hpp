@@ -18,6 +18,10 @@
 #include "type_traits.hpp" // for enable_if
 
 
+#include <typeinfo>
+
+#include <memory>
+
 namespace ft {
 
 const int INIT_CAPA = 10;
@@ -216,7 +220,7 @@ public:
 	}
 
 	void assign (size_type n, const value_type& val) {
-		resize(n);
+		resize(n, val);
 		pointer data = this->data();
 		for (std::size_t i = 0; i < _vector.dim(); ++i)
 		{
@@ -255,7 +259,7 @@ public:
 			//ptr = reallocate(increase_capacity(n), start, n, val);
 			ptr = _alloc.allocate(increase_capacity(n));
 			std::copy(begin(), begin() + start, ptr);
-			std::fill(ptr + start, ptr + start + n, val);
+			std::fill_n(ptr + start, n, val);
 			std::copy(begin() + start, begin() + _vector.dim() - start, ptr + start + n);
 			_alloc.deallocate(this->data(), _capacity);
 			_vector.setVal(ptr);
@@ -263,9 +267,12 @@ public:
 		}
 		else
 		{
-			ptr = data();
+			ptr = this->data();
 			_vector.move_up(_vector.dim() - 1 + n, n, std::distance(position, end()) - 1);
-			std::fill(ptr + start, ptr + start + n, val);
+			if (val == value_type())
+				std::uninitialized_fill_n(ptr + start, n, val);
+			else
+				std::fill_n(ptr + start, n, val);
 		}
 		_vector.setDim(_vector.dim() + n);
 	}
@@ -293,8 +300,6 @@ public:
 		size_type start = std::distance( begin(), first );
 		size_type range = std::distance( first, last );
 		destroy(start, range);
-		//_vector.move_back(start, last - first);
-		//_vector.move_back(start, range, std::distance(last, end()) );
 		_vector.move_back(start, range, std::distance(last, end()));
 		_vector.setDim(_vector.dim() - range);
 		return begin() + start;
@@ -341,10 +346,7 @@ private:
 
 	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, pointer val) {
 		pointer ptr = _alloc.allocate(n);
-		(void) range;
-		//_vector.cp_and_move(ptr, start, range, val);
 		std::copy(begin(), begin() + start, ptr);
-		//std::fill(ptr + start, ptr + start + n, val);
 		std::copy(val, val + range, ptr + start);
 		std::copy(begin() + start, begin() + _vector.dim() - start, ptr + start + range);
 		deallocate(n, ptr);

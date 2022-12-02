@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <deque>
-
+#include <vector>
 
 #include "BST.hpp"
 #include "Vect.hpp"
@@ -12,6 +12,7 @@
 
 #define TESTED_NAMESPACE ft
 #define T_SIZE_TYPE typename TESTED_NAMESPACE::vector<T>::size_type
+
 
 template <typename T>
 void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true)
@@ -35,19 +36,36 @@ void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true
 	std::cout << "###############################################" << std::endl;
 }
 
-
-
-/*
 #define TESTED_TYPE std::string
+//#define TESTED_TYPE int
 
 int		main(void)
 {
 	//Vect<TESTED_TYPE> vector(8);
 	//vector[2] = "salut" ;
 
+	//ft::vector<std::string> vect(2, "val");
+
+	//ft::vector<TESTED_TYPE> vect(2);
+
+	/*
+	ft::vector<TESTED_TYPE> vect(2, "");
+	size_t n = 5;
+	std::allocator<TESTED_TYPE> my_alloc;
+	TESTED_TYPE *data = my_alloc.allocate(n);
+	TESTED_TYPE val = TESTED_TYPE();
+	my_alloc.construct(data, val);
+	std::fill(data, data + n, val);
+	*/
+
+	//for (ft::vector<TESTED_TYPE>::const_iterator i = vect.begin(); i != vect.end(); i++ )
+		//std::cout << "i : " << *i << std::endl;
+
+	//vect.push_back("Salut");
+
+	// faire un test foireux avec la stack pour voir si ça foire
 
 	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(8);
-	std::cout << "ici" << std::endl;
 	TESTED_NAMESPACE::vector<TESTED_TYPE> vct2;
 	TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin();
 
@@ -70,11 +88,12 @@ int		main(void)
 	printSize(vct2);
 
 	return (0);
+
 }
 
 
-*/
 
+/*
 int main() {
 		//ft::reverse_iterator<Cont<int>::iterator> iter;
 		//Cont<int>::reverse_iterator itr;		// compile pas car pas dans Cont
@@ -98,7 +117,7 @@ int main() {
 
 		vect->insert(vect->begin(), -1);		// sysmalloc ici !
 		//vect->erase(vect->begin());
-		vect->erase(vect->begin() + 3);
+		vect->erase(vect->begin(), vect->begin() + 2);
 		//vect->insert(vect->begin(), -2);
 		//vect->insert(vect->begin(), vect->begin() , vect->begin() + 3);
 
@@ -186,3 +205,4 @@ int main() {
 }
 
 
+*/
