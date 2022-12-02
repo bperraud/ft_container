@@ -258,9 +258,9 @@ public:
 		{
 			//ptr = reallocate(increase_capacity(n), start, n, val);
 			ptr = _alloc.allocate(increase_capacity(n));
-			std::copy(begin(), begin() + start, ptr);
-			std::fill_n(ptr + start, n, val);
-			std::copy(begin() + start, begin() + _vector.dim() - start, ptr + start + n);
+			std::uninitialized_copy(begin(), begin() + start, ptr);
+			std::uninitialized_fill_n(ptr + start, n, val);
+			std::uninitialized_copy(begin() + start, begin() + _vector.dim() - start, ptr + start + n);
 			_alloc.deallocate(this->data(), _capacity);
 			_vector.setVal(ptr);
 			_capacity = increase_capacity(n);
@@ -340,15 +340,15 @@ private:
 
 	void	reallocate(size_type n) {		// reallocate n _capacity
 		pointer ptr = _alloc.allocate(n);
-		std::copy(begin(), end(), ptr);
+		std::uninitialized_copy(begin(), end(), ptr);
 		deallocate(n, ptr);
 	}
 
 	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, pointer val) {
 		pointer ptr = _alloc.allocate(n);
-		std::copy(begin(), begin() + start, ptr);
-		std::copy(val, val + range, ptr + start);
-		std::copy(begin() + start, begin() + _vector.dim() - start, ptr + start + range);
+		std::uninitialized_copy(begin(), begin() + start, ptr);
+		std::uninitialized_copy(val, val + range, ptr + start);
+		std::uninitialized_copy(begin() + start, begin() + _vector.dim() - start, ptr + start + range);
 		deallocate(n, ptr);
 	}
 
