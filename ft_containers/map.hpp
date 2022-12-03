@@ -6,12 +6,12 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/11/18 13:10:30 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/03 15:28:22 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MAP_H
-#define MAP_H
+#ifndef map_H
+#define map_H
 
 #include  "Vect.hpp"
 #include  "BST.hpp"
@@ -23,7 +23,7 @@
 
 // Common output operator ====================================================
 
-namespace _Map_base {
+namespace _map_base {
     namespace {
         template <typename U>
         struct _Base {
@@ -34,14 +34,14 @@ namespace _Map_base {
 }
 
 template <typename U>
-std::ostream& operator<< (std::ostream& out, const _Map_base::_Base<U>& b)
+std::ostream& operator<< (std::ostream& out, const _map_base::_Base<U>& b)
 {b._dsp(out); return out;}
 
 // A_BSTract base class =======================================================
 
 
 template <typename T>
-class Map_base { // a_BSTract
+class map_base { // a_BSTract
 public:
     class Info;               // make class Info local
     class Ptr2_Info;
@@ -58,20 +58,20 @@ protected:
     std::size_t _used;
     virtual void _dsp (std::ostream&) const = 0;
     // Non virtual assignations => protected
-    Map_base& operator= (const Map_base&);
+    map_base& operator= (const map_base&);
 
 public:
     // Getter
     std::size_t used () const  {return _used;};
     // Constructors & destructor
-    Map_base () : _used (0) {};
-    Map_base (const Map_base&);
-    virtual ~Map_base ();
+    map_base () : _used (0) {};
+    map_base (const map_base&);
+    virtual ~map_base ();
 };
 
-// Map_base<T>
+// map_base<T>
 template <typename T>
-const typename Map_base<T>::Info Map_base<T>::_EMPTY;     // Info _EMPTY attribute initialize
+const typename map_base<T>::Info map_base<T>::_EMPTY;     // Info _EMPTY attribute initialize
 
 // Embedded class Info =======================================================
 
@@ -129,7 +129,7 @@ public:
 }; // Ptr2Info
 
 /*
-namespace _Map_base {
+namespace _map_base {
     template <typename> using _Base = void;   // "destroy" access to real _Base
 }
 */
@@ -141,7 +141,7 @@ namespace _Map_base {
 
 
 template <typename T>
-class Map : public BST<Info<T> >, public Vect<Ptr2Info<T> >{
+class map : public BST<Info<T> >, public Vect<Ptr2Info<T> >{
 
 
 public:
@@ -156,8 +156,8 @@ public:
 
 
     // Constructors
-    Map();                                          // constructor without parameters
-    explicit Map(std::size_t t) : _BST(), _Vect(t){}           // constructor with maximum size of Map
+    map();                                          // constructor without parameters
+    explicit map(std::size_t t) : _BST(), _Vect(t){}           // constructor with maximum size of map
 
     // Setters
     _Ptr2Info& operator[] (std::ptrdiff_t idx)  ;
@@ -167,10 +167,10 @@ public:
     const _Info& find(const T &v) const ;
 
     // Copies & transfers
-    Map(const Map<T> &v) ;
-    explicit Map(const _Vect &v) ;
-    explicit Map(const _BST &v) ;
-    inline Map<T>& operator= (const Map&) ;
+    map(const map<T> &v) ;
+    explicit map(const _Vect &v) ;
+    explicit map(const _BST &v) ;
+    inline map<T>& operator= (const map&) ;
 
 
     // Output
@@ -178,10 +178,10 @@ public:
     // note : ne fonctionne pas pour un type déclaré _Vect, problème : celui ci n'a pas de _BST rempli et donc ne peut pas utiliser l'opérateur d'output de celui-ci
     // détecter le type déclaré (est-ce possible?) reviendrait à briser le principe de Su_BSTitution de Liskov...
     // Destructor
-    ~Map () {};
+    ~map () {};
     // Associated function
     template <typename U>
-    friend inline std::ostream& operator<< (std::ostream&, const Map<U>&);
+    friend inline std::ostream& operator<< (std::ostream&, const map<U>&);
 };
 
 // Constructors ============================================================
@@ -190,15 +190,15 @@ public:
 // Setters =================================================================
 
 template<typename T>
-Ptr2Info<T>& Map<T>::operator[](std::ptrdiff_t idx) {
-    if (_Vect::operator[](idx).isEmpty()){          // value are constant in Map Mapext, no change allowed for element
+Ptr2Info<T>& map<T>::operator[](std::ptrdiff_t idx) {
+    if (_Vect::operator[](idx).isEmpty()){          // value are constant in map mapext, no change allowed for element
         return _Vect::operator[](idx);
     }
     else throw std::domain_error("can't assign new value in a constant _Vect");
 }
 
 template<typename T>
-const Info<T>& Map<T>::insert(const T& v) {      // [-Wreturn-type] warning because no explicit return, prevents using insert two times
+const Info<T>& map<T>::insert(const T& v) {      // [-Wreturn-type] warning because no explicit return, prevents using insert two times
     std::ptrdiff_t idx = 0;
     if (idx == -1){                 // implicit conversion to _Info with default index -1
         throw std::domain_error("no index specified");
@@ -214,7 +214,7 @@ const Info<T>& Map<T>::insert(const T& v) {      // [-Wreturn-type] warning beca
 			return elem;
         }
         else{
-            throw std::domain_error("element already in Mapainer");
+            throw std::domain_error("element already in mapainer");
         }
     }
     else{
@@ -223,11 +223,11 @@ const Info<T>& Map<T>::insert(const T& v) {      // [-Wreturn-type] warning beca
 }
 
 template<typename T>
-bool Map<T>::erase(const T &v) {
-    std::ptrdiff_t idx = Map_base<T>::_index(v);
+bool map<T>::erase(const T &v) {
+    std::ptrdiff_t idx = map_base<T>::_index(v);
     if (idx == -1){         // either no index specified but v in _BST, or v not in _BST
         if(_BST::erase(v)){
-            _Ptr2Info::getPtr(_Vect::operator[](Map_base<T>::_index(_BST::find(v)))) = 0;  // delete pointer if v exist in _BST
+            _Ptr2Info::getPtr(_Vect::operator[](map_base<T>::_index(_BST::find(v)))) = 0;  // delete pointer if v exist in _BST
             return true;
         }
         else return false;
@@ -251,14 +251,14 @@ bool Map<T>::erase(const T &v) {
 // Getters ===================================================================
 
 template<typename T>
-const Info<T>& Map<T>::find(const T &v) const {
-    std::ptrdiff_t idx = Map_base<T>::_index(v);
+const Info<T>& map<T>::find(const T &v) const {
+    std::ptrdiff_t idx = map_base<T>::_index(v);
     if (idx == -1){
         return _BST::find(v);
     }
     else{
         if(!(_Vect::operator[](idx).isEmpty())){
-            if(*Map_base<T>::_ptr(_Vect::operator[](idx)) == v){    // if index and value are the same
+            if(*map_base<T>::_ptr(_Vect::operator[](idx)) == v){    // if index and value are the same
                 return _BST::find(v);
             }
             else return _BST::_NOT_FOUND;
@@ -270,25 +270,25 @@ const Info<T>& Map<T>::find(const T &v) const {
 // Copies & transfers ========================================================
 
 template<typename T>
-Map<T>::Map (const Map<T> &v) : _BST(), _Vect(v.dim()){   // Map_base<T> prevents warning
+map<T>::map (const map<T> &v) : _BST(), _Vect(v.dim()){   // map_base<T> prevents warning
     for (std::ptrdiff_t i = 0; i < v.dim(); ++i){   // warning comparaison between std::ptrdiff_t='long int' from std::size_t='long unsigned int' is acceptable because i start at 0 (same for further into code)
-        //if (!v.at(i).isEmpty()) Map::insert({i,*Map_base<T>::_ptr(v.at(i))});     // fill the _BST
+        //if (!v.at(i).isEmpty()) map::insert({i,*map_base<T>::_ptr(v.at(i))});     // fill the _BST
     }
 }
 
 // Associated function =======================================================
 
 template<typename U>
-inline std::ostream &operator<<(std::ostream &out, const Map<U> &c){
-	out << "Mapainer output ";
+inline std::ostream &operator<<(std::ostream &out, const map<U> &c){
+	out << "mapainer output ";
     out << "[ "; c._dsp(out); out << ']'; return out;
 }
 
 
 template<typename T>
-Map<T>& Map<T>::operator=(const Map &v)  {
+map<T>& map<T>::operator=(const map &v)  {
     if (this != &v){
-        Map::operator=(v);                 // explicit call to copy assignement operator of Map_Base for _used
+        map::operator=(v);                 // explicit call to copy assignement operator of map_Base for _used
         _BST::operator=(v) ;                        // explicit call to copy assignement operator of _BST
         _Vect::operator=(v) ;                       // explicit call to copy assignement operator of _Vect
     }

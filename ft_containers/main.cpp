@@ -4,9 +4,8 @@
 #include <vector>
 
 #include "BST.hpp"
-#include "Vect.hpp"
 #include "Cont.hpp"
-#include "Vector.hpp"
+#include "vector.hpp"
 
 #include "Iterator.hpp"
 
@@ -36,59 +35,43 @@ void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true
 	std::cout << "###############################################" << std::endl;
 }
 
-#define TESTED_TYPE std::string
-//#define TESTED_TYPE int
+#define TESTED_TYPE int
+
+template <class T, class Alloc>
+void	cmp(const TESTED_NAMESPACE::vector<T, Alloc> &lhs, const TESTED_NAMESPACE::vector<T, Alloc> &rhs)
+{
+	static int i = 0;
+
+	std::cout << "############### [" << i++ << "] ###############"  << std::endl;
+	std::cout << "eq: " << (lhs == rhs) << " | ne: " << (lhs != rhs) << std::endl;
+	std::cout << "lt: " << (lhs <  rhs) << " | le: " << (lhs <= rhs) << std::endl;
+	std::cout << "gt: " << (lhs >  rhs) << " | ge: " << (lhs >= rhs) << std::endl;
+}
 
 int		main(void)
 {
-	//Vect<TESTED_TYPE> vector(8);
-	//vector[2] = "salut" ;
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(4);
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct2(4);
 
-	//ft::vector<std::string> vect(2, "val");
+	cmp(vct, vct);  // 0
+	cmp(vct, vct2); // 1
 
-	//ft::vector<TESTED_TYPE> vect(2);
+	vct2.resize(10);
 
-	/*
-	ft::vector<TESTED_TYPE> vect(2, "");
-	size_t n = 5;
-	std::allocator<TESTED_TYPE> my_alloc;
-	TESTED_TYPE *data = my_alloc.allocate(n);
-	TESTED_TYPE val = TESTED_TYPE();
-	my_alloc.construct(data, val);
-	std::fill(data, data + n, val);
-	*/
+	cmp(vct, vct2); // 2
+	cmp(vct2, vct); // 3
 
-	//for (ft::vector<TESTED_TYPE>::const_iterator i = vect.begin(); i != vect.end(); i++ )
-		//std::cout << "i : " << *i << std::endl;
+	vct[2] = 42;
 
-	//vect.push_back("Salut");
+	cmp(vct, vct2); // 4
+	cmp(vct2, vct); // 5
 
-	// faire un test foireux avec la stack pour voir si ça foire
+	swap(vct, vct2);
 
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(8);
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct2;
-	TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin();
-
-	for (unsigned long int i = 0; i < vct.size(); ++i)
-		it[i] = std::string((vct.size() - i), i + 65);
-	printSize(vct, true);
-
-	std::cout << "push_back():\n" << std::endl;
-
-	vct.push_back("One long string");
-	vct2.push_back("Another long string");
-
-	printSize(vct);
-	printSize(vct2);
-
-	vct.pop_back();
-	vct2.pop_back();
-
-	printSize(vct);
-	printSize(vct2);
+	cmp(vct, vct2); // 6
+	cmp(vct2, vct); // 7
 
 	return (0);
-
 }
 
 

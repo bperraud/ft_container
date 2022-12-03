@@ -16,7 +16,7 @@
 #include "Vect.hpp"
 #include "Iterator.hpp"
 #include "type_traits.hpp" // for enable_if
-
+#include <algorithm>
 
 #include <typeinfo>
 
@@ -215,7 +215,7 @@ public:
 		for (std::size_t i = 0; i < _vector.dim(); ++i)
 		{
 			_alloc.destroy(data + i);
-			data[i] = *(first + i);
+			_alloc.construct(data + i, *(first + i));
 		}
 	}
 
@@ -225,7 +225,7 @@ public:
 		for (std::size_t i = 0; i < _vector.dim(); ++i)
 		{
 			_alloc.destroy(data + i);
-			data[i] = val;
+			_alloc.construct(data + i, val);
 		}
 	}
 
@@ -235,7 +235,7 @@ public:
 			reallocate(increase_capacity(1));
 		}
 		_vector.setDim(_vector.dim() + 1);
-		back() = val;
+		_alloc.construct(data() + _vector.dim() - 1, val);
 	}
 
 	void pop_back() {
@@ -269,10 +269,7 @@ public:
 		{
 			ptr = this->data();
 			_vector.move_up(_vector.dim() - 1 + n, n, std::distance(position, end()) - 1);
-			if (val == value_type())
-				std::uninitialized_fill_n(ptr + start, n, val);
-			else
-				std::fill_n(ptr + start, n, val);
+			std::uninitialized_fill_n(ptr + start, n, val);
 		}
 		_vector.setDim(_vector.dim() + n);
 	}
@@ -320,6 +317,19 @@ public:
 	allocator_type get_allocator() const { return _alloc;}
 
 	virtual ~vector() { _alloc.deallocate(_vector.getData(), _capacity);}
+
+	/* -------------------------- Relational operators -------------------------- */
+
+	bool operator==( const vector &other ) const {
+		return size() == other.size() && std::equal( begin(), end(), other.begin() );
+	}
+	bool operator!=( const vector &other ) const { return !( *this == other ); }
+	bool operator<( const vector &other ) const {
+		return std::lexicographical_compare( begin(), end(), other.begin(), other.end() );
+	}
+	bool operator<=( const vector &other ) const { return *this == other || *this < other;}
+	bool operator>( const vector &other ) const { return !( *this <= other ); }
+	bool operator>=( const vector &other ) const { return !( *this < other ); }
 
 
 private:
