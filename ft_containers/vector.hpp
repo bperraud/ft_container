@@ -44,7 +44,7 @@ class vector {
 		typedef std::random_access_iterator_tag	iterator_category;
 
 	public:
-		normal_iterator() : _it(U()) {}
+		normal_iterator() : _it(0) {}
 		normal_iterator( pointer i ) : _it(i) {}
 		normal_iterator( const normal_iterator &other ) : _it( other._it ) {}
 		//normal_iterator(const T& i) : _it(i) {}
@@ -230,10 +230,20 @@ public:
 		size_t range = std::distance( first, last);
 		resize(range);
 		pointer data = this->data();
+		/*
 		for (std::size_t i = 0; i < _vector.dim(); ++i)
+		//for (difference_type i = 0; i < _vector.dim(); ++i)
 		{
 			_alloc.destroy(data + i);
 			_alloc.construct(data + i, *(first + i));
+		}
+		*/
+		std::size_t i = 0;
+		for (InputIterator it = first ; it != last ; it++)
+		{
+			_alloc.destroy(data + i);
+			_alloc.construct(data + i, *it);
+			i++;
 		}
 	}
 
@@ -296,10 +306,8 @@ public:
 	void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
 		if (first > last)
 			throw std::length_error("vector::insert");
-		size_type position_offset = std::distance( begin(), position );
-		size_type begin_copy 	  = std::distance( begin(), first );
 		size_type n 			  = std::distance( first, last );
-		reallocate(increase_capacity(n), position_offset, n, data() + begin_copy);
+		reallocate(increase_capacity(n), position, std::distance( first, last ), first);
 		_vector.setDim(_vector.dim() + n);
 	}
 
@@ -372,11 +380,13 @@ private:
 		deallocate(n, ptr);
 	}
 
-	void	reallocate(size_type n, std::ptrdiff_t start, std::size_t range, pointer val) {
+	template <class InputIterator>
+	void	reallocate(size_type n, iterator position, std::size_t range, InputIterator first) {
+		size_type position_offset = std::distance( begin(), position );
 		pointer ptr = _alloc.allocate(n);
-		std::uninitialized_copy(begin(), begin() + start, ptr);
-		std::uninitialized_copy(val, val + range, ptr + start);
-		std::uninitialized_copy(begin() + start, begin() + _vector.dim() - start, ptr + start + range);
+		std::uninitialized_copy(begin(), position, ptr);
+		std::uninitialized_copy(first, first + range, ptr + position_offset);
+		std::uninitialized_copy(position + range, end() - position_offset, ptr + position_offset + range);
 		deallocate(n, ptr);
 	}
 
