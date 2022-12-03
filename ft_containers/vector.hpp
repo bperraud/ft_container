@@ -47,23 +47,23 @@ class vector {
 		normal_iterator() : _it(U()) {}
 		normal_iterator( pointer i ) : _it(i) {}
 		normal_iterator( const normal_iterator &other ) : _it( other._it ) {}
+		//normal_iterator(const T& i) : _it(i) {}
 
 		normal_iterator &operator=( const normal_iterator &other ) {
 			_it = other._it;
 			return *this;
 		}
-
-		//normal_iterator operator-( const normal_iterator &other ) const { return _it - other._it; }
 		difference_type operator-( const normal_iterator &other ) const { return _it - other._it; }
+		difference_type operator+( const normal_iterator &other ) const { return _it + other._it; }
 
-		normal_iterator operator-( difference_type n ) const { return _it - n; }
-		normal_iterator operator+( difference_type n ) const { return _it + n; }
-		/*
-		iterator operator+(difference_type lhs, const iterator &other) {
-			return lhs + other;
+		friend normal_iterator operator+( difference_type n, const normal_iterator &other ) {
+			return other + n;
 		}
-		*/
 
+		normal_iterator operator+( difference_type n ) const { return _it + n; }
+		normal_iterator operator-( difference_type n ) const { return _it - n; }
+		normal_iterator& operator+=(difference_type n) { _it += n; return *this;}
+		normal_iterator& operator-=(difference_type n) { _it -= n; return *this;}
 		normal_iterator &operator++() {
 			_it++;
 			return *this;
@@ -82,12 +82,30 @@ class vector {
 		reference operator[]( difference_type i ) { return _it[i]; }
 		reference operator[]( difference_type i ) const { return _it[i];}
 
-        bool operator>( const normal_iterator &other ) const { return (_it > other.operator->()); };
-        bool operator<( const normal_iterator &other ) const { return (_it < other.operator->()); };
-		bool operator>=( const normal_iterator &other ) const { return (_it >= other.operator->()); };
-		bool operator<=( const normal_iterator &other ) const { return (_it <= other.operator->()); };
-		bool operator==( const normal_iterator& other ) const { return _it == other._it; }
-		bool operator!=( const normal_iterator& other ) const { return _it != other._it; }
+		template < typename V >
+		bool operator==( const normal_iterator< V > &other ) const {
+			return ( _it == other.operator->() );
+		};
+	template < typename V >
+		bool operator!=( const normal_iterator< V > &other ) const {
+			return ( _it != other.operator->() );
+		};
+		template < typename V >
+		bool operator>( const normal_iterator< V > &other ) const {
+			return ( _it > other.operator->() );
+		};
+		template < typename V >
+		bool operator<( const normal_iterator< V > &other ) const {
+			return ( _it < other.operator->() );
+		};
+		template < typename V >
+		bool operator>=( const normal_iterator< V > &other ) const {
+			return ( _it >= other.operator->() );
+		};
+		template < typename V >
+		bool operator<=( const normal_iterator< V > &other ) const {
+			return ( _it <= other.operator->() );
+		};
 
 		pointer base() const { return _it; }
 		// convert T to const T for non-const to const assignation
@@ -153,18 +171,18 @@ public:
 
 	/* -------------------------------- Iterators ------------------------------- */
 
-	iterator begin() {return iterator(data()); }
-	iterator end() { return iterator(data() + _vector.dim()); }
-	const_iterator begin() const { return const_iterator(data()); }
-	const_iterator end() const  { return const_iterator(begin() + _vector.dim()); }
-	reverse_iterator rbegin() {return reverse_iterator(begin() + _vector.dim() - 1);}
-	reverse_iterator rend() { return reverse_iterator(data() - 1); }
-	const_reverse_iterator rbegin() const {return const_reverse_iterator(begin() + _vector.dim() - 1);}
-	const_reverse_iterator rend() const { return const_reverse_iterator(data() - 1); }
-	const_iterator cbegin() const { return const_iterator(data());}
-	const_iterator cend() const { return const_iterator(begin() + _vector.dim()); }
-	const_reverse_iterator crbegin() const {return const_reverse_iterator(begin() + _vector.dim() - 1);}
-	const_reverse_iterator crend() const { return const_reverse_iterator(data() - 1); }
+	iterator 				begin() {return data(); }
+	iterator 				end() { return data() + _vector.dim(); }
+	const_iterator 			begin() const { return data(); }
+	const_iterator 			end() const  { return begin() + _vector.dim(); }
+	reverse_iterator 		rbegin() {return begin() + _vector.dim() ;}
+	reverse_iterator 		rend() { return data() ; }
+	const_reverse_iterator 	rbegin() const {return begin() + _vector.dim() ;}
+	const_reverse_iterator 	rend() const { return data(); }
+	const_iterator 			cbegin() const { return data();}
+	const_iterator 			cend() const { return begin() + _vector.dim(); }
+	const_reverse_iterator 	crbegin() const {return begin() + _vector.dim() ;}
+	const_reverse_iterator 	crend() const { return data() ; }
 
 	/* -------------------------------- Capacity -------------------------------- */
 

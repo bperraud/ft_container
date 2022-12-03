@@ -78,66 +78,94 @@ template <class Category, class T, class Distance = std::ptrdiff_t,
   };
 */
 
-template <typename It>
+
+template <typename _It>
 class reverse_iterator {
 
-public:
-
-    typedef typename It::value_type        value_type;
-    typedef typename It::reference         reference;
-    typedef typename It::pointer           pointer;
-    typedef typename It::difference_type   difference_type;
-    typedef typename It::iterator_category iterator_category;
-
-	/*
-	typedef It												iterator_type;
-	typedef typename iterator_traits<It>::value_type		value_type;
-    typedef typename iterator_traits<It>::difference_type	difference_type;
-    typedef typename iterator_traits<It>::reference			reference;
-    typedef typename iterator_traits<It>::pointer			pointer;
-	*/
-
-protected:
-    It _it;
+private:
+	_It _it;
 
 public:
-	reverse_iterator() {};
-	reverse_iterator(It itr) : _it(itr) {}
+	typedef typename _It::value_type        value_type;
+    typedef typename _It::reference         reference;
+    typedef typename _It::pointer           pointer;
+    typedef typename _It::difference_type   difference_type;
+    typedef typename _It::iterator_category iterator_category;
 
-	// garder les conversions implicit ??
+public:
+	reverse_iterator() : _it(_It()) {}
+	//reverse_iterator( pointer i ) : _it(i) {}
+	//reverse_iterator( pointer p ) : _it( T( p ) ) {}
+	reverse_iterator( const _It &other ) : _it( other ) {}
 
-	template <typename U>
-    //explicit reverse_iterator(const U& other) : _it(other.base()) {}
-	//reverse_iterator(const U& other) : _it(other.base()) {}
+	template < typename U >
+    reverse_iterator( const reverse_iterator< U > &other ) : _it( other.base() ) {}
 
-	reverse_iterator &operator=( const It &other ) {
-		_it = other._it;
-		return *this;
-	}
+	reverse_iterator( const reverse_iterator &other ) : _it( other._it ) {}
+	//reverse_iterator(const T& i) : _it(i) {}
+
+	_It base() const { return _it; }
+
+	template < typename U >
+    reverse_iterator &operator=( const reverse_iterator< U > &other ) {
+        _it = other.base();
+        return *this;
+    }
 
 	reverse_iterator operator+( difference_type n ) const { return _it - n; }
-	reverse_iterator operator-( difference_type n ) const { return _it + n; }
+    friend reverse_iterator operator+( difference_type n, const reverse_iterator &other ) {
+		return other + n;
+	};
+    reverse_iterator operator-( difference_type n ) const { return _it + n; }
+    difference_type  operator-( const reverse_iterator &other ) const {
+        return other.base() - _it;
+    }
 
-    reverse_iterator& operator++() { --_it; return *this; }
-    reverse_iterator operator++(int) { reverse_iterator tmp = *this; ++(*this); return tmp; }
+    reverse_iterator operator++() { return --_it; }
+    reverse_iterator operator--() { return ++_it; }
+    reverse_iterator operator++( int ) { return _it--; }
+    reverse_iterator operator--( int ) { return _it++; }
 
-    reverse_iterator& operator--() { ++_it; return *this; }
-    reverse_iterator operator--(int) { reverse_iterator tmp = *this; --(*this); return tmp; }
+    reverse_iterator &operator+=( difference_type n ) {
+        _it -= n;
+        return *this;
+    };
+    reverse_iterator &operator-=( difference_type n ) {
+        _it += n;
+        return *this;
+    };
 
-    It base() const { return _it; }
+	reference		operator*() { return (--_It( _it )).operator*(); }
+	const reference	operator*() const { return (--_It( _it )).operator*(); }
+	pointer			operator->() { return (--_It( _it )).operator->(); }
+	const pointer	operator->() const { return (--_It( _it )).operator->(); }
+	reference       operator[]( difference_type i ) { return *operator+( i ); }
+    const reference operator[]( difference_type i ) const { return *operator+( i );}
 
-	reference operator*() { return *_it; }
-	reference operator*() const { return *_it;}
-	pointer operator->() { return _it; }
-	pointer operator->() const { return _it ;};
-
-	bool operator>( const reverse_iterator &other ) const { return (_it > other.operator->()); };
-    bool operator<( const reverse_iterator &other ) const { return (_it < other.operator->()); };
-	bool operator>=( const reverse_iterator &other ) const { return (_it >= other.operator->()); };
-	bool operator<=( const reverse_iterator &other ) const { return (_it <= other.operator->()); };
-	bool operator==( const reverse_iterator& other ) const { return _it == other._it; }
-	bool operator!=( const reverse_iterator& other ) const { return _it != other._it; }
-
+	template < typename U >
+    bool operator==( const reverse_iterator< U > &other ) const {
+        return ( _it == other.base() );
+    };
+    template < typename U >
+    bool operator!=( const reverse_iterator< U > &other ) const {
+        return ( _it != other.base() );
+    };
+    template < typename U >
+    bool operator>( const reverse_iterator< U > &other ) const {
+        return ( _it < other.base() );
+    };
+    template < typename U >
+    bool operator<( const reverse_iterator< U > &other ) const {
+        return ( _it > other.base() );
+    };
+    template < typename U >
+    bool operator>=( const reverse_iterator< U > &other ) const {
+        return ( _it <= other.base() );
+    };
+    template < typename U >
+    bool operator<=( const reverse_iterator< U > &other ) const {
+        return ( _it >= other.base() );
+    };
 
 };
 
