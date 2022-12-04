@@ -284,7 +284,6 @@ public:
 		pointer ptr;
 		if (_capacity < _vector.dim() + n)
 		{
-			//ptr = reallocate(increase_capacity(n), start, n, val);
 			ptr = _alloc.allocate(increase_capacity(n));
 			std::uninitialized_copy(begin(), begin() + start, ptr);
 			std::uninitialized_fill_n(ptr + start, n, val);
@@ -304,11 +303,10 @@ public:
 
 	template <class InputIterator>
 	void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
-		if (first > last)
-			throw std::length_error("vector::insert");
-		size_type n 			  = std::distance( first, last );
-		reallocate(increase_capacity(n), position, std::distance( first, last ), first);
+		size_type n = std::distance( first, last );
+		reallocate(increase_capacity(n), position, n, first, last);
 		_vector.setDim(_vector.dim() + n);
+		// manque cas sans realloc
 	}
 
 	iterator erase (iterator position) {
@@ -381,11 +379,11 @@ private:
 	}
 
 	template <class InputIterator>
-	void	reallocate(size_type n, iterator position, std::size_t range, InputIterator first) {
+	void	reallocate(size_type n, iterator position, std::size_t range, InputIterator first, InputIterator last) {
 		size_type position_offset = std::distance( begin(), position );
 		pointer ptr = _alloc.allocate(n);
 		std::uninitialized_copy(begin(), position, ptr);
-		std::uninitialized_copy(first, first + range, ptr + position_offset);
+		std::uninitialized_copy(first, last, ptr + position_offset);
 		std::uninitialized_copy(position + range, end() - position_offset, ptr + position_offset + range);
 		deallocate(n, ptr);
 	}

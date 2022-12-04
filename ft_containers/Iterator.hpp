@@ -93,16 +93,12 @@ public:
     typedef typename _It::iterator_category iterator_category;
 
 public:
-	reverse_iterator() : _it(_It()) {}
-	//reverse_iterator( pointer i ) : _it(i) {}
-	//reverse_iterator( pointer p ) : _it( T( p ) ) {}
+	reverse_iterator() {}
+	reverse_iterator( pointer p ) : _it( _It( p ) ) {}
 	reverse_iterator( const _It &other ) : _it( other ) {}
-
+	reverse_iterator( const reverse_iterator &other ) : _it( other._it ) {}
 	template < typename U >
     reverse_iterator( const reverse_iterator< U > &other ) : _it( other.base() ) {}
-
-	reverse_iterator( const reverse_iterator &other ) : _it( other._it ) {}
-	//reverse_iterator(const T& i) : _it(i) {}
 
 	_It base() const { return _it; }
 
