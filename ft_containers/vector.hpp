@@ -227,17 +227,9 @@ public:
 
 	template <class InputIterator>
 	void assign (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
-		size_t range = std::distance( first, last);
+		size_t range = std::distance(first, last);
 		resize(range);
 		pointer data = this->data();
-		/*
-		for (std::size_t i = 0; i < _vector.dim(); ++i)
-		//for (difference_type i = 0; i < _vector.dim(); ++i)
-		{
-			_alloc.destroy(data + i);
-			_alloc.construct(data + i, *(first + i));
-		}
-		*/
 		std::size_t i = 0;
 		for (InputIterator it = first ; it != last ; it++)
 		{
@@ -267,7 +259,7 @@ public:
 	}
 
 	void pop_back() {
-		_alloc.destroy(&back());
+		_alloc.destroy(data() + _vector.dim() - 1);
 		_vector.setDim(_vector.dim() - 1);
 	}
 
@@ -278,24 +270,27 @@ public:
 	}
 
 	void insert (iterator position, size_type n, const value_type& val) {
-		if (n < 0 || n > this->max_size())
+		if (n < 0 || n > max_size())
 			throw std::length_error("vector::insert");
 		size_type start = std::distance(begin(), position);
 		pointer ptr;
 		if (_capacity < _vector.dim() + n)
 		{
-			ptr = _alloc.allocate(increase_capacity(n));
-			std::uninitialized_copy(begin(), begin() + start, ptr);
+			std::size_t	capa = increase_capacity(n);
+			ptr = _alloc.allocate(capa);
+			std::uninitialized_copy(begin(), position, ptr);
 			std::uninitialized_fill_n(ptr + start, n, val);
-			std::uninitialized_copy(begin() + start, begin() + _vector.dim() - start, ptr + start + n);
-			_alloc.deallocate(this->data(), _capacity);
+			//std::uninitialized_copy(begin() + start, begin() + _vector.dim() - start, ptr + start + n);
+			std::uninitialized_copy(position, begin() + _vector.dim() - start, ptr + start + n);
+			_alloc.deallocate(data(), _capacity);
 			_vector.setVal(ptr);
-			_capacity = increase_capacity(n);
+			_capacity = capa;
 		}
 		else
 		{
-			ptr = this->data();
+			ptr = data();
 			_vector.move_up(_vector.dim() - 1 + n, n, std::distance(position, end()) - 1);
+			// bottle neck
 			std::uninitialized_fill_n(ptr + start, n, val);
 		}
 		_vector.setDim(_vector.dim() + n);
@@ -367,12 +362,12 @@ private:
 	}
 
 	void	deallocate(size_type n, pointer ptr) {
-		_alloc.deallocate(this->data(), _capacity);
+		_alloc.deallocate(data(), _capacity);
 		_vector.setVal(ptr);
 		_capacity = n;
 	}
 
-	void	reallocate(size_type n) {		// reallocate n _capacity
+	void	reallocate(size_type n) {	// reallocate n _capacity
 		pointer ptr = _alloc.allocate(n);
 		std::uninitialized_copy(begin(), end(), ptr);
 		deallocate(n, ptr);

@@ -76,6 +76,10 @@ int main() {
 
 		std::cout << "vect->end() : " << *(vect->end()-1) << std::endl;
 
+		vect->resize(5);
+
+		vect->insert(vect->begin() + 5, 4, 4);
+
 		for (ft::vector<int>::iterator it = vect->begin(); it != vect->end(); it++ )
 			std::cout << *it << std::endl;
 
