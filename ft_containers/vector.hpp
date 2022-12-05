@@ -229,8 +229,7 @@ public:
 
 	template <class InputIterator>
 	void assign (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
-		const size_t range = std::distance(first, last);
-		resize(range);
+		resize(std::distance(first, last));
 		const pointer data = _vector._data;
 		std::size_t i = 0;
 		for (InputIterator it = first ; it != last ; it++)
@@ -284,17 +283,12 @@ public:
 			_vector._data = ptr;
 			_capacity = capa;
 		}
-		// if (position > _vector._size)
-		else // everything pre _size initiated, not after
+		else
 		{
 			pointer ptr = data();
-			//const int elem_to_move = std::distance(position, end()) - 1;
-			//_vector.move_up(_vector._size - 1 + n, n, std::distance(position, end()) - 1);
 			for (std::size_t i = start ; i > start - std::distance(position, end()) - 1; --i) {
 				_alloc.construct(ptr + i, *(ptr + i - n));
 			}
-			//std::copy(position, position + elem_to_move, _vector._size - 1 + n);
-			// bottle neck
 			std::uninitialized_fill_n(position, n, val);
 			// et si initialized ?
 		}
@@ -398,16 +392,6 @@ private:
 		_alloc.deallocate(_vector._data, _capacity);
 		_vector._data = ptr;
 		_capacity = n;
-	}
-
-	template <class InputIterator>
-	void	reallocate(size_type n, iterator position, std::size_t range, InputIterator first, InputIterator last) {
-		size_type position_offset = std::distance( begin(), position );
-		pointer ptr = _alloc.allocate(n);
-		std::uninitialized_copy(begin(), position, ptr);
-		std::uninitialized_copy(first, last, ptr + position_offset);
-		std::uninitialized_copy(position + range, end() - position_offset, ptr + position_offset + range);
-		deallocate(n, ptr);
 	}
 
 	size_type	increase_capacity(size_type n) {	// increase capacity to add n element
