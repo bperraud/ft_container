@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/04 14:34:04 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/05 23:46:49 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,10 @@
 #include  <ostream>             // output streams
 
 template <typename T>
-class Vect {
-protected:
+struct Vect {
     std::size_t _size;
     T *_data;
     inline static T* _cp (const Vect&);
-protected:
-    //virtual void _dsp (std::ostream& out) const {out << *_data ;} ;
-public:
 
 	void move_back (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
 		if (offset < 0)
@@ -37,30 +33,16 @@ public:
 		}
 	}
 
-	void move_up (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
-		if (offset < 0)
-        	throw std::length_error("vector::negative offset");
-		for (std::size_t n = start ; n > start - left; --n){
-			_data[n] = _data[n - offset];
-		}
-	}
-
     // Constructors
     Vect ();   // Tableau vide
     explicit Vect (std::size_t d) : _size(d), _data(0) {}
-	//explicit Vect (std::size_t d) : _size(d), _data(new T[d]) {}
-    // Getters
-    std::size_t dim () const {return _size;}
-	T* getData() { return _data;}
-	T* getData() const { return _data;}
-	//const T* getData() const { return _data;}
+
     const T& operator[] (std::ptrdiff_t) const;
 	inline T& at(std::ptrdiff_t) ;
     inline const T& at(std::ptrdiff_t) const;
+
     // Setters
     virtual T& operator[] (std::ptrdiff_t);
-	void setVal(T *alloc) {_data = alloc;};
-	void setDim(std::size_t d) {_size = d;};
     // Copies & transfers
     Vect (const Vect& v) : _size(v._size), _data(_cp(v)) {}
     inline Vect& operator= (const Vect&);

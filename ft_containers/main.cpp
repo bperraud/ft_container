@@ -36,7 +36,30 @@ void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true
 	std::cout << "###############################################" << std::endl;
 }
 
+#define TESTED_TYPE int
 
+int		main(void)
+{
+	std::list<TESTED_TYPE> lst;
+	std::list<TESTED_TYPE>::iterator lst_it;
+	for (int i = 1; i < 5; ++i)
+		lst.push_back(i * 3);
+
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(lst.begin(), lst.end());
+	printSize(vct);
+
+	lst_it = lst.begin();
+	for (int i = 1; lst_it != lst.end(); ++i)
+		*lst_it++ = i * 5;
+	vct.assign(lst.begin(), lst.end());
+	printSize(vct);
+
+	vct.insert(vct.end(), lst.rbegin(), lst.rend());
+	printSize(vct);
+	return (0);
+}
+
+/*
 int main() {
 		//ft::reverse_iterator<Cont<int>::iterator> iter;
 		//Cont<int>::reverse_iterator itr;		// compile pas car pas dans Cont
@@ -69,16 +92,16 @@ int main() {
 		for (ft::vector<int>::const_iterator i = vect->begin(); i != vect->end(); i++ )
 			std::cout << "i : " << *i << std::endl;
 
-		vect->resize(15);
+		vect->resize(5);
 		vect->reserve(50);
 
 		std::cout << "classic " << std::endl;
 
 		std::cout << "vect->end() : " << *(vect->end()-1) << std::endl;
 
-		vect->resize(5);
+		//vect->insert(vect->begin() + 5, 4, 4);
 
-		vect->insert(vect->begin() + 5, 4, 4);
+		vect->insert(vect->begin(), vect->begin() + 2, vect->begin() + 4);
 
 		for (ft::vector<int>::iterator it = vect->begin(); it != vect->end(); it++ )
 			std::cout << *it << std::endl;
@@ -150,3 +173,4 @@ int main() {
 
 	return 0;
 }
+*/
