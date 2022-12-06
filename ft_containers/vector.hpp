@@ -286,35 +286,24 @@ public:
 		else
 		{
 			//std::cout << "insert n " << std::endl;
-			//pointer ptr = data();
-			//iterator start = ptr + _vector._size - 1 + n;
-			//iterator end = start - std::distance(position, this->end()) - 1;
-			//for (iterator i = start ; i != end ; --i) {
-			//	//_alloc.construct(&( *i ), *(i - n));
-			//	iterator after =
-			//	_alloc.construct(&( *i ), *(std::advance(i, -n)));
-			//}
 			//std::size_t left = std::distance(position, end());
 			//(void) left;
 			//_vector.move_up(_vector._size - 1 + n, n, left);
 			//std::uninitialized_fill_n(position, n, val);
 			// et si initialized ?
-
 			if ( position != end())
 			{
-				iterator start = end();
+				iterator start = end() - 1;
 				std::advance(start, n);
-				iterator input = end();
+				iterator input = end() - 1;
 				for (iterator it = start ; input != position - 1; it--)
 				{
 					// si inferieur a la taille : delete
 					//_alloc.destroy(it.operator->());
 					_alloc.construct( it.operator->(), *input);
-					//_alloc.construct( it.operator->(), *input);
 					input--;
 				}
 			}
-
 			std::uninitialized_fill_n(position, n, val);
 		}
 		_vector._size += n;
@@ -338,14 +327,16 @@ public:
 		}
 		else
 		{
+			// pb quand position = vect->begin()
+			//std::cout << "insert iterator" << std::endl;
 			if ( position != end())
 			{
-				iterator start = end();
-				std::advance(start, n);
-				iterator input = end();
+				iterator start = end() - 1; //
+				std::advance(start, n );
+				iterator input = end() - 1;
 				for (iterator it = start ; input != position - 1; it--)
 				{
-					//_alloc.destroy(& (*it));
+					//std::cout << "input : " << *input << std::endl;
 					// si inferieur a la taille : delete
 					//_alloc.destroy(& (*it));
 					//_alloc.destroy(it.operator->());
@@ -353,7 +344,8 @@ public:
 					input--;
 				}
 			}
-			std::uninitialized_copy(first, last, position);
+			//std::uninitialized_copy(first, last, position);
+			std::copy_backward(first, last, position + n);
 		}
 		_vector._size += n;
 	}

@@ -88,14 +88,16 @@ int main() {
 			std::cout << "i : " << *i << std::endl;
 
 		vect->resize(5);
-		//vect->reserve(50);
+		vect->reserve(50);
 
 		std::cout << "classic " << std::endl;
-		std::cout << "vect->end() : " << *(vect->end()-1) << std::endl;
+		std::cout << "vect->end() : " << *(vect->end()) << std::endl;
 
 		(*vect)[4] = 12;
 		//vect->insert(vect->begin() + 2, 2, 4);
-		vect->insert(vect->begin() + 2, vect->begin() + 2, vect->begin() + 4);
+		// test quand on depasse la range
+		vect->insert(vect->begin() + 2, vect->begin() + 1, vect->end() - 1);
+		//vect->insert(vect->begin(), 3 , 3);
 
 		for (ft::vector<int>::iterator it = vect->begin(); it != vect->end(); it++ )
 			std::cout << *it << std::endl;
