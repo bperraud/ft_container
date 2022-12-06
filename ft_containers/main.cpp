@@ -60,8 +60,6 @@ int main() {
 		//vct.insert(vct.end(), lst.rbegin(), lst.rend());
 		//printSize(vct);
 
-
-
 		ft::vector<int> *vect = new ft::vector<int>(5);
 
 		vect->assign(2, 42);
@@ -95,8 +93,9 @@ int main() {
 		std::cout << "classic " << std::endl;
 		std::cout << "vect->end() : " << *(vect->end()-1) << std::endl;
 
+		(*vect)[4] = 12;
 		//vect->insert(vect->begin() + 2, 2, 4);
-		vect->insert(vect->begin(), vect->begin() + 1, vect->begin() + 3);
+		vect->insert(vect->begin() + 2, vect->begin() + 2, vect->begin() + 4);
 
 		for (ft::vector<int>::iterator it = vect->begin(); it != vect->end(); it++ )
 			std::cout << *it << std::endl;

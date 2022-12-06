@@ -294,12 +294,28 @@ public:
 			//	iterator after =
 			//	_alloc.construct(&( *i ), *(std::advance(i, -n)));
 			//}
-			std::size_t left = std::distance(position, end());
-
-
-			_vector.move_up(_vector._size - 1 + n, n, left);
-			std::uninitialized_fill_n(position, n, val);
+			//std::size_t left = std::distance(position, end());
+			//(void) left;
+			//_vector.move_up(_vector._size - 1 + n, n, left);
+			//std::uninitialized_fill_n(position, n, val);
 			// et si initialized ?
+
+			if ( position != end())
+			{
+				iterator start = end();
+				std::advance(start, n);
+				iterator input = end();
+				for (iterator it = start ; input != position - 1; it--)
+				{
+					// si inferieur a la taille : delete
+					//_alloc.destroy(it.operator->());
+					_alloc.construct( it.operator->(), *input);
+					//_alloc.construct( it.operator->(), *input);
+					input--;
+				}
+			}
+
+			std::uninitialized_fill_n(position, n, val);
 		}
 		_vector._size += n;
 	}
@@ -322,17 +338,20 @@ public:
 		}
 		else
 		{
-			iterator start = end(); // commence a ecrire
-			std::advance(start, n);
-			//for (std::size_t i = start ; i > start - std::distance(position, end()) - 1; --i) {
-			//	_alloc.construct(ptr + i, *(ptr + i - n));
-			//}
-			iterator input = end();
-			for (iterator it = start ; input != position ; it--)
+			if ( position != end())
 			{
-				//_alloc.destroy(& (*it));
-				_alloc.construct( (it.operator->()), *input);
-				input--;
+				iterator start = end();
+				std::advance(start, n);
+				iterator input = end();
+				for (iterator it = start ; input != position - 1; it--)
+				{
+					//_alloc.destroy(& (*it));
+					// si inferieur a la taille : delete
+					//_alloc.destroy(& (*it));
+					//_alloc.destroy(it.operator->());
+					_alloc.construct( it.operator->(), *input);
+					input--;
+				}
 			}
 			std::uninitialized_copy(first, last, position);
 		}
