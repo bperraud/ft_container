@@ -38,32 +38,29 @@ void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true
 
 #define TESTED_TYPE int
 
-int		main(void)
-{
-	std::list<TESTED_TYPE> lst;
-	std::list<TESTED_TYPE>::iterator lst_it;
-	for (int i = 1; i < 5; ++i)
-		lst.push_back(i * 3);
-
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(lst.begin(), lst.end());
-	printSize(vct);
-
-	lst_it = lst.begin();
-	for (int i = 1; lst_it != lst.end(); ++i)
-		*lst_it++ = i * 5;
-	vct.assign(lst.begin(), lst.end());
-	printSize(vct);
-
-	vct.insert(vct.end(), lst.rbegin(), lst.rend());
-	printSize(vct);
-	return (0);
-}
-
-/*
 int main() {
 		//ft::reverse_iterator<Cont<int>::iterator> iter;
 		//Cont<int>::reverse_iterator itr;		// compile pas car pas dans Cont
 		//ft::vector<std::string> vct(8);
+
+		//std::list<TESTED_TYPE> lst;
+		//std::list<TESTED_TYPE>::iterator lst_it;
+		//for (int i = 1; i < 5; ++i)
+		//	lst.push_back(i * 3);
+
+		//TESTED_NAMESPACE::vector<TESTED_TYPE> vct(lst.begin(), lst.end());
+		//printSize(vct);
+
+		//lst_it = lst.begin();
+		//for (int i = 1; lst_it != lst.end(); ++i)
+		//	*lst_it++ = i * 5;
+		//vct.assign(lst.begin(), lst.end());
+		//printSize(vct);
+
+		//vct.insert(vct.end(), lst.rbegin(), lst.rend());
+		//printSize(vct);
+
+
 
 		ft::vector<int> *vect = new ft::vector<int>(5);
 
@@ -93,15 +90,13 @@ int main() {
 			std::cout << "i : " << *i << std::endl;
 
 		vect->resize(5);
-		vect->reserve(50);
+		//vect->reserve(50);
 
 		std::cout << "classic " << std::endl;
-
 		std::cout << "vect->end() : " << *(vect->end()-1) << std::endl;
 
-		//vect->insert(vect->begin() + 5, 4, 4);
-
-		vect->insert(vect->begin(), vect->begin() + 2, vect->begin() + 4);
+		//vect->insert(vect->begin() + 2, 2, 4);
+		vect->insert(vect->begin(), vect->begin() + 1, vect->begin() + 3);
 
 		for (ft::vector<int>::iterator it = vect->begin(); it != vect->end(); it++ )
 			std::cout << *it << std::endl;
@@ -111,6 +106,7 @@ int main() {
 		//vect->resize(5);
 		//vect->assign(5, 5);
 		vect->assign(vect->begin(), vect->end());
+		//vect->assign(10, -8);
 
 		std::cout << "classic " << std::endl;
 		for (ft::vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )
@@ -173,4 +169,4 @@ int main() {
 
 	return 0;
 }
-*/
+

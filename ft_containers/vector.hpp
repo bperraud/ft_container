@@ -51,6 +51,8 @@ class vector {
 		normal_iterator( const normal_iterator &other ) : _it( other._it ) {}
 		//normal_iterator(const T& i) : _it(i) {}
 
+		pointer base() const { return _it; }
+
 		normal_iterator &operator=( const normal_iterator &other ) {
 			_it = other._it;
 			return *this;
@@ -109,7 +111,6 @@ class vector {
 			return ( _it <= other.operator->() );
 		};
 
-		pointer base() const { return _it; }
 		// convert T to const T for non-const to const assignation
 		operator normal_iterator< const U >() const {
             return ( normal_iterator< const U >( _it ) );
@@ -230,23 +231,22 @@ public:
 	template <class InputIterator>
 	void assign (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
 		resize(std::distance(first, last));
-		const pointer data = _vector._data;
-		std::size_t i = 0;
-		for (InputIterator it = first ; it != last ; it++)
+		InputIterator input = first;
+		for (iterator it = begin() ; it != end() ; ++it)
 		{
-			_alloc.destroy(data + i);
-			_alloc.construct(data + i, *it);
-			i++;
+			//.operator->() ?
+			_alloc.destroy(& (*it));
+			_alloc.construct(& (*it), *input);
+			input++;
 		}
 	}
 
 	void assign (size_type n, const value_type& val) {
 		resize(n, val);
-		const pointer data = _vector._data;
-		for (std::size_t i = 0; i < _vector._size; ++i)
+		for (iterator it = begin() ; it != end() ; ++it)
 		{
-			_alloc.destroy(data + i);
-			_alloc.construct(data + i, val);
+			_alloc.destroy(& (*it));
+			_alloc.construct(& (*it), val);
 		}
 	}
 
@@ -285,10 +285,19 @@ public:
 		}
 		else
 		{
-			pointer ptr = data();
-			for (std::size_t i = start ; i > start - std::distance(position, end()) - 1; --i) {
-				_alloc.construct(ptr + i, *(ptr + i - n));
-			}
+			//std::cout << "insert n " << std::endl;
+			//pointer ptr = data();
+			//iterator start = ptr + _vector._size - 1 + n;
+			//iterator end = start - std::distance(position, this->end()) - 1;
+			//for (iterator i = start ; i != end ; --i) {
+			//	//_alloc.construct(&( *i ), *(i - n));
+			//	iterator after =
+			//	_alloc.construct(&( *i ), *(std::advance(i, -n)));
+			//}
+			std::size_t left = std::distance(position, end());
+
+
+			_vector.move_up(_vector._size - 1 + n, n, left);
 			std::uninitialized_fill_n(position, n, val);
 			// et si initialized ?
 		}
@@ -307,15 +316,23 @@ public:
 			std::uninitialized_copy(begin(), position, ptr);
 			std::uninitialized_copy(first, last, ptr + position_offset);
 			std::uninitialized_copy(position + n, end() - position_offset, ptr + position_offset + n);
+			_alloc.deallocate(_vector._data, _capacity);
 			_vector._data = ptr;
 			_capacity = capa;
 		}
 		else
 		{
-			pointer ptr = data();
-			const size_type start = std::distance(begin(), position);
-			for (std::size_t i = start ; i > start - std::distance(position, end()) - 1; --i) {
-				_alloc.construct(ptr + i, *(ptr + i - n));
+			iterator start = end(); // commence a ecrire
+			std::advance(start, n);
+			//for (std::size_t i = start ; i > start - std::distance(position, end()) - 1; --i) {
+			//	_alloc.construct(ptr + i, *(ptr + i - n));
+			//}
+			iterator input = end();
+			for (iterator it = start ; input != position ; it--)
+			{
+				//_alloc.destroy(& (*it));
+				_alloc.construct( (it.operator->()), *input);
+				input--;
 			}
 			std::uninitialized_copy(first, last, position);
 		}

@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/05 23:46:49 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/06 00:52:19 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,14 @@ struct Vect {
 		for (std::size_t n = start; n < start + left; ++n){
 			_data[n] = _data[n + offset];
 			//std::cout << "n : " << n << std::endl;
+		}
+	}
+
+	void move_up (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
+		if (offset < 0)
+        	throw std::length_error("vector::negative offset");
+		for (std::size_t n = start ; n > start - left; --n){
+			_data[n] = _data[n - offset];
 		}
 	}
 
