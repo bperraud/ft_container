@@ -271,82 +271,48 @@ public:
 	void insert (iterator position, size_type n, const value_type& val) {
 		if (n < 0 || n > max_size())
 			throw std::length_error("vector::insert");
-		const size_type start = std::distance(begin(), position);
+		size_type offset = position - begin();
 		if (_capacity < _vector._size + n)
+			reallocate(increase_capacity(n));
+		iterator pos = begin() + offset;
+		if ( pos != end())
 		{
-			std::size_t	capa = increase_capacity(n);
-			pointer ptr = _alloc.allocate(capa);
-			std::uninitialized_copy(begin(), position, ptr);
-			std::uninitialized_fill_n(ptr + start, n, val);
-			std::uninitialized_copy(position, begin() + _vector._size - start, ptr + start + n);
-			_alloc.deallocate(_vector._data, _capacity);
-			_vector._data = ptr;
-			_capacity = capa;
-		}
-		else
-		{
-			//std::cout << "insert n " << std::endl;
-			//std::size_t left = std::distance(position, end());
-			//(void) left;
-			//_vector.move_up(_vector._size - 1 + n, n, left);
-			//std::uninitialized_fill_n(position, n, val);
-			// et si initialized ?
-			if ( position != end())
+			iterator start = end() - 1;
+			std::advance(start, n);
+			iterator input = end() - 1;
+			for (iterator it = start ; it != pos + n - 1 ; it--)
 			{
-				iterator start = end() - 1;
-				std::advance(start, n);
-				iterator input = end() - 1;
-				for (iterator it = start ; input != position - 1; it--)
-				{
-					// si inferieur a la taille : delete
-					//_alloc.destroy(it.operator->());
-					_alloc.construct( it.operator->(), *input);
-					input--;
-				}
+				// si inferieur a la taille : delete ?
+				//_alloc.destroy(it.operator->());
+				_alloc.construct( it.operator->(), *input);
+				input--;
 			}
-			std::uninitialized_fill_n(position, n, val);
 		}
+		std::uninitialized_fill_n(pos, n, val);
 		_vector._size += n;
 	}
 
 	template <class InputIterator>
 	void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
 		const size_type n = std::distance( first, last );
+		size_type offset = position - begin();
 		if (_capacity < _vector._size + n)
+			reallocate(increase_capacity(n));
+		iterator pos = begin() + offset;
+		if ( pos != end())
 		{
-			//reallocate(increase_capacity(n), position, n, first, last);
-			std::size_t	capa = increase_capacity(n);
-			size_type position_offset = std::distance( begin(), position );
-			pointer ptr = _alloc.allocate(capa);
-			std::uninitialized_copy(begin(), position, ptr);
-			std::uninitialized_copy(first, last, ptr + position_offset);
-			std::uninitialized_copy(position + n, end() - position_offset, ptr + position_offset + n);
-			_alloc.deallocate(_vector._data, _capacity);
-			_vector._data = ptr;
-			_capacity = capa;
-		}
-		else
-		{
-			// pb quand position = vect->begin()
-			//std::cout << "insert iterator" << std::endl;
-			if ( position != end())
+			iterator start = end() - 1;
+			std::advance(start, n);
+			iterator input = end() - 1;
+			for (iterator it = start ; it != pos + n - 1; it--)
 			{
-				iterator start = end() - 1; //
-				std::advance(start, n );
-				iterator input = end() - 1;
-				for (iterator it = start ; input != position - 1; it--)
-				{
-					//std::cout << "input : " << *input << std::endl;
-					// si inferieur a la taille : delete
-					//_alloc.destroy(& (*it));
-					//_alloc.destroy(it.operator->());
-					_alloc.construct( it.operator->(), *input);
-					input--;
-				}
+				// si inferieur a la taille : delete
+				//_alloc.destroy(& (*it));
+				_alloc.construct( it.operator->(), *input);
+				input--;
 			}
-			//std::uninitialized_copy(first, last, position);
-			std::copy_backward(first, last, position + n);
 		}
+		std::copy_backward(first, last, pos + n);
 		_vector._size += n;
 	}
 

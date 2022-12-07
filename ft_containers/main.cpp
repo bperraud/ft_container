@@ -36,7 +36,49 @@ void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true
 	std::cout << "###############################################" << std::endl;
 }
 
+/*
 #define TESTED_TYPE int
+
+int		main(void)
+{
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(10);
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct2;
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct3;
+
+	for (unsigned long int i = 0; i < vct.size(); ++i)
+		vct[i] = (vct.size() - i) * 3;
+	printSize(vct);
+
+	vct2.insert(vct2.end(), 42);
+	vct2.insert(vct2.begin(), 2, 21);
+	printSize(vct2);
+
+	vct2.insert(vct2.end() - 2, 42);
+	printSize(vct2);
+
+	vct2.insert(vct2.end(), 2, 84);
+	printSize(vct2);
+
+	vct2.resize(4);
+	printSize(vct2);
+
+	vct2.insert(vct2.begin() + 2, vct.begin(), vct.end());
+	vct.clear();
+
+	vct2.reserve(50);
+	printSize(vct2);	// this one
+
+	printSize(vct);
+
+	for (int i = 0; i < 5; ++i)
+		vct3.insert(vct3.end(), i);
+	vct3.insert(vct3.begin() + 1, 2, 111);
+	printSize(vct3);
+
+	return (0);
+}
+*/
+
 
 int main() {
 		//ft::reverse_iterator<Cont<int>::iterator> iter;
@@ -75,8 +117,10 @@ int main() {
 		vect->push_back(45);
 		//vect->pop_back();
 
+		for (ft::vector<int>::const_iterator i = vect->begin(); i != vect->end(); i++ )
+			std::cout << "i : " << *i << std::endl;
 
-		vect->insert(vect->begin(), -1);		// sysmalloc ici !
+		vect->insert(vect->begin(), -1);
 		//vect->erase(vect->begin());
 		vect->erase(vect->begin(), vect->begin() + 2);
 		//vect->insert(vect->begin(), -2);
@@ -91,12 +135,11 @@ int main() {
 		vect->reserve(50);
 
 		std::cout << "classic " << std::endl;
-		std::cout << "vect->end() : " << *(vect->end()) << std::endl;
 
 		(*vect)[4] = 12;
 		//vect->insert(vect->begin() + 2, 2, 4);
 		// test quand on depasse la range
-		vect->insert(vect->begin() + 2, vect->begin() + 1, vect->end() - 1);
+		vect->insert(vect->begin() + 2, vect->begin(), vect->end() );
 		//vect->insert(vect->begin(), 3 , 3);
 
 		for (ft::vector<int>::iterator it = vect->begin(); it != vect->end(); it++ )
