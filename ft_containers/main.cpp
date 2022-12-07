@@ -4,11 +4,10 @@
 #include <vector>
 #include <list>
 
-#include "BST.hpp"
 #include "Cont.hpp"
 #include "vector.hpp"
+#include "stack.hpp"
 
-#include "Iterator.hpp"
 
 #define TESTED_NAMESPACE ft
 #define T_SIZE_TYPE typename TESTED_NAMESPACE::vector<T>::size_type
@@ -36,51 +35,12 @@ void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true
 	std::cout << "###############################################" << std::endl;
 }
 
-/*
-#define TESTED_TYPE int
-
-int		main(void)
-{
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(10);
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct2;
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct3;
-
-	for (unsigned long int i = 0; i < vct.size(); ++i)
-		vct[i] = (vct.size() - i) * 3;
-	printSize(vct);
-
-	vct2.insert(vct2.end(), 42);
-	vct2.insert(vct2.begin(), 2, 21);
-	printSize(vct2);
-
-	vct2.insert(vct2.end() - 2, 42);
-	printSize(vct2);
-
-	vct2.insert(vct2.end(), 2, 84);
-	printSize(vct2);
-
-	vct2.resize(4);
-	printSize(vct2);
-
-	vct2.insert(vct2.begin() + 2, vct.begin(), vct.end());
-	vct.clear();
-
-	vct2.reserve(50);
-	printSize(vct2);	// this one
-
-	printSize(vct);
-
-	for (int i = 0; i < 5; ++i)
-		vct3.insert(vct3.end(), i);
-	vct3.insert(vct3.begin() + 1, 2, 111);
-	printSize(vct3);
-
-	return (0);
-}
-*/
-
-
 int main() {
+
+		ft::stack<int> *stack = new ft::stack<int>();
+
+		(void) stack;
+
 
 		ft::vector<int> *vect = new ft::vector<int>(5);
 
@@ -193,4 +153,5 @@ int main() {
 
 	return 0;
 }
+
 

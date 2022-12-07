@@ -16,10 +16,6 @@
 #include "Vect.hpp"
 #include "Iterator.hpp"
 #include "type_traits.hpp" // for enable_if
-#include <algorithm>
-
-#include <typeinfo>
-
 #include <memory>
 
 namespace ft {
@@ -30,7 +26,6 @@ template <typename T, typename Allocator = std::allocator<T> >
 class vector {
 
 	// iterator class
-
 
 	template <typename U>
 	class normal_iterator {
@@ -49,7 +44,6 @@ class vector {
 		normal_iterator() : _it(0) {}
 		normal_iterator( pointer i ) : _it(i) {}
 		normal_iterator( const normal_iterator &other ) : _it( other._it ) {}
-		//normal_iterator(const T& i) : _it(i) {}
 
 		pointer base() const { return _it; }
 
