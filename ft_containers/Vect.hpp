@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/06 00:52:19 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/07 23:10:49 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ struct Vect {
         	throw std::length_error("vector::negative offset");
 		for (std::size_t n = start; n < start + left; ++n){
 			_data[n] = _data[n + offset];
-			//std::cout << "n : " << n << std::endl;
 		}
 	}
 
@@ -41,9 +40,8 @@ struct Vect {
 		}
 	}
 
-    // Constructors
-    Vect ();   // Tableau vide
-    explicit Vect (std::size_t d) : _size(d), _data(0) {}
+	// Constructors
+	Vect () : _size(0), _data(0) {}
 
     const T& operator[] (std::ptrdiff_t) const;
 	inline T& at(std::ptrdiff_t) ;
@@ -61,18 +59,11 @@ struct Vect {
     friend inline std::ostream& operator<< (std::ostream&, const Vect<U>&);
 }; // Vect<T>
 
-// Constructors ============================================================
-
-template <typename T>
-Vect<T>::Vect () : _size(0), _data(0) {
-
-}
-
 // Getters ===================================================================
 
 template <typename T>
 const T& Vect<T>::operator[] (std::ptrdiff_t idx) const {
-    return _data[idx];
+	return _data[idx];
 }
 
 template<typename T>

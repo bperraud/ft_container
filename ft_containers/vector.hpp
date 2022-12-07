@@ -321,11 +321,8 @@ public:
 			throw std::length_error("vector::erase");
 		const size_type start = std::distance( begin(), first );
 		const size_type range = std::distance( first, last );
-		//destroy(start, range);
-
 		for (iterator it = first; it != last; ++it)
 			_alloc.destroy(it.operator->());
-
 		_vector.move_back(start, range, std::distance(last, end()));
 		_vector._size -= range;
 		return (begin() + start);
@@ -345,7 +342,10 @@ public:
 
 	allocator_type get_allocator() const { return _alloc;}
 
-	virtual ~vector() { _alloc.deallocate(_vector._data, _capacity);}
+	virtual ~vector() {
+		clear();
+		_alloc.deallocate(_vector._data, _capacity);
+	}
 
 	/* -------------------------- Relational operators -------------------------- */
 
@@ -386,6 +386,16 @@ private:
 template <class T, class Alloc>
 void swap (vector<T,Alloc>& x, vector<T,Alloc>& y) {
 	x.swap(y);
+}
+
+
+// Associated functions =========================================================
+
+template <class T, class Alloc>
+inline std::ostream& operator<< (std::ostream& out, const vector<T,Alloc>& v)
+{
+	v._dsp(out);
+	return out;
 }
 
 } //namespace ft
