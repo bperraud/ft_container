@@ -206,7 +206,8 @@ public:
 			throw std::length_error("vector::resize");
 		if (n <= _vector._size)
 		{
-			destroy(n, _vector._size);
+			for (size_type i = 0; i < n; ++i)
+				_alloc.destroy(_vector._data + i);
 			_vector._size = n;
 		}
 		else
@@ -234,9 +235,8 @@ public:
 		InputIterator input = first;
 		for (iterator it = begin() ; it != end() ; ++it)
 		{
-			//.operator->() ?
-			_alloc.destroy(& (*it));
-			_alloc.construct(& (*it), *input);
+			_alloc.destroy(it.operator->());
+			_alloc.construct(it.operator->(), *input);
 			input++;
 		}
 	}
@@ -245,8 +245,8 @@ public:
 		resize(n, val);
 		for (iterator it = begin() ; it != end() ; ++it)
 		{
-			_alloc.destroy(& (*it));
-			_alloc.construct(& (*it), val);
+			_alloc.destroy(it.operator->());
+			_alloc.construct(it.operator->(), val);
 		}
 	}
 
@@ -327,7 +327,11 @@ public:
 			throw std::length_error("vector::erase");
 		const size_type start = std::distance( begin(), first );
 		const size_type range = std::distance( first, last );
-		destroy(start, range);
+		//destroy(start, range);
+
+		for (iterator it = first; it != last; ++it)
+			_alloc.destroy(it.operator->());
+
 		_vector.move_back(start, range, std::distance(last, end()));
 		_vector._size -= range;
 		return (begin() + start);
@@ -367,22 +371,9 @@ private:
 
 	/* ------------------------------ Private Method ---------------------------- */
 
-	void	destroy(std::ptrdiff_t start, std::ptrdiff_t range){
-		pointer data = this->_vector._data;
-		for (std::ptrdiff_t i = start; i < range; ++i)
-			_alloc.destroy(data + i);
-	}
-
-	void	deallocate(size_type n, pointer ptr) {
-		_alloc.deallocate(_vector._data, _capacity);
-		_vector._data = ptr;
-		_capacity = n;
-	}
-
 	void	reallocate(size_type n) {	// reallocate n _capacity
 		pointer ptr = _alloc.allocate(n);
 		std::uninitialized_copy(begin(), end(), ptr);
-		//deallocate(n, ptr);
 		_alloc.deallocate(_vector._data, _capacity);
 		_vector._data = ptr;
 		_capacity = n;
