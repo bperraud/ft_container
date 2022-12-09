@@ -4,10 +4,9 @@
 #include <vector>
 #include <list>
 
-#include "Cont.hpp"
 #include "vector.hpp"
 #include "stack.hpp"
-
+#include "map.hpp"
 
 #define TESTED_NAMESPACE ft
 #define T_SIZE_TYPE typename TESTED_NAMESPACE::vector<T>::size_type
@@ -35,13 +34,11 @@ void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true
 	std::cout << "###############################################" << std::endl;
 }
 
+
 int main() {
 
 		ft::stack<int> *stack = new ft::stack<int>();
-
 		(void) stack;
-
-
 		ft::vector<int> *vect = new ft::vector<int>(5);
 
 		vect->assign(2, 42);
@@ -50,8 +47,6 @@ int main() {
 		std::cout << "main size " << vect->size() << std::endl;
 		std::cout << "main empty " << vect->empty() << std::endl;
 
-		//vect->reserve(20);
-		//vect->push_back(8);
 		vect->push_back(-9);
 		vect->push_back(3);
 		vect->push_back(45);
@@ -73,9 +68,6 @@ int main() {
 
 		vect->resize(5);
 		vect->reserve(50);
-
-		std::cout << "classic " << std::endl;
-
 		(*vect)[4] = 12;
 		//vect->insert(vect->begin() + 2, 2, 4);
 		// test quand on depasse la range
@@ -92,34 +84,30 @@ int main() {
 		vect->assign(vect->begin(), vect->end());
 		//vect->assign(10, -8);
 
-		std::cout << "classic " << std::endl;
-		for (ft::vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )
-			std::cout << *it << std::endl;
+		std::cout << "classic " << *vect << std::endl;
+		//for (ft::vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )
+		//	std::cout << *it << std::endl;
 
 		std::cout << "vec size : " << vect->size() << std::endl;
 		std::cout << "vec back : " << vect->back() << std::endl;
 
 		//vect->clear();
-		//vect->erase(vect->begin());
 		vect->erase(vect->begin());
 		vect->erase(vect->begin() + 1, vect->end() - 1);
 
 		ft::vector<int> *vec = new ft::vector<int>();
-
-		//vec->push_back(6);
 
 		vect->swap(*vec);
 
 		for (ft::vector<int>::const_iterator y = vect->begin(); y != vect->end(); y++ )
 			std::cout << *y << std::endl;
 
-		std::cout << "deuxieme" << std::endl;
-
-		for (ft::vector<int>::const_iterator iter = vec->begin(); iter != vec->end(); iter++ )
-			std::cout << *iter << std::endl;
+		std::cout << "deuxieme " << *vect << std::endl;
 
 		delete vec;
 		delete vect;
+		delete stack;
+
 		//vector<int>::iterator ite = vect->begin();
 
 

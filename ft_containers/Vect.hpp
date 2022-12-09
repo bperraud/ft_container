@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/07 23:10:49 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/08 00:41:38 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@ struct Vect {
     std::size_t _size;
     T *_data;
     inline static T* _cp (const Vect&);
+
+	virtual void _dsp (std::ostream& out) const {out << *_data ;} ;
+
 
 	void move_back (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
 		if (offset < 0)
@@ -111,9 +114,16 @@ Vect<T>& Vect<T>::operator= (const Vect& v) {
 template <typename T>
 inline std::ostream& operator<< (std::ostream& out, const Vect<T>& v)
 {
-	out << "vect output ";
-	out << "[ "; v._dsp(out); out << ']'; return out;
+	out << "[ ";
+	for (std::size_t i = 0; i < v._size; ++i) out << v._data[i] << " , ";
+	out << " ]" << std::endl;
+	return out;
 }
 
+
+//out << "[ ";
+//	for (std::size_t i = 0; i < v._size; ++i) out << v._data[i] << " , ";
+//	out << " ]" << std::endl;
+//	return out;
 
 #endif // _VECT_H_

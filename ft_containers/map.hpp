@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Map.hpp                                            :+:      :+:    :+:   */
+/*   map.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/03 15:28:22 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/09 01:38:52 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,159 +140,54 @@ namespace _map_base {
 #include "Iterator.hpp"
 
 
-template <typename T>
-class map : public BST<Info<T> >, public Vect<Ptr2Info<T> >{
+template<
+    class Key,														// map::key_type
+    class T,														// map::mapped_type
+    class Compare = std::less<Key>,									// map::key_compare
+    class Allocator = std::allocator<std::pair<const Key, T> > >	// map::allocator_type
+class map {
 
+//class map : public BST<Info<T> >, public Vect<Ptr2Info<T> >{
 
 public:
-	//Iterator	const_iterator;
 
-public:
+	// types:
+	typedef Key											key_type;
+	typedef T											mapped_type;
+	typedef std::pair<const Key, T>						value_type;
+	typedef Compare										key_compare;
+	typedef Allocator									allocator_type;
+	typedef typename allocator_type::reference			reference;
+	typedef typename allocator_type::const_reference	const_reference;
+	typedef	typename allocator_type::pointer			pointer;
+	typedef	typename allocator_type::const_pointer		const_pointer;
+
 
 	typedef Vect<Ptr2Info<T> >	_Vect;
 	typedef Ptr2Info<T> 		_Ptr2Info;
 	typedef BST<Info<T>	>		_BST;
 	typedef Info<T> 			_Info;
 
+private:
 
-    // Constructors
-    map();                                          // constructor without parameters
-    explicit map(std::size_t t) : _BST(), _Vect(t){}           // constructor with maximum size of map
+public:
 
-    // Setters
-    _Ptr2Info& operator[] (std::ptrdiff_t idx)  ;
-    const _Info& insert(const T &v) ;
-    bool erase(const T &v) ;
-    // Getters
-    const _Info& find(const T &v) const ;
+	// Constructors
+	map();										// constructor without parameters
+	explicit map(std::size_t t) : {}			// constructor with maximum size of map
 
-    // Copies & transfers
-    map(const map<T> &v) ;
-    explicit map(const _Vect &v) ;
-    explicit map(const _BST &v) ;
-    inline map<T>& operator= (const map&) ;
+	// Setters
+	_Ptr2Info& operator[] (std::ptrdiff_t idx)  ;
+	const _Info& insert(const T &v) ;
+	bool erase(const T &v) ;
+	// Getters
+	const _Info& find(const T &v) const ;
 
+	// Copies & transfers
 
-    // Output
-    void _dsp (std::ostream &out) const  {_BST::_dsp(out);}
-    // note : ne fonctionne pas pour un type déclaré _Vect, problème : celui ci n'a pas de _BST rempli et donc ne peut pas utiliser l'opérateur d'output de celui-ci
-    // détecter le type déclaré (est-ce possible?) reviendrait à briser le principe de Su_BSTitution de Liskov...
-    // Destructor
-    ~map () {};
-    // Associated function
-    template <typename U>
-    friend inline std::ostream& operator<< (std::ostream&, const map<U>&);
+	~map () {};
 };
 
-// Constructors ============================================================
 
-
-// Setters =================================================================
-
-template<typename T>
-Ptr2Info<T>& map<T>::operator[](std::ptrdiff_t idx) {
-    if (_Vect::operator[](idx).isEmpty()){          // value are constant in map mapext, no change allowed for element
-        return _Vect::operator[](idx);
-    }
-    else throw std::domain_error("can't assign new value in a constant _Vect");
-}
-
-template<typename T>
-const Info<T>& map<T>::insert(const T& v) {      // [-Wreturn-type] warning because no explicit return, prevents using insert two times
-    std::ptrdiff_t idx = 0;
-    if (idx == -1){                 // implicit conversion to _Info with default index -1
-        throw std::domain_error("no index specified");
-    }
-    if (std::size_t(idx) <= _Vect::dim()){
-        if(!_BST::exists(T(v))){                                // cast to T to find element without taking into account the index
-            if (!_Vect::operator[](idx).isEmpty()) {            // check if index is occupied, if yes erase it from the _BST
-                _BST::erase(_Vect::operator[](idx));            // delete old Node at same position to update
-            }
-			const _Info& elem = _BST::insert(v);
-            //_Ptr2Info<T>::getPtr(_Vect::operator[](idx)) = &_BST<_Info<T> >::insert(v);    // _Vect[i] points to correct Node of _BST
-			_Ptr2Info::getPtr(_Vect::operator[](idx)) = &elem;    // _Vect[i] points to correct Node of _BST
-			return elem;
-        }
-        else{
-            throw std::domain_error("element already in mapainer");
-        }
-    }
-    else{
-        throw std::out_of_range("index out of range");
-    }
-}
-
-template<typename T>
-bool map<T>::erase(const T &v) {
-    std::ptrdiff_t idx = map_base<T>::_index(v);
-    if (idx == -1){         // either no index specified but v in _BST, or v not in _BST
-        if(_BST::erase(v)){
-            _Ptr2Info::getPtr(_Vect::operator[](map_base<T>::_index(_BST::find(v)))) = 0;  // delete pointer if v exist in _BST
-            return true;
-        }
-        else return false;
-    }
-    else {
-        if(!(_Vect::operator[](idx).isEmpty())){
-            if(*_Ptr2Info::getPtr(_Vect::operator[](idx)) == v){       // if index and value are the same
-                _Vect::operator[](idx) = _Ptr2Info() ;           // erase pointeur of _Vect
-                if(_BST::erase(v)){
-                    return true;
-                }
-                else return false;
-            }
-        }
-        else{
-            throw std::domain_error("element not found at this position");
-        }
-    }
-}
-
-// Getters ===================================================================
-
-template<typename T>
-const Info<T>& map<T>::find(const T &v) const {
-    std::ptrdiff_t idx = map_base<T>::_index(v);
-    if (idx == -1){
-        return _BST::find(v);
-    }
-    else{
-        if(!(_Vect::operator[](idx).isEmpty())){
-            if(*map_base<T>::_ptr(_Vect::operator[](idx)) == v){    // if index and value are the same
-                return _BST::find(v);
-            }
-            else return _BST::_NOT_FOUND;
-        }
-        else return _BST::_NOT_FOUND;  // no exception threw here because base virtual method is noexcept
-    }
-}
-
-// Copies & transfers ========================================================
-
-template<typename T>
-map<T>::map (const map<T> &v) : _BST(), _Vect(v.dim()){   // map_base<T> prevents warning
-    for (std::ptrdiff_t i = 0; i < v.dim(); ++i){   // warning comparaison between std::ptrdiff_t='long int' from std::size_t='long unsigned int' is acceptable because i start at 0 (same for further into code)
-        //if (!v.at(i).isEmpty()) map::insert({i,*map_base<T>::_ptr(v.at(i))});     // fill the _BST
-    }
-}
-
-// Associated function =======================================================
-
-template<typename U>
-inline std::ostream &operator<<(std::ostream &out, const map<U> &c){
-	out << "mapainer output ";
-    out << "[ "; c._dsp(out); out << ']'; return out;
-}
-
-
-template<typename T>
-map<T>& map<T>::operator=(const map &v)  {
-    if (this != &v){
-        map::operator=(v);                 // explicit call to copy assignement operator of map_Base for _used
-        _BST::operator=(v) ;                        // explicit call to copy assignement operator of _BST
-        _Vect::operator=(v) ;                       // explicit call to copy assignement operator of _Vect
-    }
-    return *this;
-}
 
 #endif

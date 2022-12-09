@@ -137,6 +137,9 @@ private:
 
 public:
 
+	template <class U, class Alloc>
+	friend std::ostream& operator<< (std::ostream& out, const vector<U,Alloc>& v);
+
 	/* ------------------------------ Construction ------------------------------ */
 
 	explicit vector (const allocator_type &alloc = allocator_type()) : _alloc(alloc), _capacity(INIT_CAPA), _vector() {
@@ -394,7 +397,7 @@ void swap (vector<T,Alloc>& x, vector<T,Alloc>& y) {
 template <class T, class Alloc>
 inline std::ostream& operator<< (std::ostream& out, const vector<T,Alloc>& v)
 {
-	v._dsp(out);
+	out << v._vector ;
 	return out;
 }
 
