@@ -26,10 +26,8 @@ template <typename T, typename Allocator = std::allocator<T> >
 class vector {
 
 	// iterator class
-
 	template <typename U>
 	class normal_iterator {
-
 	private:
 		U* _it;
 
