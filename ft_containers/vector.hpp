@@ -129,7 +129,7 @@ public:
 	typedef Vect<typename Allocator::value_type>	vector_type;
 
 private:
-	allocator_type			_alloc;
+	allocator_type			_allocator;
 	size_type				_capacity;
 	vector_type				_vector;
 
@@ -140,25 +140,26 @@ public:
 
 	/* ------------------------------ Construction ------------------------------ */
 
-	explicit vector (const allocator_type &alloc = allocator_type()) : _alloc(alloc), _capacity(INIT_CAPA), _vector() {
-		_vector._data = _alloc.allocate(INIT_CAPA);
+	explicit vector (const allocator_type &alloc = allocator_type()) : _allocator(alloc), _capacity(INIT_CAPA), _vector() {
+		_vector._data = _allocator.allocate(INIT_CAPA);
 	}
 
 	explicit vector( size_type n, const value_type &val = value_type(), const allocator_type &alloc = allocator_type() )
-		: _alloc(alloc), _capacity(n), _vector() {
-		_vector._data = _alloc.allocate(n);
+		: _allocator(alloc), _capacity(n), _vector() {
+		_vector._data = _allocator.allocate(n);
 		assign( n, val );
 	}
 
 	template < class InputIterator >
-	vector( InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true)
-		: _alloc(alloc), _capacity(INIT_CAPA), _vector() {
-		_vector._data = _alloc.allocate(INIT_CAPA);
+	vector( InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type(),
+			typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true)
+		: _allocator(alloc), _capacity(INIT_CAPA), _vector() {
+		_vector._data = _allocator.allocate(INIT_CAPA);
 		assign( first, last );
 	}
 
-	vector( const vector &x ) : _alloc( x._alloc ), _capacity(x._capacity), _vector(){
-		_vector._data = _alloc.allocate(x._capacity);
+	vector( const vector &x ) : _allocator( x._allocator ), _capacity(x._capacity), _vector(){
+		_vector._data = _allocator.allocate(x._capacity);
 		*this = x;
     }
 
@@ -185,7 +186,7 @@ public:
 	/* -------------------------------- Capacity -------------------------------- */
 
 	size_type	size () const { return _vector._size;}
-	size_type	max_size () const {return _alloc.max_size();}
+	size_type	max_size () const {return _allocator.max_size();}
 	bool		empty () const {return _vector._size == 0;}
 	size_type	capacity() const { return _capacity; }
 
@@ -202,7 +203,7 @@ public:
 		if (n <= _vector._size)
 		{
 			for (size_type i = 0; i < n; ++i)
-				_alloc.destroy(_vector._data + i);
+				_allocator.destroy(_vector._data + i);
 			_vector._size = n;
 		}
 		else
@@ -225,13 +226,14 @@ public:
 	/* -------------------------------- Modifiers ------------------------------- */
 
 	template <class InputIterator>
-	void assign (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
+	void assign (InputIterator first, InputIterator last,
+		typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
 		resize(std::distance(first, last));
 		InputIterator input = first;
 		for (iterator it = begin() ; it != end() ; ++it)
 		{
-			_alloc.destroy(it.operator->());
-			_alloc.construct(it.operator->(), *input);
+			_allocator.destroy(it.operator->());
+			_allocator.construct(it.operator->(), *input);
 			input++;
 		}
 	}
@@ -240,8 +242,8 @@ public:
 		resize(n, val);
 		for (iterator it = begin() ; it != end() ; ++it)
 		{
-			_alloc.destroy(it.operator->());
-			_alloc.construct(it.operator->(), val);
+			_allocator.destroy(it.operator->());
+			_allocator.construct(it.operator->(), val);
 		}
 	}
 
@@ -249,11 +251,11 @@ public:
 		if (_capacity < _vector._size + 1)
 			reallocate(increase_capacity(1));
 		_vector._size += 1;
-		_alloc.construct(_vector._data + _vector._size - 1, val);
+		_allocator.construct(_vector._data + _vector._size - 1, val);
 	}
 
 	void pop_back() {
-		_alloc.destroy(_vector._data + _vector._size - 1);
+		_allocator.destroy(_vector._data + _vector._size - 1);
 		_vector._size -= 1;
 	}
 
@@ -269,45 +271,28 @@ public:
 		size_type offset = position - begin();
 		if (_capacity < _vector._size + n)
 			reallocate(increase_capacity(n));
-		iterator pos = begin() + offset;
-		if ( pos != end())
+		iterator new_position = begin() + offset;
+		if ( new_position != end())
 		{
-			iterator start = end() - 1;
-			std::advance(start, n);
-			iterator input = end() - 1;
-			for (iterator it = start ; it != pos + n - 1 ; it--)
-			{
-				// si inferieur a la taille : delete ?
-				//_alloc.destroy(it.operator->());
-				_alloc.construct( it.operator->(), *input);
-				input--;
-			}
+			insert_construct(new_position, n);
 		}
-		std::uninitialized_fill_n(pos, n, val);
+		std::uninitialized_fill_n(new_position, n, val);
 		_vector._size += n;
 	}
 
 	template <class InputIterator>
-	void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
+	void insert (iterator position, InputIterator first, InputIterator last,
+		typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
 		const size_type n = std::distance( first, last );
 		size_type offset = position - begin();
 		if (_capacity < _vector._size + n)
 			reallocate(increase_capacity(n));
-		iterator pos = begin() + offset;
-		if ( pos != end())
+		iterator new_position = begin() + offset;
+		if ( new_position != end())
 		{
-			iterator start = end() - 1;
-			std::advance(start, n);
-			iterator input = end() - 1;
-			for (iterator it = start ; it != pos + n - 1; it--)
-			{
-				// si inferieur a la taille : delete
-				//_alloc.destroy(& (*it));
-				_alloc.construct( it.operator->(), *input);
-				input--;
-			}
+			insert_construct(new_position, n);
 		}
-		std::copy_backward(first, last, pos + n);
+		std::copy_backward(first, last, new_position + n);
 		_vector._size += n;
 	}
 
@@ -323,7 +308,7 @@ public:
 		const size_type start = std::distance( begin(), first );
 		const size_type range = std::distance( first, last );
 		for (iterator it = first; it != last; ++it)
-			_alloc.destroy(it.operator->());
+			_allocator.destroy(it.operator->());
 		_vector.move_back(start, range, std::distance(last, end()));
 		_vector._size -= range;
 		return (begin() + start);
@@ -341,11 +326,11 @@ public:
 
 	/* -------------------------------- Allocator ------------------------------- */
 
-	allocator_type get_allocator() const { return _alloc;}
+	allocator_type get_allocator() const { return _allocator;}
 
 	virtual ~vector() {
 		clear();
-		_alloc.deallocate(_vector._data, _capacity);
+		_allocator.deallocate(_vector._data, _capacity);
 	}
 
 	/* -------------------------- Relational operators -------------------------- */
@@ -366,15 +351,27 @@ private:
 
 	/* ------------------------------ Private Method ---------------------------- */
 
-	void	reallocate(size_type n) {	// reallocate n _capacity
-		pointer ptr = _alloc.allocate(n);
+	inline void insert_construct(iterator new_position, size_type n)
+	{
+		iterator input = end() - 1;
+		for (iterator it = end() - 1 + n ; it != new_position + n - 1 ; it--)
+		{
+			// si inferieur a la taille : delete ?
+			//_allocator.destroy(it.operator->());
+			_allocator.construct( it.operator->(), *input);
+			input--;
+		}
+	}
+
+	inline void	reallocate(size_type n) {	// reallocate n _capacity
+		pointer ptr = _allocator.allocate(n);
 		std::uninitialized_copy(begin(), end(), ptr);
-		_alloc.deallocate(_vector._data, _capacity);
+		_allocator.deallocate(_vector._data, _capacity);
 		_vector._data = ptr;
 		_capacity = n;
 	}
 
-	size_type	increase_capacity(size_type n) {	// increase capacity to add n element
+	inline size_type	increase_capacity(size_type n) {	// increase capacity to add n element
 		if (n < 0)
 			throw std::length_error("vector::increase_capacity");
 		size_t new_capacity = _capacity;

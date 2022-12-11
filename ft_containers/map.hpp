@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/09 15:34:39 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/11 22:23:20 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,6 +181,7 @@ class map {
         }
         normal_iterator operator--( int ) { return _it--; }
 
+		/*
         reference operator*() { return *_it; }
         typename normal_iterator< tree_const_iterator >::reference operator*() const {
             return *_it;
@@ -190,6 +191,7 @@ class map {
         typename normal_iterator< tree_const_iterator >::pointer operator->() const {
             return _it.operator->();
         }
+		*/
 
         template < typename V >
         bool operator==( const normal_iterator< V > &other ) const {
@@ -205,16 +207,20 @@ class map {
 
         //operator U() const { return U( _it ); }
 
+	};
+
+	/*
         operator normal_iterator< tree_const_iterator >() const {
             return normal_iterator< tree_const_iterator >( _it );
         }
     };
 
+
     typedef normal_iterator< tree_iterator >              iterator;
     typedef normal_iterator< tree_const_iterator >        const_iterator;
     typedef ft::reverse_iterator< iterator >       reverse_iterator;
     typedef ft::reverse_iterator< const_iterator > const_reverse_iterator;
-
+	*/
 
 public:
 
