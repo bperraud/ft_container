@@ -37,79 +37,10 @@ void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true
 
 int main() {
 
-		ft::stack<int> *stack = new ft::stack<int>();
-		(void) stack;
-		ft::vector<int> *vect = new ft::vector<int>(5);
+		ft::map<int, int> gquiz1;
 
-		vect->assign(2, 42);
-
-		std::cout << "main capacity " << vect->capacity() << std::endl;
-		std::cout << "main size " << vect->size() << std::endl;
-		std::cout << "main empty " << vect->empty() << std::endl;
-
-		vect->push_back(-9);
-		vect->push_back(3);
-		vect->push_back(45);
-		//vect->pop_back();
-
-		for (ft::vector<int>::const_iterator i = vect->begin(); i != vect->end(); i++ )
-			std::cout << "i : " << *i << std::endl;
-
-		vect->insert(vect->begin(), -1);
-		//vect->erase(vect->begin());
-		vect->erase(vect->begin(), vect->begin() + 2);
-		//vect->insert(vect->begin(), -2);
-		//vect->insert(vect->begin(), vect->begin() , vect->begin() + 3);
-
-		std::cout << "main size " << vect->size() << std::endl;
-
-		for (ft::vector<int>::const_iterator i = vect->begin(); i != vect->end(); i++ )
-			std::cout << "i : " << *i << std::endl;
-
-		vect->resize(5);
-		vect->reserve(50);
-		(*vect)[4] = 12;
-		//vect->insert(vect->begin() + 2, 2, 4);
-		// test quand on depasse la range
-		vect->insert(vect->begin() + 2, vect->begin(), vect->end() );
-		//vect->insert(vect->begin(), 3 , 3);
-
-		for (ft::vector<int>::iterator it = vect->begin(); it != vect->end(); it++ )
-			std::cout << *it << std::endl;
-
-		std::cout << "vec size : " << vect->size() << std::endl;
-
-		//vect->resize(5);
-		//vect->assign(5, 5);
-		vect->assign(vect->begin(), vect->end());
-		//vect->assign(10, -8);
-
-		std::cout << "classic " << *vect << std::endl;
-		//for (ft::vector<int>::const_iterator it = vect->begin(); it != vect->end(); it++ )
-		//	std::cout << *it << std::endl;
-
-		std::cout << "vec size : " << vect->size() << std::endl;
-		std::cout << "vec back : " << vect->back() << std::endl;
-
-		//vect->clear();
-		vect->erase(vect->begin());
-		vect->erase(vect->begin() + 1, vect->end() - 1);
-
-		ft::vector<int> *vec = new ft::vector<int>();
-
-		vect->swap(*vec);
-
-		for (ft::vector<int>::const_iterator y = vect->begin(); y != vect->end(); y++ )
-			std::cout << *y << std::endl;
-
-		std::cout << "deuxieme " << *vect << std::endl;
-
-		delete vec;
-		delete vect;
-		delete stack;
-
-		//vector<int>::iterator ite = vect->begin();
-
+		// insert elements in random order
+		//gquiz1.insert(std::pair<int, int>(1, 40));
 
 		//Info<int> info;
 		//std::cout << vect->at(0) << std::endl;
