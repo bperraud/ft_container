@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/19 18:44:10 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/19 23:23:13 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,50 +39,48 @@ public :
 	typedef std::size_t									size_type;
 
 
-private:
-    // Implementation
+public:
 	struct _Node {
-		const value_type _info;
-		BST left, right;
-		explicit _Node (const value_type& v) : _info(v), left(), right() {}
+		value_type _info;
+		_Node* _left;
+		_Node* _right;
+		explicit _Node (const value_type& v) : _info(v), _left(), _right() {}
 	};
 
+private:
     _Node*				_root;
 	allocator_type		_allocator;
 	key_compare			_key_compare;
 
-
-	_Node*& _findNode (const value_type& v)  {
+	_Node*& _findNode (const value_type& v) {
 		_Node **res = &_root;
 		while (*res)
 		{
-			if (v == (*res)->info) break;
-			else res = v < (*res)->info ? &(*res)->left._root : &(*res)->right._root;
+			if (v == (*res)->_info) break;
+			else res = v < (*res)->_info ? &(*res)->_left : &(*res)->_right;
 		}
 		return *res;   //  pointer to place where v is or should be
 	}
-
-	_Node*& _nextLeaf (const value_type& v)  {
+	_Node*& _nextLeaf (const value_type& v) {
 		_Node **res = &_root;
 		while (*res)
-			res = v < (*res)->info ? &(*res)->left._root : &(*res)->right._root;
+			res = v < (*res)->_info ? &(*res)->_left : &(*res)->_right;
 		return *res;
 	}
-
 	_Node* _erase (_Node*& target) {
 		_Node *const res = target; // saved
 		if (target) {
-			_Node *subst = target->right._root;
+			_Node *subst = target->_right;
 			if (subst) {
 				_Node *father = 0;
-				while (subst->left._root) {father = subst; subst = subst->left._root;}
+				while (subst->_left) {father = subst; subst = subst->_left;}
 				if (father) {
-					father->left._root = subst->right._root;
-					subst->right._root = target->right._root;
+					father->_left = subst->_right;
+					subst->_right = target->_right;
 				}
-				subst->left._root  = target->left._root;
-			} else subst = target->left._root;
-			target->left._root = 0; target->right._root = 0;
+				subst->_left  = target->_left;
+			} else subst = target->_left;
+			target->_left = 0; target->_right = 0;
 			target = subst;
 		}
 		return res;   // old isolated _Node (not yet deleted)
@@ -92,17 +90,37 @@ private:
     {return r ? new _Node(*r) : 0;}
 
 protected:
-    //static const value_type _NOT_FOUND = 0;                      // "not found" element
+    static const value_type _NOT_FOUND;                      // "not found" element
 
 public:
 
     /* ------------------------------ Construction ------------------------------ */
 
 	BST( const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type() )
-		:_root( 0 ), _allocator( alloc ), _key_compare(comp) {
+		: _root( 0 ), _allocator( alloc ), _key_compare(comp) {
 	}
 
 	/* -------------------------------- Observers ------------------------------- */
+
+	bool isEmpty () const {return !_root;}
+
+	bool isNotFound (const value_type& v) {
+		return &v == &_NOT_FOUND;
+	}
+
+	const value_type& find (const value_type& v) const {
+		const _Node *const res = const_cast<BST*>(this)->_findNode(v);
+		return res ? res->_info : _NOT_FOUND;
+	}
+
+	bool exists (const value_type& v) const {return !isNotFound(find(v));}
+
+
+	// Setters
+	const value_type& insert (const value_type& v) {  // always add
+		return (_nextLeaf(v) = new _Node(v))->_info;
+	}
+
 
     //virtual BST& operator= (const BST&);
 
@@ -113,21 +131,14 @@ public:
     //friend inline std::ostream& operator<< (std::ostream&, const BST<U>&);
 
 	// Operator
-	BST &operator++() ;
+	BST &operator++() {
+		//return _nextLeaf (const value_type& v)
+	};
 	BST operator++( int ) ;
 	BST &operator--() ;
 	BST operator--( int ) ;
 
-}; // BST<T>
-
-//template <typename T>
-//const T BST<T>::_NOT_FOUND = 0;
+};
 
 
-//template <typename T>
-//BST<T>::BST( const key_compare &comp = key_compare(), const allocator_type &alloc = node_allocator_type() )
-//	:_root( _end ), _allocator( alloc ),_key_compare( extended_key_compare( _end, comp ) ) {
-//}
-
-
-#endif // _BST_H_
+#endif

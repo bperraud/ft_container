@@ -34,10 +34,26 @@ void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true
 	std::cout << "###############################################" << std::endl;
 }
 
-
+#include <map>
 int main() {
 
-		ft::map<int, int> gquiz1;
+
+		std::map<int, int> map;
+		map.insert(std::pair<int, int>(1, 40));
+		map.insert(std::pair<int, int>(3, 12));
+		map.insert(std::pair<int, int>(2, 3));
+
+		std::map<int, int>::iterator itr;
+		for (itr = map.begin(); itr != map.end(); ++itr) {
+			std::cout << '\t' << itr->first << '\t' << itr->second << '\n';
+		}
+
+		ft::map<int, int> map1;
+
+		map1.insert(std::pair<int, int>(1, 40));
+
+		ft::map<int, int>::iterator custom_itr;
+
 
 		// insert elements in random order
 		//gquiz1.insert(std::pair<int, int>(1, 40));

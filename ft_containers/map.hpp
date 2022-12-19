@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/19 17:07:59 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/19 23:22:20 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,41 +35,50 @@ class map {
         typedef typename U::reference         reference;
         typedef typename U::pointer           pointer;
         typedef typename U::difference_type   difference_type;
-        typedef typename U::iterator_category iterator_category;
+        //typedef typename U::iterator_category iterator_category;
 
     private:
-        U _it;
+        U _tree;
+		typename U::_Node* current_node;
 
     public:
-        normal_iterator() : _it( U() ) {}
-        normal_iterator( const normal_iterator &other ) : _it( other._it ) {}
-        normal_iterator( const U &other ) : _it( other ) {}
-        normal_iterator &operator=( const normal_iterator &other ) {
-            _it = other._it;
-            return *this;
-        }
+        normal_iterator() : _tree( U() ) {}
 
-        normal_iterator &operator++() {
-            _it++;
+		reference operator*() { return *_tree; }
+
+		normal_iterator &operator++() {
+            _tree++;
             return *this;
         }
-        normal_iterator operator++( int ) { return _it++; }
+        normal_iterator operator++( int ) { return _tree++; }
         normal_iterator &operator--() {
-            _it--;
+            _tree--;
             return *this;
         }
-        normal_iterator operator--( int ) { return _it--; }
+        normal_iterator operator--( int ) { return _tree--; }
+
+		/*
+
+        normal_iterator( const normal_iterator &other ) : _tree( other._tree ) {}
+        normal_iterator( const U &other ) : _tree( other ) {}
+        normal_iterator &operator=( const normal_iterator &other ) {
+            _tree = other._tree;
+            return *this;
+        }
 
 
-        reference operator*() { return *_it; }
-        //typename normal_iterator< tree_const_iterator >::reference operator*() const {
-        //    return *_it;
-        //}
+        reference operator*() { return *_tree; }
+        typename normal_iterator< tree_const_iterator >::reference operator*() const {
+            return *_it;
+        }
+		typename normal_iterator< tree_const_iterator >::reference operator*() const {
+            return *_tree;
+        }
 
-        pointer operator->() { return _it.operator->(); }
-        //typename normal_iterator< tree_const_iterator >::pointer operator->() const {
-        //    return _it.operator->();
-        //}
+        pointer operator->() { return _tree.operator->(); }
+        typename normal_iterator< tree_const_iterator >::pointer operator->() const {
+            return _it.operator->();
+        }
 
         template < typename V >
         bool operator==( const normal_iterator< V > &other ) const {
@@ -83,19 +92,17 @@ class map {
         }
         bool operator!=( const U &other ) const { return !( *this == other ); }
 
-        //operator U() const { return U( _it ); }
+        operator U() const { return U( _it ); }
 	};
 
-	/*
         operator normal_iterator< tree_const_iterator >() const {
             return normal_iterator< tree_const_iterator >( _it );
         }
-    };
 	*/
+	};
 
+public :
 	typedef BST<Key, T, Compare, Allocator> 			tree_type;
-
-	//typedef typename BST<Key, T, Compare, Allocator> 	tree_type;
 
 	typedef normal_iterator< tree_type >				iterator;
     typedef normal_iterator< const tree_type >			const_iterator;
@@ -160,6 +167,12 @@ public:
 	mapped_type& at (const key_type& k);
 	const mapped_type& at (const key_type& k) const;
 
+	/* -------------------------------- Modifiers ------------------------------- */
+
+	void insert( const value_type &val ) {
+        _tree.insert( val );
+    }
+
 	/* -------------------------------- Capacity -------------------------------- */
 
 	bool		empty () const {return _size == 0;}
@@ -168,7 +181,7 @@ public:
 
 	/* -------------------------------- Observers ------------------------------- */
 
-    //key_compare   key_comp() const { return key_compare(); }
+    key_compare   key_comp() const { return key_compare(); }
     //value_compare value_comp() const { return value_compare(); }
 
 
