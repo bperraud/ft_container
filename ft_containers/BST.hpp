@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/21 18:32:52 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/21 21:09:44 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,17 +41,22 @@ public :
 public:
 	struct _Node {
 		value_type _info;
-		_Node* _left;
-		_Node* _right;
+		_Node*	_father;
+		_Node*	_left;
+		_Node*	_right;
 
 		explicit _Node () {};
-
-		explicit _Node (const value_type& v) : _info(v), _left(), _right() {}
+		explicit _Node (const value_type& v) : _info(v), _father(), _left(), _right(){}
 
 		// define operator here
 
 		_Node &operator++() {
-			return *_nextLeaf(_info);
+			std::cout << "here ";
+			return *this;
+		}
+		_Node &operator++(int) {
+			std::cout << "here ";
+			return *this;
 		}
 	};
 
@@ -69,38 +74,56 @@ private:
 			if (v == (*res)->_info) break;
 			else res = v < (*res)->_info ? &(*res)->_left : &(*res)->_right;
 		}
-		return *res;   //  pointer to place where v is or should be
+		return *res; //  pointer to place where v is or should be
 	}
+
 	_Node*& _nextLeaf (const value_type& v) {
 		_Node **res = &_root;
 		while (*res)
 			res = v < (*res)->_info ? &(*res)->_left : &(*res)->_right;
 		return *res;
 	}
-	_Node* _erase (_Node*& target) {
-		_Node *const res = target; // saved
-		if (target) {
-			_Node *subst = target->_right;
-			if (subst) {
-				_Node *father = 0;
-				while (subst->_left) {father = subst; subst = subst->_left;}
-				if (father) {
-					father->_left = subst->_right;
-					subst->_right = target->_right;
-				}
-				subst->_left  = target->_left;
-			} else subst = target->_left;
-			target->_left = 0; target->_right = 0;
-			target = subst;
-		}
-		return res;   // old isolated _Node (not yet deleted)
-	}
 
-    static _Node* _cp (const _Node* r) // recursive
-    {return r ? new _Node(*r) : 0;}
+	_Node* _erase (_Node*& target) {
+	_Node *const res = target;  // saved
+	if (target) {
+		_Node* subst = target->_right;
+		if (subst) {
+			_Node* father = 0;
+			while (subst->_left) {
+				father = subst;
+				subst = subst->_left;
+			}
+			if (father) {
+				father->_left = subst->_right;
+				if (subst->_right) {  // Update father of subst->_right
+				subst->_right->_father = father;
+				}
+				subst->_right = target->_right;
+			}
+			subst->_left = target->_left;
+			if (target->_left) {  // Update father of target->_left
+				target->_left->_father = subst;
+			}
+		}
+		else {
+			subst = target->_left;
+			if (subst) {  // Update father of target->_left
+				subst->_father = target->_father;
+			}
+		}
+		target->_left = 0;
+		target->_right = 0;
+		target = subst;
+	}
+	return res;  // old isolated _Node (not yet deleted)
+}
+
+	static _Node* _cp (const _Node* r) // recursive
+	{return r ? new _Node(*r) : 0;}
 
 protected:
-    static const value_type _NOT_FOUND;                      // "not found" element
+	static const value_type _NOT_FOUND;                      // "not found" element
 
 public:
 
@@ -130,13 +153,12 @@ public:
 	_Node* findMin( _Node* node)
 	{
 		if (node == 0)
-			return 0;  // Return a default-constructed value if the tree is empty.
-
+			return 0;
 		_Node* minNode = node;
 		_Node* leftMin = findMin(node->_left);
 		_Node* rightMin = findMin(node->_right);
 		if (leftMin != 0 && leftMin->_info < minNode->_info)
-        	minNode = leftMin;
+			minNode = leftMin;
 		if (rightMin != 0 && rightMin->_info < minNode->_info)
 			minNode = rightMin;
 		return minNode;
@@ -146,7 +168,6 @@ public:
 	const value_type& insert (const value_type& v) {  // always add
 		return (_nextLeaf(v) = new _Node(v))->_info;
 	}
-
 
     //virtual BST& operator= (const BST&);
 

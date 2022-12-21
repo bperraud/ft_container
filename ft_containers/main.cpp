@@ -35,8 +35,8 @@ void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true
 }
 
 #include <map>
-int main() {
 
+int main() {
 
 		std::map<int, int> map;
 		map.insert(std::pair<int, int>(1, 40));
@@ -59,6 +59,7 @@ int main() {
 		ft::map<int, int>::iterator custom_itr;
 
 		custom_itr = map1.begin();
+		custom_itr++;
 
 		std::cout << custom_itr->second << std::endl;
 

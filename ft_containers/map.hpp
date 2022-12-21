@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/21 18:41:37 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/21 19:13:45 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,15 +54,24 @@ public :
 		normal_iterator(node_pointer node) : _current_node( node ) {}
 
 		normal_iterator &operator++() {
-            _current_node++;
+			node_reference node = *_current_node;
+            node++;
+			_current_node = &node;
             return *this;
         }
-        normal_iterator operator++( int ) { return _tree++; }
+
+        normal_iterator operator++( int ) {
+			node_reference node = *_current_node;
+            node++;
+			_current_node = &node;
+			return *this;
+		}
+
         normal_iterator &operator--() {
-            _tree--;
+            _current_node--;
             return *this;
         }
-        normal_iterator operator--( int ) { return _tree--; }
+        normal_iterator operator--( int ) { return _current_node--; }
 
 		pointer operator->() { return &_current_node->_info; }
 
