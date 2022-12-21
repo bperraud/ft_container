@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/19 23:23:13 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/21 18:32:52 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,13 @@
 
 #include  <cstddef>             // nullptr_t, size_t, ptrdiff_t, byte...
 #include  <ostream>             // output streams
-
+#include "map.hpp"
 template<
     class Key,														// map::key_type
     class T,														// map::mapped_type
     class Compare = std::less<Key>,									// map::key_compare
     class Allocator = std::allocator<std::pair<const Key, T> > >	// map::allocator_type
 class BST {
-
 
 public :
 	typedef Key											key_type;
@@ -44,11 +43,22 @@ public:
 		value_type _info;
 		_Node* _left;
 		_Node* _right;
+
+		explicit _Node () {};
+
 		explicit _Node (const value_type& v) : _info(v), _left(), _right() {}
+
+		// define operator here
+
+		_Node &operator++() {
+			return *_nextLeaf(_info);
+		}
 	};
 
-private:
+public:
     _Node*				_root;
+
+private:
 	allocator_type		_allocator;
 	key_compare			_key_compare;
 
@@ -102,6 +112,8 @@ public:
 
 	/* -------------------------------- Observers ------------------------------- */
 
+	_Node*	getRoot() const {return _root;}
+
 	bool isEmpty () const {return !_root;}
 
 	bool isNotFound (const value_type& v) {
@@ -115,6 +127,20 @@ public:
 
 	bool exists (const value_type& v) const {return !isNotFound(find(v));}
 
+	_Node* findMin( _Node* node)
+	{
+		if (node == 0)
+			return 0;  // Return a default-constructed value if the tree is empty.
+
+		_Node* minNode = node;
+		_Node* leftMin = findMin(node->_left);
+		_Node* rightMin = findMin(node->_right);
+		if (leftMin != 0 && leftMin->_info < minNode->_info)
+        	minNode = leftMin;
+		if (rightMin != 0 && rightMin->_info < minNode->_info)
+			minNode = rightMin;
+		return minNode;
+	}
 
 	// Setters
 	const value_type& insert (const value_type& v) {  // always add
@@ -129,14 +155,6 @@ public:
     // Associated function
     //template <typename U>
     //friend inline std::ostream& operator<< (std::ostream&, const BST<U>&);
-
-	// Operator
-	BST &operator++() {
-		//return _nextLeaf (const value_type& v)
-	};
-	BST operator++( int ) ;
-	BST &operator--() ;
-	BST operator--( int ) ;
 
 };
 

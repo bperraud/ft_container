@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/19 23:22:20 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/21 18:41:37 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,10 @@ template<
     class Allocator = std::allocator<std::pair<const Key, T> > >	// map::allocator_type
 class map {
 
+
+public :
+	typedef BST<Key, T, Compare, Allocator> 			tree_type;
+
 	// iterator class
     template <typename U>
 	class normal_iterator {
@@ -35,19 +39,22 @@ class map {
         typedef typename U::reference         reference;
         typedef typename U::pointer           pointer;
         typedef typename U::difference_type   difference_type;
+
+		typedef typename U::_Node				node_reference;
+		typedef typename U::_Node*				node_pointer;
+
         //typedef typename U::iterator_category iterator_category;
 
     private:
-        U _tree;
-		typename U::_Node* current_node;
+		node_pointer _current_node;
 
     public:
-        normal_iterator() : _tree( U() ) {}
+        normal_iterator() : _current_node() {}
 
-		reference operator*() { return *_tree; }
+		normal_iterator(node_pointer node) : _current_node( node ) {}
 
 		normal_iterator &operator++() {
-            _tree++;
+            _current_node++;
             return *this;
         }
         normal_iterator operator++( int ) { return _tree++; }
@@ -56,6 +63,13 @@ class map {
             return *this;
         }
         normal_iterator operator--( int ) { return _tree--; }
+
+		pointer operator->() { return &_current_node->_info; }
+
+
+		reference operator*() { return _current_node->_info; }
+		reference operator*() const { return _current_node->_info;}
+
 
 		/*
 
@@ -101,20 +115,21 @@ class map {
 	*/
 	};
 
-public :
-	typedef BST<Key, T, Compare, Allocator> 			tree_type;
-
-	typedef normal_iterator< tree_type >				iterator;
-    typedef normal_iterator< const tree_type >			const_iterator;
-    typedef ft::reverse_iterator< iterator >			reverse_iterator;
-    typedef ft::reverse_iterator< const_iterator >		const_reverse_iterator;
-
 	/*
     typedef normal_iterator< tree_iterator >			iterator;
     typedef normal_iterator< tree_const_iterator >		const_iterator;
     typedef ft::reverse_iterator< iterator >			reverse_iterator;
     typedef ft::reverse_iterator< const_iterator >		const_reverse_iterator;
 	*/
+
+public :
+	//typedef BST<Key, T, Compare, Allocator> 			tree_type;
+
+	typedef normal_iterator< tree_type >				iterator;
+    typedef normal_iterator< const tree_type >			const_iterator;
+    typedef ft::reverse_iterator< iterator >			reverse_iterator;
+    typedef ft::reverse_iterator< const_iterator >		const_reverse_iterator;
+
 
 public:
 
@@ -159,6 +174,23 @@ public:
 	const allocator_type& alloc = allocator_type()) {
 	}
 
+	/* -------------------------------- Iterators ------------------------------- */
+
+	iterator 				begin() {return _tree.findMin(_tree.getRoot()); }
+
+	/*
+	iterator 				end() { return _vector._data + _vector._size; }
+	const_iterator 			begin() const { return _vector._data; }
+	const_iterator 			end() const  { return begin() + _vector._size; }
+	reverse_iterator 		rbegin() {return begin() + _vector._size ;}
+	reverse_iterator 		rend() { return _vector._data ; }
+	const_reverse_iterator 	rbegin() const {return begin() + _vector._size ;}
+	const_reverse_iterator 	rend() const { return _vector._data; }
+	const_iterator 			cbegin() const { return _vector._data;}
+	const_iterator 			cend() const { return begin() + _vector._size; }
+	const_reverse_iterator 	crbegin() const {return begin() + _vector._size ;}
+	const_reverse_iterator 	crend() const { return _vector._data ; }
+	*/
 
 	/* ----------------------------- Element access ----------------------------- */
 

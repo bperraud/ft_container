@@ -50,10 +50,17 @@ int main() {
 
 		ft::map<int, int> map1;
 
+		BST<int, int> bst;
+
 		map1.insert(std::pair<int, int>(1, 40));
+		map1.insert(std::pair<int, int>(3, 12));
+		map1.insert(std::pair<int, int>(2, 3));
 
 		ft::map<int, int>::iterator custom_itr;
 
+		custom_itr = map1.begin();
+
+		std::cout << custom_itr->second << std::endl;
 
 		// insert elements in random order
 		//gquiz1.insert(std::pair<int, int>(1, 40));
