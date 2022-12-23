@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/21 19:13:45 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/23 13:52:27 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ public :
         typedef typename U::pointer           pointer;
         typedef typename U::difference_type   difference_type;
 
-		typedef typename U::_Node				node_reference;
-		typedef typename U::_Node*				node_pointer;
+		typedef typename U::node_reference				node_reference;
+		typedef typename U::node_pointer				node_pointer;
 
         //typedef typename U::iterator_category iterator_category;
 
@@ -54,24 +54,23 @@ public :
 		normal_iterator(node_pointer node) : _current_node( node ) {}
 
 		normal_iterator &operator++() {
-			node_reference node = *_current_node;
-            node++;
-			_current_node = &node;
+			_current_node = _current_node->next(_current_node);
             return *this;
         }
 
         normal_iterator operator++( int ) {
-			node_reference node = *_current_node;
-            node++;
-			_current_node = &node;
+			_current_node = _current_node->next(_current_node);
 			return *this;
 		}
 
         normal_iterator &operator--() {
-            _current_node--;
+            _current_node = _current_node->previous(_current_node);
             return *this;
         }
-        normal_iterator operator--( int ) { return _current_node--; }
+        normal_iterator operator--( int ) {
+            _current_node = _current_node->previous(_current_node);
+			return *this;
+		}
 
 		pointer operator->() { return &_current_node->_info; }
 
@@ -181,6 +180,10 @@ public:
 	template <class InputIterator>
 	map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
 	const allocator_type& alloc = allocator_type()) {
+		(void) first;
+		(void) last;
+		(void) comp;
+		(void) alloc;
 	}
 
 	/* -------------------------------- Iterators ------------------------------- */

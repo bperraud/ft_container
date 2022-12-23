@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/21 21:09:44 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/23 14:03:56 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,17 +50,57 @@ public:
 
 		// define operator here
 
-		_Node &operator++() {
-			std::cout << "here ";
-			return *this;
+		//_Node &operator++() {
+		//	this = next(this);
+		//	return *this;
+		//}
+		//_Node &operator++(int) {
+		//	this = next(this);
+		//	return *this;
+		//}
+
+		_Node* next(_Node *node) {
+			if (!node) return 0;
+			if (node->_right) {
+				// Find leftmost node in right subtree
+				node = node->_right;
+				while (node->_left) node = node->_left;
+				return node;
+			}
+			// Go up the tree until we find an ancestor whose left child is also an ancestor
+			_Node *ancestor = node->_father;
+			while (ancestor && ancestor->_left != node) {
+				node = ancestor;
+				ancestor = ancestor->_father;
+			}
+			return ancestor;
 		}
-		_Node &operator++(int) {
-			std::cout << "here ";
-			return *this;
+
+		_Node* previous(_Node *node) {
+			if (!node)
+				return 0;
+			if (node->_left) {
+				// Find rightmost node in left subtree
+				node = node->_left;
+				while (node->_right) node = node->_right;
+				return node;
+			}
+			// Go up the tree until we find an ancestor whose right child is also an ancestor
+			_Node *ancestor = node->_father;
+			while (ancestor && ancestor->_right != node) {
+				node = ancestor;
+				ancestor = ancestor->_father;
+			}
+			return ancestor;
 		}
 	};
 
 public:
+  typedef _Node& node_reference;
+  typedef _Node* node_pointer;
+
+
+private:
     _Node*				_root;
 
 private:
@@ -85,39 +125,39 @@ private:
 	}
 
 	_Node* _erase (_Node*& target) {
-	_Node *const res = target;  // saved
-	if (target) {
-		_Node* subst = target->_right;
-		if (subst) {
-			_Node* father = 0;
-			while (subst->_left) {
-				father = subst;
-				subst = subst->_left;
-			}
-			if (father) {
-				father->_left = subst->_right;
-				if (subst->_right) {  // Update father of subst->_right
-				subst->_right->_father = father;
+		_Node *const res = target;  // saved
+		if (target) {
+			_Node* subst = target->_right;
+			if (subst) {
+				_Node* father = 0;
+				while (subst->_left) {
+					father = subst;
+					subst = subst->_left;
 				}
-				subst->_right = target->_right;
+				if (father) {
+					father->_left = subst->_right;
+					if (subst->_right) {  // Update father of subst->_right
+					subst->_right->_father = father;
+					}
+					subst->_right = target->_right;
+				}
+				subst->_left = target->_left;
+				if (target->_left) {  // Update father of target->_left
+					target->_left->_father = subst;
+				}
 			}
-			subst->_left = target->_left;
-			if (target->_left) {  // Update father of target->_left
-				target->_left->_father = subst;
+			else {
+				subst = target->_left;
+				if (subst) {  // Update father of target->_left
+					subst->_father = target->_father;
+				}
 			}
+			target->_left = 0;
+			target->_right = 0;
+			target = subst;
 		}
-		else {
-			subst = target->_left;
-			if (subst) {  // Update father of target->_left
-				subst->_father = target->_father;
-			}
-		}
-		target->_left = 0;
-		target->_right = 0;
-		target = subst;
+		return res;  // old isolated _Node (not yet deleted)
 	}
-	return res;  // old isolated _Node (not yet deleted)
-}
 
 	static _Node* _cp (const _Node* r) // recursive
 	{return r ? new _Node(*r) : 0;}
@@ -165,9 +205,38 @@ public:
 	}
 
 	// Setters
-	const value_type& insert (const value_type& v) {  // always add
-		return (_nextLeaf(v) = new _Node(v))->_info;
+	//const value_type& insert (const value_type& v) {  // always add
+	//	return (_nextLeaf(v) = new _Node(v))->_info;
+	//}
+
+	void insert(const value_type& val) {
+		_Node *curr = _root;
+		while (curr) {
+			if (val < curr->_info) {
+				if (curr->_left) {
+					curr = curr->_left;
+				}
+				else {
+					curr->_left = new _Node(val);
+					curr->_left->_father = curr;
+					break;
+				}
+			}
+			else {
+				if (curr->_right) {
+					curr = curr->_right;
+				} else {
+					curr->_right = new _Node(val);
+					curr->_right->_father = curr;
+					break;
+				}
+			}
+		}
+		if (!_root) {
+			_root = new _Node(val);
+		}
 	}
+
 
     //virtual BST& operator= (const BST&);
 
