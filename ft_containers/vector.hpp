@@ -176,9 +176,9 @@ public:
 	const_iterator 			end() const  { return begin() + _vector._size; }
 	reverse_iterator 		rbegin() {return begin() + _vector._size ;}
 	reverse_iterator 		rend() { return _vector._data ; }
-	const_reverse_iterator 	rbegin() const {return begin() + _vector._size ;}
+	const_reverse_iterator 	rbegin() const {return begin() + _vector._size;}
 	const_reverse_iterator 	rend() const { return _vector._data; }
-	const_iterator 			cbegin() const { return _vector._data;}
+	const_iterator 			cbegin() const { return _vector._data; }
 	const_iterator 			cend() const { return begin() + _vector._size; }
 	const_reverse_iterator 	crbegin() const {return begin() + _vector._size ;}
 	const_reverse_iterator 	crend() const { return _vector._data ; }

@@ -44,17 +44,27 @@ int main() {
 		map.insert(std::pair<int, int>(2, 3));
 
 		std::map<int, int>::iterator itr;
+
+		itr = map.begin();
+		itr++;
+		itr++;
+		std::cout << itr->second << std::endl;
+
 		for (itr = map.begin(); itr != map.end(); ++itr) {
 			std::cout << '\t' << itr->first << '\t' << itr->second << '\n';
 		}
 
 		ft::map<int, int> map1;
-
 		BST<int, int> bst;
 
 		map1.insert(std::pair<int, int>(1, 40));
 		map1.insert(std::pair<int, int>(3, 12));
 		map1.insert(std::pair<int, int>(2, 3));
+
+		std::cout << " find 3 : " << map1.find(3) << std::endl;
+
+		ft::map<int, int>::reverse_iterator reverse_custom_itr;
+		//reverse_custom_itr = map1.rend();
 
 		ft::map<int, int>::iterator custom_itr;
 

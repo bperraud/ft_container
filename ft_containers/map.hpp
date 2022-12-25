@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/23 13:52:27 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/25 22:52:58 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ template<
     class Allocator = std::allocator<std::pair<const Key, T> > >	// map::allocator_type
 class map {
 
-
 public :
 	typedef BST<Key, T, Compare, Allocator> 			tree_type;
 
@@ -35,21 +34,23 @@ public :
     template <typename U>
 	class normal_iterator {
     public:
-        typedef typename U::value_type        value_type;
-        typedef typename U::reference         reference;
-        typedef typename U::pointer           pointer;
-        typedef typename U::difference_type   difference_type;
+        typedef typename U::value_type			value_type;
+        typedef typename U::reference			reference;
+        typedef typename U::pointer				pointer;
+        typedef typename U::difference_type		difference_type;
+		typedef std::bidirectional_iterator_tag iterator_category;
 
-		typedef typename U::node_reference				node_reference;
-		typedef typename U::node_pointer				node_pointer;
+
+		typedef typename U::node_reference		node_reference;
+		typedef typename U::node_pointer		node_pointer;
 
         //typedef typename U::iterator_category iterator_category;
 
     private:
-		node_pointer _current_node;
+		node_pointer	_current_node;
 
     public:
-        normal_iterator() : _current_node() {}
+		normal_iterator() : _current_node() {}
 
 		normal_iterator(node_pointer node) : _current_node( node ) {}
 
@@ -188,21 +189,18 @@ public:
 
 	/* -------------------------------- Iterators ------------------------------- */
 
-	iterator 				begin() {return _tree.findMin(_tree.getRoot()); }
-
-	/*
-	iterator 				end() { return _vector._data + _vector._size; }
-	const_iterator 			begin() const { return _vector._data; }
-	const_iterator 			end() const  { return begin() + _vector._size; }
-	reverse_iterator 		rbegin() {return begin() + _vector._size ;}
-	reverse_iterator 		rend() { return _vector._data ; }
-	const_reverse_iterator 	rbegin() const {return begin() + _vector._size ;}
-	const_reverse_iterator 	rend() const { return _vector._data; }
-	const_iterator 			cbegin() const { return _vector._data;}
-	const_iterator 			cend() const { return begin() + _vector._size; }
-	const_reverse_iterator 	crbegin() const {return begin() + _vector._size ;}
-	const_reverse_iterator 	crend() const { return _vector._data ; }
-	*/
+	iterator 				begin() {return _tree.findMin(); }
+	iterator 				end() { return _tree.findMin();}
+	const_iterator 			begin() const { return _tree.findMin(); }
+	const_iterator 			end() const  { return _tree.findMin();}
+	reverse_iterator 		rbegin() {return _tree.findMin();}
+	reverse_iterator 		rend() { return iterator(_tree.findMin());}
+	const_reverse_iterator 	rbegin() const {return _tree.findMin();}
+	const_reverse_iterator 	rend() const { return _tree.findMin(); }
+	const_iterator 			cbegin() const { return _tree.findMin(); }
+	const_iterator 			cend() const { return _tree.findMin();}
+	const_reverse_iterator 	crbegin() const {return _tree.findMin();}
+	const_reverse_iterator 	crend() const { return _tree.findMin();}
 
 	/* ----------------------------- Element access ----------------------------- */
 
@@ -216,6 +214,15 @@ public:
 	void insert( const value_type &val ) {
         _tree.insert( val );
     }
+
+
+	//iterator find (const key_type& k) {
+	bool find (const key_type& k) {
+		return _tree.find(k) ? true : false;
+	}
+
+	const_iterator find (const key_type& k) const;
+
 
 	/* -------------------------------- Capacity -------------------------------- */
 
