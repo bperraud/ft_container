@@ -55,24 +55,32 @@ int main() {
 		}
 
 		ft::map<int, int> map1;
+
 		BST<int, int> bst;
+
 
 		map1.insert(std::pair<int, int>(1, 40));
 		map1.insert(std::pair<int, int>(3, 12));
 		map1.insert(std::pair<int, int>(2, 3));
 
-		map1.find(3);
+		//map1.find(3);
 
 		ft::map<int, int>::reverse_iterator reverse_custom_itr;
 		//reverse_custom_itr = map1.rend();
 
-		ft::map<int, int>::iterator custom_itr;
+		ft::map<int, int>::iterator begin_itr;
+		ft::map<int, int>::iterator end_itr;
 
-		custom_itr = map1.begin();
-		custom_itr++;
-		custom_itr++;
+		begin_itr = map1.begin();
+		end_itr = map1.end();
+		begin_itr++;
+		begin_itr++;
 
-		std::cout << custom_itr->second << std::endl;
+		end_itr--;
+
+		std::cout << end_itr->second << std::endl;
+
+		return 0;
 
 		// insert elements in random order
 		//gquiz1.insert(std::pair<int, int>(1, 40));

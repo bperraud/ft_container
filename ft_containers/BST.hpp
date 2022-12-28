@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/28 12:06:47 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/28 19:22:12 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,6 @@ private:
 		_Node* next(_Node *node) {	//remplacer node par this
 			if (!node)
 				return 0;
-
-			//if (past the end) {
-			//	return 0;
-			//}
-
 			if (node->_right) {
 				// Find leftmost node in right subtree
 				node = node->_right;
@@ -68,19 +63,12 @@ private:
 				node = ancestor;
 				ancestor = ancestor->_father;
 			}
-			//if (!ancestor)
-				//return past the end;
 			return ancestor;
 		}
 
 		_Node* previous(_Node *node) {
 			if (!node)
 				return 0;
-
-			//if (past the end) {
-			//	return node->_father;
-			//}
-
 			if (node->_left) {
 				// Find rightmost node in left subtree
 				node = node->_left;
@@ -103,12 +91,13 @@ public :
 
 private :
 	class extended_key_compare {
-			node_pointer _end;
-			node_pointer _rend;
-			key_compare  _comp;
+		node_pointer	_end;
+		node_pointer	_rend;
+		key_compare		_comp;
+
 	public:
-	extended_key_compare( node_pointer end, node_pointer rend, const key_compare &comp = key_compare() )
-	: _end(end), _rend(rend), _comp(comp) {}
+		extended_key_compare( node_pointer end, node_pointer rend, const key_compare &comp )
+		: _end(end), _rend(rend), _comp(comp) {}
 
 	bool operator()( const key_type &a, const key_type &b ) const {
 		if ( &a == &_end->_info.first ) { return false; }
@@ -136,7 +125,8 @@ public:
     /* ------------------------------ Construction ------------------------------ */
 
 	BST( const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type() )
-		: _root( 0 ), _end(0), _rend(0), _allocator( alloc ), _key_compare( extended_key_compare(_end, _rend, comp)) {
+		: _root( 0 ), _end(new _Node(value_type())), _rend(new _Node(value_type())), _allocator( alloc ),
+		_key_compare( extended_key_compare(_end, _rend, comp)) {
 	}
 
 	/* -------------------------------- Observers ------------------------------- */
@@ -173,6 +163,11 @@ public:
 		return current;
 	}
 
+	_Node*	getEnd()
+	{
+		return _end;
+	}
+
 	_Node* findMax()
 	{
 		if (_root == 0)
@@ -189,6 +184,10 @@ public:
 	//const value_type& insert (const value_type& v) {  // always add
 	//	return (_nextLeaf(v) = new _Node(v))->_info;
 	//}
+
+	bool	isEmpty() {
+		return _root->_right == _end && _root->_left == _rend;
+	}
 
 	void insert(const value_type& val) {
 		_Node *curr = _root;
@@ -215,13 +214,22 @@ public:
 		}
 		if (!_root) {
 			_root = new _Node(val);
+			_root->_right = _end;
+			_root->_left = _rend;
+			_end->_father = _root;
+			_rend->_father = _root;
 		}
 	}
 
     //virtual BST& operator= (const BST&);
 
     // Destructor
-    virtual ~BST () {delete _root;}  // recursive
+    virtual ~BST () {
+		delete _root;
+		delete _end;
+		delete _rend;
+	}  // recursive
+
     // Associated function
     //template <typename U>
     //friend inline std::ostream& operator<< (std::ostream&, const BST<U>&);
