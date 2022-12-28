@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/25 23:07:40 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/28 12:19:24 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,7 +213,10 @@ public:
 
 	void insert( const value_type &val ) {
 		if (!_exists(val.first))
+		{
 			_tree.insert( val );
+			_size +=1 ;
+		}
     }
 
 	iterator find (const key_type& k) {
