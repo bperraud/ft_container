@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/25 22:52:58 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/25 23:07:40 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,13 +212,12 @@ public:
 	/* -------------------------------- Modifiers ------------------------------- */
 
 	void insert( const value_type &val ) {
-        _tree.insert( val );
+		if (!_exists(val.first))
+			_tree.insert( val );
     }
 
-
-	//iterator find (const key_type& k) {
-	bool find (const key_type& k) {
-		return _tree.find(k) ? true : false;
+	iterator find (const key_type& k) {
+		return _tree.find(k);
 	}
 
 	const_iterator find (const key_type& k) const;
@@ -239,6 +238,13 @@ public:
 	/* -------------------------------- Destructor ------------------------------ */
 
 	~map () {};
+
+private :
+
+	bool _exists (const key_type &k) {
+		return _tree.find(k) ? true : false;
+	}
+
 };
 
 } //namespace ft

@@ -61,7 +61,7 @@ int main() {
 		map1.insert(std::pair<int, int>(3, 12));
 		map1.insert(std::pair<int, int>(2, 3));
 
-		std::cout << " find 3 : " << map1.find(3) << std::endl;
+		map1.find(3);
 
 		ft::map<int, int>::reverse_iterator reverse_custom_itr;
 		//reverse_custom_itr = map1.rend();

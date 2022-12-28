@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/25 22:56:07 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/28 12:06:47 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,14 +97,36 @@ private:
 		}
 	};
 
-public:
+public :
 	typedef _Node&		node_reference;
 	typedef _Node*		node_pointer;
 
+private :
+	class extended_key_compare {
+			node_pointer _end;
+			node_pointer _rend;
+			key_compare  _comp;
+	public:
+	extended_key_compare( node_pointer end, node_pointer rend, const key_compare &comp = key_compare() )
+	: _end(end), _rend(rend), _comp(comp) {}
+
+	bool operator()( const key_type &a, const key_type &b ) const {
+		if ( &a == &_end->_info.first ) { return false; }
+		if ( &b == &_end->_info.first ) { return true; }
+		if ( &a == &_rend->_info.first ) { return true; }
+		if ( &b == &_rend->_info.first ) { return false; }
+			return _comp( a, b );
+		}
+        const key_compare &key_comp() const { return _comp; }
+    };
+
+
 private:
-    _Node*				_root;
-	allocator_type		_allocator;
-	key_compare			_key_compare;
+    _Node*					_root;
+	_Node*					_end;
+	_Node*					_rend;
+	allocator_type			_allocator;
+	extended_key_compare	_key_compare;
 
 protected:
 	static const value_type _NOT_FOUND;                      // "not found" element
@@ -114,7 +136,7 @@ public:
     /* ------------------------------ Construction ------------------------------ */
 
 	BST( const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type() )
-		: _root( 0 ), _allocator( alloc ), _key_compare(comp) {
+		: _root( 0 ), _end(0), _rend(0), _allocator( alloc ), _key_compare( extended_key_compare(_end, _rend, comp)) {
 	}
 
 	/* -------------------------------- Observers ------------------------------- */
@@ -131,7 +153,6 @@ public:
 	}
 
 	_Node* find (const key_type& k) {
-		//_Node *const res = const_cast<BST*>(this)->_findNode(k);
 		return _findNode(k);
 	}
 
@@ -211,9 +232,15 @@ private:
 		_Node **res = &_root;
 		while (*res)
 		{
-			if (k == (*res)->_info.first) break;
-			//else res = v < (*res)->_info ? &(*res)->_left : &(*res)->_right;
-			else res = _key_compare(k, (*res)->_info.first) ? &(*res)->_left : &(*res)->_right;
+			if ( _key_compare(k, (*res)->_info.first)) {
+				res = &(*res)->_left;
+			}
+			else if (_key_compare((*res)->_info.first, k)) {
+				res = &(*res)->_right;
+			}
+			else {
+				break;
+			}
 		}
 		return *res; //  pointer to place where v is or should be
 	}
