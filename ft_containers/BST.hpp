@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/28 19:22:12 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/28 20:26:23 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,8 @@ private:
 		explicit _Node () {};
 		explicit _Node (const value_type& v) : _info(v), _father(), _left(), _right(){}
 
-		_Node* next(_Node *node) {	//remplacer node par this
-			if (!node)
-				return 0;
+		_Node* next() {
+			_Node *node = this;
 			if (node->_right) {
 				// Find leftmost node in right subtree
 				node = node->_right;
@@ -66,9 +65,8 @@ private:
 			return ancestor;
 		}
 
-		_Node* previous(_Node *node) {
-			if (!node)
-				return 0;
+		_Node* previous() {
+			_Node *node = this;
 			if (node->_left) {
 				// Find rightmost node in left subtree
 				node = node->_left;
@@ -111,9 +109,9 @@ private :
 
 
 private:
-    _Node*					_root;
-	_Node*					_end;
-	_Node*					_rend;
+    node_pointer			_root;
+	node_pointer			_end;
+	node_pointer			_rend;
 	allocator_type			_allocator;
 	extended_key_compare	_key_compare;
 
@@ -125,7 +123,7 @@ public:
     /* ------------------------------ Construction ------------------------------ */
 
 	BST( const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type() )
-		: _root( 0 ), _end(new _Node(value_type())), _rend(new _Node(value_type())), _allocator( alloc ),
+		: _root(0), _end(new _Node()), _rend(new _Node()), _allocator(alloc),
 		_key_compare( extended_key_compare(_end, _rend, comp)) {
 	}
 
@@ -137,22 +135,41 @@ public:
 		return &v == &_NOT_FOUND;
 	}
 
+/*
 	const value_type& find (const value_type& v) const {
 		const _Node *const res = const_cast<BST*>(this)->_findNode(v);
 		return res ? res->_info : _NOT_FOUND;
 	}
+	*/
 
-	_Node* find (const key_type& k) {
-		return _findNode(k);
+	node_pointer find (const key_type& key) const {
+		node_pointer node = _findNode(key);
+		if (node)
+			return node;
+		else
+		{
+			return _end;
+		}
 	}
 
 	// true if Key of v is in tree
-	bool exists (const value_type& v) const {
-		return !isNotFound(find(v));
+	bool exists (const key_type& key) const {
+		return find(key) != _end;
 	}
 
-	_Node* findMin()
-	{
+	node_pointer	end() {
+		return _end;
+	}
+
+	node_pointer	begin() {
+		return _rend->next();
+	}
+
+	node_pointer	rend() {
+		return _rend;
+	}
+
+	node_pointer findMin() {
 		if (_root == 0)
 			return 0;
 		_Node* current = _root;
@@ -163,13 +180,7 @@ public:
 		return current;
 	}
 
-	_Node*	getEnd()
-	{
-		return _end;
-	}
-
-	_Node* findMax()
-	{
+	node_pointer findMax() {
 		if (_root == 0)
 			return 0;
 		_Node* current = _root;
@@ -236,6 +247,24 @@ public:
 
 private:
 
+	_Node* _findNode (const key_type& k) const {
+		_Node *res = _root;
+		while (res)
+		{
+			if ( _key_compare(k, (res)->_info.first)) {
+				res = res->_left;
+			}
+			else if (_key_compare((res)->_info.first, k)) {
+				res = res->_right;
+			}
+			else {
+				return res;
+			}
+		}
+		return 0; //  if not found return 0
+	}
+
+	/*
 	_Node*& _findNode (const key_type& k) {
 		_Node **res = &_root;
 		while (*res)
@@ -252,6 +281,7 @@ private:
 		}
 		return *res; //  pointer to place where v is or should be
 	}
+	*/
 
 	_Node*& _nextLeaf (const value_type& v) {
 		_Node **res = &_root;

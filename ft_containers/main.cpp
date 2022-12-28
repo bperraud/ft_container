@@ -71,14 +71,21 @@ int main() {
 		ft::map<int, int>::iterator begin_itr;
 		ft::map<int, int>::iterator end_itr;
 
+		ft::map<int, int>::iterator find_elem;
+
 		begin_itr = map1.begin();
 		end_itr = map1.end();
 		begin_itr++;
-		begin_itr++;
-
 		end_itr--;
 
+		//return 0;
+		find_elem = map1.find(9);
+
+		std::cout << find_elem->second << std::endl;
+
 		std::cout << end_itr->second << std::endl;
+
+		std::cout << begin_itr->second << std::endl;
 
 		return 0;
 

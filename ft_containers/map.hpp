@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/28 19:01:38 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/28 20:24:29 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,21 +55,21 @@ public :
 		normal_iterator(node_pointer node) : _current_node( node ) {}
 
 		normal_iterator &operator++() {
-			_current_node = _current_node->next(_current_node);
+			_current_node = _current_node->next();
             return *this;
         }
 
         normal_iterator operator++( int ) {
-			_current_node = _current_node->next(_current_node);
+			_current_node = _current_node->next();
 			return *this;
 		}
 
         normal_iterator &operator--() {
-            _current_node = _current_node->previous(_current_node);
+            _current_node = _current_node->previous();
             return *this;
         }
         normal_iterator operator--( int ) {
-            _current_node = _current_node->previous(_current_node);
+            _current_node = _current_node->previous();
 			return *this;
 		}
 
@@ -189,22 +189,24 @@ public:
 
 	/* -------------------------------- Iterators ------------------------------- */
 
-	iterator 				begin() {return _tree.findMin(); }
-	iterator 				end() { return _tree.getEnd();}
-	const_iterator 			begin() const { return _tree.findMin(); }
-	const_iterator 			end() const  { return _tree.findMin();}
-	reverse_iterator 		rbegin() {return _tree.findMin();}
-	reverse_iterator 		rend() { return iterator(_tree.findMin());}
-	const_reverse_iterator 	rbegin() const {return _tree.findMin();}
-	const_reverse_iterator 	rend() const { return _tree.findMin(); }
-	const_iterator 			cbegin() const { return _tree.findMin(); }
-	const_iterator 			cend() const { return _tree.findMin();}
-	const_reverse_iterator 	crbegin() const {return _tree.findMin();}
-	const_reverse_iterator 	crend() const { return _tree.findMin();}
+	iterator 				begin() {return _tree.begin(); }
+	iterator 				end() { return _tree.end();}
+	const_iterator 			begin() const { return _tree.begin(); }
+	const_iterator 			end() const  { return _tree.end();}
+	reverse_iterator 		rbegin() {return iterator(_tree.end());}
+	reverse_iterator 		rend() { return iterator(_tree.begin());}
+	const_reverse_iterator 	rbegin() const {return iterator(_tree.end());}
+	const_reverse_iterator 	rend() const { return iterator(_tree.begin()); }
+	const_iterator 			cbegin() const { return _tree.begin(); }
+	const_iterator 			cend() const { return _tree.end();}
+	const_reverse_iterator 	crbegin() const {return iterator(_tree.end());}
+	const_reverse_iterator 	crend() const { return iterator(_tree.begin());}
 
 	/* ----------------------------- Element access ----------------------------- */
 
-	mapped_type& operator[] (const key_type& k);
+	mapped_type& operator[] (const key_type& k) {
+		;
+	}
 
 	mapped_type& at (const key_type& k);
 	const mapped_type& at (const key_type& k) const;
@@ -223,7 +225,9 @@ public:
 		return _tree.find(k);
 	}
 
-	const_iterator find (const key_type& k) const;
+	const_iterator find (const key_type& k) const {
+		return _tree.find(k);
+	}
 
 
 	/* -------------------------------- Capacity -------------------------------- */
@@ -245,7 +249,7 @@ public:
 private :
 
 	bool _exists (const key_type &k) {
-		return _tree.find(k) ? true : false;
+		return _tree.exists(k);
 	}
 
 };
