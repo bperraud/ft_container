@@ -39,14 +39,6 @@ struct pair {
 	}
 	~pair() {}
 
-	void swap(pair& other)
-	{
-		if (this == &other)
-			return;
-		ft::swap(first, other.first);
-		ft::swap(second, other.second);
-	}
-
 	bool operator==( const pair &other ) const {
 		return ( first == other.first && second == other.second );
 	}

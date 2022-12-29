@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/29 13:03:23 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/29 19:57:05 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,11 +166,23 @@ public:
 		return _end;
 	}
 
+	 node_pointer	end() const {
+		return _end;
+	}
+
 	node_pointer	begin() {
 		return _rend->next();
 	}
 
+	 node_pointer	begin() const {
+		return _rend->next();
+	}
+
 	node_pointer	rend() {
+		return _rend;
+	}
+
+	 node_pointer	rend() const {
 		return _rend;
 	}
 
@@ -235,12 +247,68 @@ public:
 			_end->_father = _root;
 			_rend->_father = _root;
 		}
-		return ft::pair<node_pointer, bool>(_root, false);;
+		return ft::pair<node_pointer, bool>(_root, false);
+	}
+
+	ft::pair<node_pointer, bool> insert(node_pointer position, const value_type& val) {
+		if (!_root) {
+			_root = new _Node(val);
+			_root->_right = _end;
+			_root->_left = _rend;
+			_end->_father = _root;
+			_rend->_father = _root;
+		}
+		if (_key_compare(position->_info.first, val.first) && !position->_right) {
+			position->_right = new _Node(val);
+			position->_right->_father = position;
+			return ft::pair<node_pointer, bool>(position->_right, true);
+		}
+		return insert(val);
+	}
+
+	node_pointer lower_bound( const key_type &k ) { return _lower_bound( k ); }
+    node_pointer lower_bound( const key_type &k ) const {
+        return _lower_bound( k );
+    }
+    node_pointer upper_bound( const key_type &k ) { return _upper_bound( k ); }
+    node_pointer upper_bound( const key_type &k ) const {
+        return _upper_bound( k );
+    }
+
+	node_pointer _lower_bound(const key_type& key) const
+	{
+		node_pointer current = _rend;
+		while (current) {
+			if (!_key_compare(current->_info.first, key)) {
+				// key is not less than current node's key, return current node
+				return current;
+			}
+			current->next();
+		}
+
+		// key was not found, return end iterator
+		return _end;
+	}
+
+	node_pointer _upper_bound(const key_type& key) const
+	{
+		node_pointer current = _rend;
+		while (current) {
+			if (_key_compare(key, current->_info.first)) {
+				// key is less than current node's key, return current node
+				return current;
+			}
+			current->next();
+		}
+
+		// key was not found, return end iterator
+		return _end;
 	}
 
     //virtual BST& operator= (const BST&);
 
-    // Destructor
+    /* -------------------------------- Destructor ------------------------------ */
+
     virtual ~BST () {
 		delete _root;
 		delete _end;
@@ -288,7 +356,6 @@ private:
 		return *res; //  pointer to place where v is or should be
 	}
 	*/
-
 
 	node_pointer _erase (_Node*& target) {
 		node_pointer const res = target;  // saved

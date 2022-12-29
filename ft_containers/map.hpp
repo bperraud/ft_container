@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/29 13:02:14 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/29 20:30:19 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,17 +28,22 @@ class map {
 
 public :
 	typedef BST<Key, T, Compare, Allocator> 			tree_type;
+	typedef const tree_type 							const_tree_type;
+
+	//typedef typename tree_type::iterator				tree_iterator;
+    //typedef typename tree_type::const_iterator			tree_const_iterator;
 
 	// iterator class
     template <typename U>
 	class normal_iterator {
     public:
+
         typedef typename U::value_type			value_type;
         typedef typename U::reference			reference;
         typedef typename U::pointer				pointer;
         typedef typename U::difference_type		difference_type;
-		typedef std::bidirectional_iterator_tag iterator_category;
 
+		typedef std::bidirectional_iterator_tag iterator_category;
 
 		typedef typename U::node_reference		node_reference;
 		typedef typename U::node_pointer		node_pointer;
@@ -50,19 +55,23 @@ public :
 
     public:
 		normal_iterator() : _current_node() {}
-
 		normal_iterator(node_pointer node) : _current_node( node ) {}
+		normal_iterator( const normal_iterator &other ) : _current_node( other._current_node ) {}
 
+		const node_pointer &get_node() const { return _current_node; }
+
+		normal_iterator &operator=( const normal_iterator &other ) {
+            _current_node = other.get_node();
+            return *this;
+        }
 		normal_iterator &operator++() {
 			_current_node = _current_node->next();
             return *this;
         }
-
         normal_iterator operator++( int ) {
 			_current_node = _current_node->next();
 			return *this;
 		}
-
         normal_iterator &operator--() {
             _current_node = _current_node->previous();
             return *this;
@@ -73,81 +82,39 @@ public :
 		}
 
 		pointer operator->() { return &_current_node->_info; }
-
+		typename normal_iterator< const_tree_type >::pointer operator->() const {
+            return &_current_node->_info;
+        }
 
 		reference operator*() { return _current_node->_info; }
-		reference operator*() const { return _current_node->_info;}
-
-
-		/*
-
-        normal_iterator( const normal_iterator &other ) : _tree( other._tree ) {}
-        normal_iterator( const U &other ) : _tree( other ) {}
-        normal_iterator &operator=( const normal_iterator &other ) {
-            _tree = other._tree;
-            return *this;
+		typename normal_iterator< const_tree_type >::reference operator*() const {
+            return _current_node->_info;
         }
-
-
-        reference operator*() { return *_tree; }
-        typename normal_iterator< tree_const_iterator >::reference operator*() const {
-            return *_it;
+		template < typename P >
+        bool operator==( const normal_iterator< P > &other ) const {
+            return _current_node == other.get_node();
         }
-		typename normal_iterator< tree_const_iterator >::reference operator*() const {
-            return *_tree;
-        }
-
-        pointer operator->() { return _tree.operator->(); }
-        typename normal_iterator< tree_const_iterator >::pointer operator->() const {
-            return _it.operator->();
-        }
-
-        template < typename V >
-        bool operator==( const normal_iterator< V > &other ) const {
-            return U( *this ) == V( other );
-        }
-        bool operator==( const U &other ) const { return T( *this ) == other; }
-
-        template < typename V >
-        bool operator!=( const normal_iterator< V > &other ) const {
+        template < typename P >
+        bool operator!=( const normal_iterator< P > &other ) const {
             return !( *this == other );
         }
-        bool operator!=( const U &other ) const { return !( *this == other ); }
 
-        operator U() const { return U( _it ); }
-	};
-
-        operator normal_iterator< tree_const_iterator >() const {
-            return normal_iterator< tree_const_iterator >( _it );
+		//operator U() const { return node_pointer( _current_node ); }
+        operator normal_iterator< const_tree_type >() const {
+            return normal_iterator< const_tree_type >( _current_node );
         }
-	*/
-	};
 
-	/*
-    typedef normal_iterator< tree_iterator >			iterator;
-    typedef normal_iterator< tree_const_iterator >		const_iterator;
-    typedef ft::reverse_iterator< iterator >			reverse_iterator;
-    typedef ft::reverse_iterator< const_iterator >		const_reverse_iterator;
-	*/
+	};
 
 public :
-	//typedef BST<Key, T, Compare, Allocator> 			tree_type;
 
 	typedef normal_iterator< tree_type >				iterator;
     typedef normal_iterator< const tree_type >			const_iterator;
     typedef ft::reverse_iterator< iterator >			reverse_iterator;
     typedef ft::reverse_iterator< const_iterator >		const_reverse_iterator;
 
-
 public:
 
-	//struct value_compare {
-    //    bool operator()( const value_type &a, const value_type &b ) const {
-    //        return key_compare()( a.first, b.first );
-    //    }
-    //};
-
-	// types:
 	typedef Key											key_type;
 	typedef T											mapped_type;
 	typedef ft::pair<const Key, T>						value_type;
@@ -161,7 +128,11 @@ public:
 	typedef std::ptrdiff_t								difference_type;
 	typedef std::size_t									size_type;
 
-	//typedef Vect<typename Allocator::value_type>	vector_type;
+	struct value_compare {
+        bool operator()( const value_type &a, const value_type &b ) const {
+            return key_compare()( a.first, b.first );
+        }
+    };
 
 private:
 	allocator_type		_allocator;
@@ -200,10 +171,16 @@ public:
 	const_reverse_iterator 	crbegin() const {return iterator(_tree.end());}
 	const_reverse_iterator 	crend() const { return iterator(_tree.begin());}
 
+	/* -------------------------------- Capacity -------------------------------- */
+
+	bool		empty () const {return  _tree.size() == 0;}
+	size_type	size () const { return _tree.size();}
+	size_type	max_size () const {return _allocator.max_size();}
+
 	/* ----------------------------- Element access ----------------------------- */
 
 	mapped_type& operator[] (const key_type& k) {
-		//return _tree.insert( value_type( k, mapped_type() ) ).first->second;
+		return _tree.insert( value_type( k, mapped_type() ) ).first->_info.second;
 	}
 
 	mapped_type& at (const key_type& k);
@@ -215,6 +192,43 @@ public:
 		return _tree.insert( val );
     }
 
+	iterator insert( iterator position, const value_type &val ) {
+		return _tree.insert( position.get_node(), val ).first;
+    }
+
+	template < class InputIterator >
+    void insert( InputIterator first, InputIterator last ) {
+		(void) first;
+		(void) last;
+        //_tree.insert( first, last );
+    }
+
+	void erase (iterator position) {
+		_tree.erase( position.get_node());
+	}
+
+	size_type erase (const key_type& k){
+		(void) k;
+		return 0;
+	}
+
+    void erase (iterator first, iterator last){
+		(void) first;
+		(void) last;
+	}
+
+	void clear() {
+		erase(begin(), end());
+	}
+
+
+	/* -------------------------------- Observers ------------------------------- */
+
+    key_compare   key_comp() const { return key_compare(); }
+    value_compare value_comp() const { return value_compare(); }
+
+	/* ------------------------------- Operations ------------------------------- */
+
 	iterator find (const key_type& k) {
 		return _tree.find(k);
 	}
@@ -223,18 +237,28 @@ public:
 		return _tree.find(k);
 	}
 
+	iterator lower_bound( const key_type &k ) { return _tree.lower_bound( k ); }
+	const_iterator lower_bound( const key_type &k ) const {
+		return _tree.lower_bound( k );
+	}
+	iterator upper_bound( const key_type &k ) { return _tree.upper_bound( k ); }
+	const_iterator upper_bound( const key_type &k ) const {
+		return _tree.upper_bound( k );
+	}
 
-	/* -------------------------------- Capacity -------------------------------- */
+	ft::pair< const_iterator, const_iterator >
+	equal_range( const key_type &k ) const {
+		return ft::pair< const_iterator, const_iterator >( lower_bound( k ), upper_bound( k ) );
+	}
+	ft::pair< iterator, iterator > equal_range( const key_type &k ) {
+		return ft::pair< iterator, iterator >( lower_bound( k ), upper_bound( k ) );
+	}
 
-	bool		empty () const {return  _tree.size() == 0;}
-	size_type	size () const { return _tree.size();}
-	size_type	max_size () const {return _allocator.max_size();}
+	/* -------------------------------- Allocator ------------------------------ */
 
-	/* -------------------------------- Observers ------------------------------- */
-
-    key_compare   key_comp() const { return key_compare(); }
-    //value_compare value_comp() const { return value_compare(); }
-
+	allocator_type get_allocator() const {
+		return _allocator;
+	}
 
 	/* -------------------------------- Destructor ------------------------------ */
 

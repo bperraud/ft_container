@@ -2,7 +2,7 @@ NAME = cont
 
 SRC = $(wildcard *.cpp)
 
-CXX = c++
+CC="clang++"
 
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 #-fsanitize=address
 
