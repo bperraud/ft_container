@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/29 19:57:05 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/29 21:23:13 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,6 +211,9 @@ public:
 	bool	isEmpty() {
 		return _root->_right == _end && _root->_left == _rend;
 	}
+
+	/* -------------------------------- Modifiers ------------------------------- */
+
 
 	ft::pair<node_pointer, bool> insert(const value_type& val) {
 		_Node *curr = _root;

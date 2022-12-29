@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/29 20:30:19 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/29 21:34:49 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,16 +144,16 @@ public:
 	/* ------------------------------ Construction ------------------------------ */
 
 	explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) :
-	_allocator(alloc), _size(0), _tree( tree_type(comp, alloc)) {
+		_allocator(alloc), _size(0), _tree( tree_type(comp, alloc)) {
+
 	}
 
 	template <class InputIterator>
 	map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
-	const allocator_type& alloc = allocator_type()) {
+	const allocator_type& alloc = allocator_type()) : _allocator(alloc), _size(0), _tree( tree_type(comp, alloc)) {
+		//insert(first, last);
 		(void) first;
 		(void) last;
-		(void) comp;
-		(void) alloc;
 	}
 
 	/* -------------------------------- Iterators ------------------------------- */
@@ -198,9 +198,10 @@ public:
 
 	template < class InputIterator >
     void insert( InputIterator first, InputIterator last ) {
-		(void) first;
-		(void) last;
-        //_tree.insert( first, last );
+		while (first != last) {
+			insert (*first);
+			first++;
+		}
     }
 
 	void erase (iterator position) {
