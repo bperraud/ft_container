@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/28 20:24:29 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/29 12:38:12 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@
 #include "Iterator.hpp"
 
 namespace ft {
-
-const int INITIAL_CAPACITY = 10;
 
 template<
     class Key,														// map::key_type
@@ -166,7 +164,6 @@ public:
 
 private:
 	allocator_type		_allocator;
-	size_type			_capacity;
 	size_type			_size;
 	tree_type			_tree;
 
@@ -175,7 +172,7 @@ public:
 	/* ------------------------------ Construction ------------------------------ */
 
 	explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) :
-	_allocator(alloc), _capacity(INITIAL_CAPACITY), _size(0), _tree( tree_type(comp, alloc)) {
+	_allocator(alloc), _size(0), _tree( tree_type(comp, alloc)) {
 	}
 
 	template <class InputIterator>
@@ -205,7 +202,7 @@ public:
 	/* ----------------------------- Element access ----------------------------- */
 
 	mapped_type& operator[] (const key_type& k) {
-		;
+		//return _tree.insert( value_type( k, mapped_type() ) ).first->second;
 	}
 
 	mapped_type& at (const key_type& k);
@@ -213,12 +210,8 @@ public:
 
 	/* -------------------------------- Modifiers ------------------------------- */
 
-	void insert( const value_type &val ) {
-		if (!_exists(val.first))
-		{
-			_tree.insert( val );
-			_size +=1 ;
-		}
+	std::pair<iterator, bool> insert( const value_type &val ) {
+		return _tree.insert( val );
     }
 
 	iterator find (const key_type& k) {
@@ -232,8 +225,8 @@ public:
 
 	/* -------------------------------- Capacity -------------------------------- */
 
-	bool		empty () const {return _size == 0;}
-	size_type	size () const { return _size;}
+	bool		empty () const {return  _tree.size() == 0;}
+	size_type	size () const { return _tree.size();}
 	size_type	max_size () const {return _allocator.max_size();}
 
 	/* -------------------------------- Observers ------------------------------- */

@@ -58,10 +58,10 @@ int main() {
 
 		BST<int, int> bst;
 
-
 		map1.insert(std::pair<int, int>(1, 40));
 		map1.insert(std::pair<int, int>(3, 12));
 		map1.insert(std::pair<int, int>(2, 3));
+		map1.insert(std::pair<int, int>(5, -9));
 
 		//map1.find(3);
 
@@ -82,9 +82,7 @@ int main() {
 		find_elem = map1.find(9);
 
 		std::cout << find_elem->second << std::endl;
-
 		std::cout << end_itr->second << std::endl;
-
 		std::cout << begin_itr->second << std::endl;
 
 		return 0;

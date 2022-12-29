@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/28 20:26:23 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/29 12:37:10 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,7 @@ private:
 	node_pointer			_rend;
 	allocator_type			_allocator;
 	extended_key_compare	_key_compare;
+	size_type				_size;
 
 protected:
 	static const value_type _NOT_FOUND;                      // "not found" element
@@ -124,10 +125,12 @@ public:
 
 	BST( const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type() )
 		: _root(0), _end(new _Node()), _rend(new _Node()), _allocator(alloc),
-		_key_compare( extended_key_compare(_end, _rend, comp)) {
+		_key_compare( extended_key_compare(_end, _rend, comp)), _size(0) {
 	}
 
 	/* -------------------------------- Observers ------------------------------- */
+
+	size_type size() const {return _size;}
 
 	bool isEmpty () const {return !_root;}
 
@@ -200,7 +203,7 @@ public:
 		return _root->_right == _end && _root->_left == _rend;
 	}
 
-	void insert(const value_type& val) {
+	std::pair<node_pointer, bool> insert(const value_type& val) {
 		_Node *curr = _root;
 		while (curr) {
 			if (_key_compare(val.first, curr->_info.first)) {
@@ -210,17 +213,22 @@ public:
 				else {
 					curr->_left = new _Node(val);
 					curr->_left->_father = curr;
-					break;
+					_size += 1;
+					return std::pair<node_pointer, bool>(curr->_left, true);
 				}
 			}
-			else {
+			else if (_key_compare(curr->_info.first, val.first)) {
 				if (curr->_right) {
 					curr = curr->_right;
 				} else {
 					curr->_right = new _Node(val);
 					curr->_right->_father = curr;
-					break;
+					_size += 1;
+					return std::pair<node_pointer, bool>(curr->_right, true);
 				}
+			}
+			else {
+				return std::pair<node_pointer, bool>(curr, false);
 			}
 		}
 		if (!_root) {
@@ -230,6 +238,7 @@ public:
 			_end->_father = _root;
 			_rend->_father = _root;
 		}
+		return std::pair<node_pointer, bool>(_root, false);;
 	}
 
     //virtual BST& operator= (const BST&);
