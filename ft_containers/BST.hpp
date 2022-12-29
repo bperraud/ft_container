@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/29 12:37:10 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/29 12:41:00 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,11 +194,6 @@ public:
 		return current;
 	}
 
-	// Setters
-	//const value_type& insert (const value_type& v) {  // always add
-	//	return (_nextLeaf(v) = new _Node(v))->_info;
-	//}
-
 	bool	isEmpty() {
 		return _root->_right == _end && _root->_left == _rend;
 	}
@@ -256,8 +251,8 @@ public:
 
 private:
 
-	_Node* _findNode (const key_type& k) const {
-		_Node *res = _root;
+	node_pointer _findNode (const key_type& k) const {
+		node_pointer res = _root;
 		while (res)
 		{
 			if ( _key_compare(k, (res)->_info.first)) {
@@ -292,20 +287,13 @@ private:
 	}
 	*/
 
-	_Node*& _nextLeaf (const value_type& v) {
-		_Node **res = &_root;
-		while (*res)
-			//res = v < (*res)->_info ? &(*res)->_left : &(*res)->_right;
-			res = _key_compare(v.first, (*res)->_info.first) ? &(*res)->_left : &(*res)->_right;
-		return *res;
-	}
 
-	_Node* _erase (_Node*& target) {
-		_Node *const res = target;  // saved
+	node_pointer _erase (_Node*& target) {
+		node_pointer const res = target;  // saved
 		if (target) {
-			_Node* subst = target->_right;
+			node_pointer subst = target->_right;
 			if (subst) {
-				_Node* father = 0;
+				node_pointer father = 0;
 				while (subst->_left) {
 					father = subst;
 					subst = subst->_left;
@@ -335,7 +323,7 @@ private:
 		return res;  // old isolated _Node (not yet deleted)
 	}
 
-	static _Node* _cp (const _Node* r) // recursive
+	static node_pointer _cp (const node_pointer r) // recursive
 	{return r ? new _Node(*r) : 0;}
 
 };
