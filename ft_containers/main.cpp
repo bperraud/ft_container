@@ -58,13 +58,13 @@ int main() {
 
 		BST<int, int> bst;
 
-		map1.insert(std::pair<int, int>(1, 40));
-		map1.insert(std::pair<int, int>(3, 12));
-		map1.insert(std::pair<int, int>(2, 3));
-		map1.insert(std::pair<int, int>(5, -9));
+		map1.insert(ft::pair<int, int>(1, 40));
+		map1.insert(ft::pair<int, int>(3, 12));
+		map1.insert(ft::pair<int, int>(2, 3));
+		map1.insert(ft::pair<int, int>(5, -9));
 
-		std::pair<ft::map<int,int>::iterator ,bool> ret;
-		ret = map1.insert(std::pair<int, int>(8, 7));
+		ft::pair<ft::map<int,int>::iterator ,bool> ret;
+		ret = map1.insert(ft::pair<int, int>(5, 7));
 
 		if (ret.second==false) {
 			std::cout << "element '5' already existed";

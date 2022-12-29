@@ -6,28 +6,30 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/29 12:41:00 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/29 13:03:23 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _BST_H_
-#define _BST_H_
+#ifndef BST_H
+#define BST_H
 
 #include <cstddef>             // nullptr_t, size_t, ptrdiff_t, byte...
 #include <ostream>             // output streams
 #include "map.hpp"
 
+#include "pair.hpp"
+
 template<
     class Key,														// map::key_type
     class T,														// map::mapped_type
     class Compare = std::less<Key>,									// map::key_compare
-    class Allocator = std::allocator<std::pair<const Key, T> > >	// map::allocator_type
+    class Allocator = std::allocator<ft::pair<const Key, T> > >	// map::allocator_type
 class BST {
 
 public :
 	typedef Key											key_type;
 	typedef T											mapped_type;
-	typedef std::pair<const Key, T>						value_type;
+	typedef ft::pair<const Key, T>						value_type;
 	typedef Compare										key_compare;
 	typedef Allocator									allocator_type;
 	typedef typename allocator_type::reference			reference;
@@ -198,7 +200,7 @@ public:
 		return _root->_right == _end && _root->_left == _rend;
 	}
 
-	std::pair<node_pointer, bool> insert(const value_type& val) {
+	ft::pair<node_pointer, bool> insert(const value_type& val) {
 		_Node *curr = _root;
 		while (curr) {
 			if (_key_compare(val.first, curr->_info.first)) {
@@ -209,7 +211,7 @@ public:
 					curr->_left = new _Node(val);
 					curr->_left->_father = curr;
 					_size += 1;
-					return std::pair<node_pointer, bool>(curr->_left, true);
+					return ft::pair<node_pointer, bool>(curr->_left, true);
 				}
 			}
 			else if (_key_compare(curr->_info.first, val.first)) {
@@ -219,11 +221,11 @@ public:
 					curr->_right = new _Node(val);
 					curr->_right->_father = curr;
 					_size += 1;
-					return std::pair<node_pointer, bool>(curr->_right, true);
+					return ft::pair<node_pointer, bool>(curr->_right, true);
 				}
 			}
 			else {
-				return std::pair<node_pointer, bool>(curr, false);
+				return ft::pair<node_pointer, bool>(curr, false);
 			}
 		}
 		if (!_root) {
@@ -233,7 +235,7 @@ public:
 			_end->_father = _root;
 			_rend->_father = _root;
 		}
-		return std::pair<node_pointer, bool>(_root, false);;
+		return ft::pair<node_pointer, bool>(_root, false);;
 	}
 
     //virtual BST& operator= (const BST&);

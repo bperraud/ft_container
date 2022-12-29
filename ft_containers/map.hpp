@@ -6,15 +6,16 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/29 12:38:12 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/29 13:02:14 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef map_H
-#define map_H
+#ifndef MAP_H
+#define MAP_H
 
 #include "BST.hpp"
 #include "Iterator.hpp"
+#include "pair.hpp"
 
 namespace ft {
 
@@ -22,7 +23,7 @@ template<
     class Key,														// map::key_type
     class T,														// map::mapped_type
     class Compare = std::less<Key>,									// map::key_compare
-    class Allocator = std::allocator<std::pair<const Key, T> > >	// map::allocator_type
+    class Allocator = std::allocator<ft::pair<const Key, T> > >	// map::allocator_type
 class map {
 
 public :
@@ -149,7 +150,7 @@ public:
 	// types:
 	typedef Key											key_type;
 	typedef T											mapped_type;
-	typedef std::pair<const Key, T>						value_type;
+	typedef ft::pair<const Key, T>						value_type;
 	typedef Compare										key_compare;
 	typedef Allocator									allocator_type;
 	typedef typename allocator_type::reference			reference;
@@ -210,7 +211,7 @@ public:
 
 	/* -------------------------------- Modifiers ------------------------------- */
 
-	std::pair<iterator, bool> insert( const value_type &val ) {
+	ft::pair<iterator, bool> insert( const value_type &val ) {
 		return _tree.insert( val );
     }
 
