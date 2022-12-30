@@ -43,6 +43,18 @@ void	ft_insert(MAP &mp, U param, V param2)
 
 int		main(void)
 {
+
+
+	// construct _end() and _rend() 	-> deleted at the end
+	// point to _root
+	// _root not construct yet -> point to _end()
+	// at first insert -> construct _root
+
+	std::map<int, int> map;
+
+	std::cout << map.begin()->first << std::endl;
+
+
 	TESTED_NAMESPACE::map<T1, T2> mp, mp2;
 
 	ft_insert(mp, T3(42, "lol"));
@@ -55,9 +67,15 @@ int		main(void)
 	ft_insert(mp, T3(21, "fizz"));
 	ft_insert(mp, T3(38, "buzz"));
 
+
 	ft_insert(mp, mp.begin(), T3(55, "fuzzy"));
 
+
+	std::cout << " insert at begin " << std::endl;
 	ft_insert(mp2, mp2.begin(), T3(1337, "beauty"));
+
+	return 0;
+
 	ft_insert(mp2, mp2.end(), T3(1000, "Hello"));
 	ft_insert(mp2, mp2.end(), T3(1500, "World"));
 

@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/29 21:23:13 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/30 12:57:21 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,9 @@ private:
 		}
 	};
 
+	typedef typename Allocator::template rebind< _Node >::other node_allocator_type;
+
+
 public :
 	typedef _Node&		node_reference;
 	typedef _Node*		node_pointer;
@@ -111,10 +114,10 @@ private :
 
 
 private:
-    node_pointer			_root;
 	node_pointer			_end;
 	node_pointer			_rend;
-	allocator_type			_allocator;
+    node_pointer			_root;
+	node_allocator_type		_allocator;
 	extended_key_compare	_key_compare;
 	size_type				_size;
 
@@ -126,9 +129,26 @@ public:
     /* ------------------------------ Construction ------------------------------ */
 
 	BST( const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type() )
-		: _root(0), _end(new _Node()), _rend(new _Node()), _allocator(alloc),
+		: _end(construct_node(value_type())), _rend(construct_node(value_type())), _root(_end), _allocator(alloc),
+		//: _end(construct_node(_Node())), _rend(construct_node(_Node())), _root(_end), _allocator(alloc),
 		_key_compare( extended_key_compare(_end, _rend, comp)), _size(0) {
+		//_end->_father = _root;
+		//_rend->_father = _root;
 	}
+
+	node_pointer construct_node(const value_type &val)
+	{
+		node_pointer node = _allocator.allocate(1);
+        _allocator.construct(node, _Node(val));
+		return node;
+	}
+
+	//node_pointer construct_node(const node_reference other)
+	//{
+	//	node_pointer node = _allocator.allocate(1);
+    //    _allocator.construct(node, other);
+	//	return node;
+	//}
 
 	/* -------------------------------- Observers ------------------------------- */
 
@@ -217,6 +237,18 @@ public:
 
 	ft::pair<node_pointer, bool> insert(const value_type& val) {
 		_Node *curr = _root;
+
+		if (_root == _end) {
+			//_root = new _Node(val);
+			_root = construct_node(val);
+			_root->_right = _end;
+			_root->_left = _rend;
+			_end->_father = _root;
+			_rend->_father = _root;
+			_size += 1;
+			return ft::pair<node_pointer, bool>(_root, true);
+		}
+
 		while (curr) {
 			if (_key_compare(val.first, curr->_info.first)) {
 				if (curr->_left) {
@@ -243,24 +275,37 @@ public:
 				return ft::pair<node_pointer, bool>(curr, false);
 			}
 		}
-		if (!_root) {
-			_root = new _Node(val);
-			_root->_right = _end;
-			_root->_left = _rend;
-			_end->_father = _root;
-			_rend->_father = _root;
-		}
+		//if (!_root) {
+		//	_root = new _Node(val);
+		//	_root->_right = _end;
+		//	_root->_left = _rend;
+		//	_end->_father = _root;
+		//	_rend->_father = _root;
+		//}
+
 		return ft::pair<node_pointer, bool>(_root, false);
 	}
 
 	ft::pair<node_pointer, bool> insert(node_pointer position, const value_type& val) {
-		if (!_root) {
-			_root = new _Node(val);
+		//if (!root)
+
+		std::cout << "INSERT HERE" << std::endl;
+
+		// pb : construit _root au premier insert -> map.begin() pointe pas encore vers _root
+		if (_root == _end) {
+			_root = construct_node(val);
 			_root->_right = _end;
 			_root->_left = _rend;
 			_end->_father = _root;
 			_rend->_father = _root;
+			return ft::pair<node_pointer, bool>(_root, true);
 		}
+
+
+		std::cout << "begin : " << begin()->_info.first << std::endl;
+
+		std::cout << "position" << position->_info.first << std::endl;
+
 		if (_key_compare(position->_info.first, val.first) && !position->_right) {
 			position->_right = new _Node(val);
 			position->_right->_father = position;

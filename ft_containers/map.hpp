@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/29 21:34:49 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/30 12:57:28 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ public :
 
 		typedef std::bidirectional_iterator_tag iterator_category;
 
-		typedef typename U::node_reference		node_reference;
+		//typedef typename U::node_reference		node_reference;
 		typedef typename U::node_pointer		node_pointer;
 
         //typedef typename U::iterator_category iterator_category;
@@ -134,6 +134,7 @@ public:
         }
     };
 
+
 private:
 	allocator_type		_allocator;
 	size_type			_size;
@@ -158,7 +159,7 @@ public:
 
 	/* -------------------------------- Iterators ------------------------------- */
 
-	iterator 				begin() {return _tree.begin(); }
+	iterator 				begin() {return _tree.begin();}
 	iterator 				end() { return _tree.end();}
 	const_iterator 			begin() const { return _tree.begin(); }
 	const_iterator 			end() const  { return _tree.end();}
