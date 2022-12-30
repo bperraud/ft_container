@@ -5,77 +5,67 @@
 #include <list>
 #include <map>
 
-
 #include "common.hpp"
 #include <list>
 #include "vector.hpp"
 #include "stack.hpp"
 
 #define T1 int
-#define T2 foo<int>
-typedef TESTED_NAMESPACE::map<T1, T2>::value_type T3;
-typedef TESTED_NAMESPACE::map<T1, T2>::iterator ft_iterator;
-typedef TESTED_NAMESPACE::map<T1, T2>::const_iterator ft_const_iterator;
+#define T2 std::string
 
-static int iter = 0;
+TESTED_NAMESPACE::map<T1, T2> mp;
+TESTED_NAMESPACE::map<T1, T2>::iterator it = mp.end();
 
-template <typename MAP>
-void	ft_bound(MAP &mp, const T1 &param)
+void	ft_find(T1 const &k)
 {
-	ft_iterator ite = mp.end(), it[2];
-	_pair<ft_iterator, ft_iterator> ft_range;
+	TESTED_NAMESPACE::map<T1, T2>::iterator ret = mp.find(k);
 
-	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
-	std::cout << "with key [" << param << "]:" << std::endl;
-	it[0] = mp.lower_bound(param); it[1] = mp.upper_bound(param);
-	ft_range = mp.equal_range(param);
-	std::cout << "lower_bound: " << (it[0] == ite ? "end()" : printPair(it[0], false)) << std::endl;
-	std::cout << "upper_bound: " << (it[1] == ite ? "end()" : printPair(it[1], false)) << std::endl;
-	std::cout << "equal_range: " << (ft_range.first == it[0] && ft_range.second == it[1]) << std::endl;
+	if (ret != it)
+		printPair(ret);
+	else
+		std::cout << "map::find(" << k << ") returned end()" << std::endl;
 }
 
-template <typename MAP>
-void	ft_const_bound(const MAP &mp, const T1 &param)
+void	ft_count(T1 const &k)
 {
-	ft_const_iterator ite = mp.end(), it[2];
-	_pair<ft_const_iterator, ft_const_iterator> ft_range;
-
-	std::cout << "\t-- [" << iter++ << "] (const) --" << std::endl;
-	std::cout << "with key [" << param << "]:" << std::endl;
-	it[0] = mp.lower_bound(param); it[1] = mp.upper_bound(param);
-	ft_range = mp.equal_range(param);
-	std::cout << "lower_bound: " << (it[0] == ite ? "end()" : printPair(it[0], false)) << std::endl;
-	std::cout << "upper_bound: " << (it[1] == ite ? "end()" : printPair(it[1], false)) << std::endl;
-	std::cout << "equal_range: " << (ft_range.first == it[0] && ft_range.second == it[1]) << std::endl;
+	std::cout << "map::count(" << k << ")\treturned [" << mp.count(k) << "]" << std::endl;
 }
 
 int		main(void)
 {
-	std::list<T3> lst;
-	unsigned int lst_size = 10;
-	for (unsigned int i = 0; i < lst_size; ++i)
-		lst.push_back(T3(i + 1, (i + 1) * 3));
-	TESTED_NAMESPACE::map<T1, T2> mp(lst.begin(), lst.end());
+	mp[42] = "fgzgxfn";
+	mp[25] = "funny";
+	mp[80] = "hey";
+	mp[12] = "no";
+	mp[27] = "bee";
+	mp[90] = "8";
 	printSize(mp);
 
-	ft_const_bound(mp, -10);
-	ft_const_bound(mp, 1);
+	std::cout << "\t-- FIND --" << std::endl;
+	ft_find(12);
+	ft_find(3);
+	ft_find(35);
+	ft_find(90);
+	ft_find(100);
 
+	std::cout << "\t-- COUNT --" << std::endl;
+	ft_count(-3);
+	ft_count(12);
+	ft_count(3);
+	ft_count(35);
+	ft_count(90);
+	ft_count(100);
 
-	ft_const_bound(mp, 5);
-	ft_const_bound(mp, 10);
-	ft_const_bound(mp, 50);
+	mp.find(27)->second = "newly inserted mapped_value";
 
 	printSize(mp);
 
-	mp.lower_bound(3)->second = 404;
-	mp.upper_bound(7)->second = 842;
-	ft_bound(mp, 5);
-	ft_bound(mp, 7);
-
-	printSize(mp);
+	TESTED_NAMESPACE::map<T1, T2> const c_map(mp.begin(), mp.end());
+	std::cout << "const map.find(" << 42 << ")->second: [" << c_map.find(42)->second << "]" << std::endl;
+	std::cout << "const map.count(" << 80 << "): [" << c_map.count(80) << "]" << std::endl;
 	return (0);
 }
+
 
 
 /*

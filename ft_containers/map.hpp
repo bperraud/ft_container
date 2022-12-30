@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/30 15:50:38 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/30 16:51:36 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,7 +222,6 @@ public:
 		erase(begin(), end());
 	}
 
-
 	/* -------------------------------- Observers ------------------------------- */
 
     key_compare   key_comp() const { return key_compare(); }
@@ -236,6 +235,10 @@ public:
 
 	const_iterator find (const key_type& k) const {
 		return _tree.find(k);
+	}
+
+	size_type count (const key_type& k) const {
+		return _tree.exists(k);
 	}
 
 	iterator lower_bound( const key_type &k ) { return _tree.lower_bound( k ); }
