@@ -5,80 +5,75 @@
 #include <list>
 #include <map>
 
+
+#include "common.hpp"
+#include <list>
 #include "vector.hpp"
 #include "stack.hpp"
 
-#include "map.hpp"
-#include "common.hpp"
-
 #define T1 int
-#define T2 std::string
+#define T2 foo<int>
 typedef TESTED_NAMESPACE::map<T1, T2>::value_type T3;
-typedef TESTED_NAMESPACE::map<T1, T2>::iterator iterator;
+typedef TESTED_NAMESPACE::map<T1, T2>::iterator ft_iterator;
+typedef TESTED_NAMESPACE::map<T1, T2>::const_iterator ft_const_iterator;
 
 static int iter = 0;
 
-template <typename MAP, typename U>
-void	ft_insert(MAP &mp, U param)
+template <typename MAP>
+void	ft_bound(MAP &mp, const T1 &param)
 {
-	_pair<iterator, bool> tmp;
+	ft_iterator ite = mp.end(), it[2];
+	_pair<ft_iterator, ft_iterator> ft_range;
 
 	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
-	tmp = mp.insert(param);
-	std::cout << "insert return: " << printPair(tmp.first);
-	std::cout << "Created new node: " << tmp.second << std::endl;
-	printSize(mp);
+	std::cout << "with key [" << param << "]:" << std::endl;
+	it[0] = mp.lower_bound(param); it[1] = mp.upper_bound(param);
+	ft_range = mp.equal_range(param);
+	std::cout << "lower_bound: " << (it[0] == ite ? "end()" : printPair(it[0], false)) << std::endl;
+	std::cout << "upper_bound: " << (it[1] == ite ? "end()" : printPair(it[1], false)) << std::endl;
+	std::cout << "equal_range: " << (ft_range.first == it[0] && ft_range.second == it[1]) << std::endl;
 }
 
-template <typename MAP, typename U, typename V>
-void	ft_insert(MAP &mp, U param, V param2)
+template <typename MAP>
+void	ft_const_bound(const MAP &mp, const T1 &param)
 {
-	iterator tmp;
+	ft_const_iterator ite = mp.end(), it[2];
+	_pair<ft_const_iterator, ft_const_iterator> ft_range;
 
-	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
-	tmp = mp.insert(param, param2);
-	std::cout << "insert return: " << printPair(tmp);
-	printSize(mp);
+	std::cout << "\t-- [" << iter++ << "] (const) --" << std::endl;
+	std::cout << "with key [" << param << "]:" << std::endl;
+	it[0] = mp.lower_bound(param); it[1] = mp.upper_bound(param);
+	ft_range = mp.equal_range(param);
+	std::cout << "lower_bound: " << (it[0] == ite ? "end()" : printPair(it[0], false)) << std::endl;
+	std::cout << "upper_bound: " << (it[1] == ite ? "end()" : printPair(it[1], false)) << std::endl;
+	std::cout << "equal_range: " << (ft_range.first == it[0] && ft_range.second == it[1]) << std::endl;
 }
 
 int		main(void)
 {
+	std::list<T3> lst;
+	unsigned int lst_size = 10;
+	for (unsigned int i = 0; i < lst_size; ++i)
+		lst.push_back(T3(i + 1, (i + 1) * 3));
+	TESTED_NAMESPACE::map<T1, T2> mp(lst.begin(), lst.end());
+	printSize(mp);
+
+	ft_const_bound(mp, -10);
+	ft_const_bound(mp, 1);
 
 
-	// construct _end() and _rend() 	-> deleted at the end
-	// point to _root
-	// _root not construct yet -> point to _end()
-	// at first insert -> construct _root
+	ft_const_bound(mp, 5);
+	ft_const_bound(mp, 10);
+	ft_const_bound(mp, 50);
 
-	std::map<int, int> map;
+	printSize(mp);
 
-	std::cout << map.begin()->first << std::endl;
+	mp.lower_bound(3)->second = 404;
+	mp.upper_bound(7)->second = 842;
+	ft_bound(mp, 5);
+	ft_bound(mp, 7);
 
-
-	TESTED_NAMESPACE::map<T1, T2> mp, mp2;
-
-	ft_insert(mp, T3(42, "lol"));
-	ft_insert(mp, T3(42, "mdr"));
-
-	ft_insert(mp, T3(50, "mdr"));
-	ft_insert(mp, T3(35, "funny"));
-
-	ft_insert(mp, T3(45, "bunny"));
-	ft_insert(mp, T3(21, "fizz"));
-	ft_insert(mp, T3(38, "buzz"));
-
-
-	ft_insert(mp, mp.begin(), T3(55, "fuzzy"));
-
-
-	std::cout << " insert at begin " << std::endl;
-	ft_insert(mp2, mp2.begin(), T3(1337, "beauty"));
-
-	return 0;
-
-	ft_insert(mp2, mp2.end(), T3(1000, "Hello"));
-	ft_insert(mp2, mp2.end(), T3(1500, "World"));
-
+	printSize(mp);
 	return (0);
 }
 

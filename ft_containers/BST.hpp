@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/30 13:00:35 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/30 16:07:29 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ public:
 
     /* ------------------------------ Construction ------------------------------ */
 
-	BST( const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type() )
+	BST( const key_compare &comp = key_compare(), const allocator_type &alloc = node_allocator_type() () )
 		: _end(construct_node(value_type())), _rend(construct_node(value_type())), _root(0), _allocator(alloc),
 		//: _end(construct_node(_Node())), _rend(construct_node(_Node())), _root(_end), _allocator(alloc),
 		_key_compare( extended_key_compare(_end, _rend, comp)), _size(0) {
@@ -148,6 +148,24 @@ public:
     //    _allocator.construct(node, other);
 	//	return node;
 	//}
+
+	/* -------------------------------- Iterators ------------------------------- */
+
+	node_pointer	end() {return _end;}
+
+	node_pointer	end() const { return _end;}
+
+	node_pointer	begin() { return _rend->next(); }
+
+	node_pointer	begin() const { return _rend->next();}
+
+	node_pointer	rend() { return _rend; }
+
+	node_pointer	rend() const { return _rend;}
+
+	/* -------------------------------- Capacity -------------------------------- */
+
+	size_type max_size() const {return _allocator.max_size();}
 
 	/* -------------------------------- Observers ------------------------------- */
 
@@ -181,30 +199,6 @@ public:
 		return find(key) != _end;
 	}
 
-	node_pointer	end() {
-		return _end;
-	}
-
-	 node_pointer	end() const {
-		return _end;
-	}
-
-	node_pointer	begin() {
-		return _rend->next();
-	}
-
-	 node_pointer	begin() const {
-		return _rend->next();
-	}
-
-	node_pointer	rend() {
-		return _rend;
-	}
-
-	 node_pointer	rend() const {
-		return _rend;
-	}
-
 	node_pointer findMin() {
 		if (_root == 0)
 			return 0;
@@ -233,16 +227,19 @@ public:
 
 	/* -------------------------------- Modifiers ------------------------------- */
 
+	void init_root(const value_type& val) {
+		_root = construct_node(val);
+		_root->_right = _end;
+		_root->_left = _rend;
+		_end->_father = _root;
+		_rend->_father = _root;
+		_size += 1;
+	}
 
 	ft::pair<node_pointer, bool> insert(const value_type& val) {
 		_Node *curr = _root;
 		if (!_root) {
-			_root = construct_node(val);
-			_root->_right = _end;
-			_root->_left = _rend;
-			_end->_father = _root;
-			_rend->_father = _root;
-			_size += 1;
+			init_root(val);
 			return ft::pair<node_pointer, bool>(_root, true);
 		}
 
@@ -272,82 +269,48 @@ public:
 				return ft::pair<node_pointer, bool>(curr, false);
 			}
 		}
-		//if (!_root) {
-		//	_root = new _Node(val);
-		//	_root->_right = _end;
-		//	_root->_left = _rend;
-		//	_end->_father = _root;
-		//	_rend->_father = _root;
-		//}
-
 		return ft::pair<node_pointer, bool>(_root, false);
 	}
 
 	ft::pair<node_pointer, bool> insert(node_pointer position, const value_type& val) {
 		if (!_root) {
-			_root = construct_node(val);
-			_root->_right = _end;
-			_root->_left = _rend;
-			_end->_father = _root;
-			_rend->_father = _root;
+			init_root(val);
 			return ft::pair<node_pointer, bool>(_root, true);
 		}
 		if (_key_compare(position->_info.first, val.first) && !position->_right) {
-			position->_right = new _Node(val);
+			position->_right = construct_node(val);
 			position->_right->_father = position;
+			_size += 1;
 			return ft::pair<node_pointer, bool>(position->_right, true);
 		}
 		return insert(val);
 	}
 
-	node_pointer lower_bound( const key_type &k ) { return _lower_bound( k ); }
-    node_pointer lower_bound( const key_type &k ) const {
-        return _lower_bound( k );
-    }
-    node_pointer upper_bound( const key_type &k ) { return _upper_bound( k ); }
-    node_pointer upper_bound( const key_type &k ) const {
-        return _upper_bound( k );
-    }
-
-	node_pointer _lower_bound(const key_type& key) const
-	{
-		node_pointer current = _rend;
-		while (current) {
-			if (!_key_compare(current->_info.first, key)) {
-				// key is not less than current node's key, return current node
-				return current;
-			}
-			current->next();
-		}
-
-		// key was not found, return end iterator
-		return _end;
+	node_pointer lower_bound( const key_type &k ) { return _lower_bound(k); }
+	node_pointer lower_bound( const key_type &k ) const {
+		return _lower_bound(k);
 	}
 
-	node_pointer _upper_bound(const key_type& key) const
-	{
-		node_pointer current = _rend;
-		while (current) {
-			if (_key_compare(key, current->_info.first)) {
-				// key is less than current node's key, return current node
-				return current;
-			}
-			current->next();
-		}
-
-		// key was not found, return end iterator
-		return _end;
+	node_pointer upper_bound( const key_type &k ) { return _upper_bound(k); }
+	node_pointer upper_bound( const key_type &k ) const {
+		return _upper_bound(k);
 	}
 
     //virtual BST& operator= (const BST&);
 
+	/* -------------------------------- Allocator ------------------------------ */
+
+	allocator_type get_allocator() const {
+		return _allocator;
+	}
+
     /* -------------------------------- Destructor ------------------------------ */
 
     virtual ~BST () {
-		delete _root;
-		delete _end;
-		delete _rend;
-	}  // recursive
+		//delete _root;
+		//delete _end;
+		//delete _rend;
+	}  // recursive with BST node
 
     // Associated function
     //template <typename U>
@@ -370,6 +333,38 @@ private:
 			}
 		}
 		return 0; //  if not found return 0
+	}
+
+	node_pointer _lower_bound(const key_type& key) const
+	{
+		node_pointer current = begin();
+		while (current && current != _end) {
+			if (!_key_compare(current->_info.first, key)) {
+				// key is not less than current node's key, return current node
+				return current;
+			}
+			//std::cout << "current node lower: " << current->_info.first << std::endl;
+			current = current->next();
+		}
+
+		// key was not found, return end iterator
+		return _end;
+	}
+
+	node_pointer _upper_bound(const key_type& key) const
+	{
+		node_pointer current = begin();
+		while (current && current != _end) {
+			if (_key_compare(key, current->_info.first)) {
+				// key is less than current node's key, return current node
+				return current;
+			}
+			//std::cout << "current node upper : " << current->_info.first << std::endl;
+			current =  current->next();
+		}
+
+		// key was not found, return end iterator
+		return _end;
 	}
 
 	/*

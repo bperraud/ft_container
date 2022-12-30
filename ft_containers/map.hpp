@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/30 12:57:28 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/30 15:50:38 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,9 +152,7 @@ public:
 	template <class InputIterator>
 	map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
 	const allocator_type& alloc = allocator_type()) : _allocator(alloc), _size(0), _tree( tree_type(comp, alloc)) {
-		//insert(first, last);
-		(void) first;
-		(void) last;
+		insert(first, last);
 	}
 
 	/* -------------------------------- Iterators ------------------------------- */
@@ -176,7 +174,7 @@ public:
 
 	bool		empty () const {return  _tree.size() == 0;}
 	size_type	size () const { return _tree.size();}
-	size_type	max_size () const {return _allocator.max_size();}
+	size_type	max_size () const {return _tree.max_size();}
 
 	/* ----------------------------- Element access ----------------------------- */
 
@@ -206,7 +204,8 @@ public:
     }
 
 	void erase (iterator position) {
-		_tree.erase( position.get_node());
+		//_tree.erase( position.get_node());
+		(void) position;
 	}
 
 	size_type erase (const key_type& k){
