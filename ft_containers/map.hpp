@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/30 16:51:36 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/30 17:02:59 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,22 +136,19 @@ public:
 
 
 private:
-	allocator_type		_allocator;
-	size_type			_size;
-	tree_type			_tree;
+	tree_type	_tree;
 
 public:
 
 	/* ------------------------------ Construction ------------------------------ */
 
 	explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) :
-		_allocator(alloc), _size(0), _tree( tree_type(comp, alloc)) {
-
+		_tree( tree_type(comp, alloc)) {
 	}
 
 	template <class InputIterator>
 	map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
-	const allocator_type& alloc = allocator_type()) : _allocator(alloc), _size(0), _tree( tree_type(comp, alloc)) {
+	const allocator_type& alloc = allocator_type()) : _tree( tree_type(comp, alloc)) {
 		insert(first, last);
 	}
 
@@ -261,7 +258,7 @@ public:
 	/* -------------------------------- Allocator ------------------------------ */
 
 	allocator_type get_allocator() const {
-		return _allocator;
+		return _tree.get_allocator();
 	}
 
 	/* -------------------------------- Destructor ------------------------------ */

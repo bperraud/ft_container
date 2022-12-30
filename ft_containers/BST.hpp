@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/30 16:07:29 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/30 17:03:31 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,17 @@ public:
 
 	}
 
+	//BST &operator=( const BST &other ) {
+	//	//clear();
+	//	node_pointer first = begin();
+	//	while (first != end())
+	//	{
+	//		insert(*first);
+	//		first++;
+	//	}
+	//	return *this;
+	//}
+
 	node_pointer construct_node(const value_type &val)
 	{
 		node_pointer node = _allocator.allocate(1);
@@ -242,7 +253,6 @@ public:
 			init_root(val);
 			return ft::pair<node_pointer, bool>(_root, true);
 		}
-
 		while (curr) {
 			if (_key_compare(val.first, curr->_info.first)) {
 				if (curr->_left) {
@@ -307,9 +317,9 @@ public:
     /* -------------------------------- Destructor ------------------------------ */
 
     virtual ~BST () {
-		//delete _root;
-		//delete _end;
-		//delete _rend;
+		delete _root;
+		delete _end;
+		delete _rend;
 	}  // recursive with BST node
 
     // Associated function
