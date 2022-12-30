@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/30 12:57:21 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/30 13:00:35 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,11 +129,10 @@ public:
     /* ------------------------------ Construction ------------------------------ */
 
 	BST( const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type() )
-		: _end(construct_node(value_type())), _rend(construct_node(value_type())), _root(_end), _allocator(alloc),
+		: _end(construct_node(value_type())), _rend(construct_node(value_type())), _root(0), _allocator(alloc),
 		//: _end(construct_node(_Node())), _rend(construct_node(_Node())), _root(_end), _allocator(alloc),
 		_key_compare( extended_key_compare(_end, _rend, comp)), _size(0) {
-		//_end->_father = _root;
-		//_rend->_father = _root;
+
 	}
 
 	node_pointer construct_node(const value_type &val)
@@ -237,9 +236,7 @@ public:
 
 	ft::pair<node_pointer, bool> insert(const value_type& val) {
 		_Node *curr = _root;
-
-		if (_root == _end) {
-			//_root = new _Node(val);
+		if (!_root) {
 			_root = construct_node(val);
 			_root->_right = _end;
 			_root->_left = _rend;
@@ -287,12 +284,7 @@ public:
 	}
 
 	ft::pair<node_pointer, bool> insert(node_pointer position, const value_type& val) {
-		//if (!root)
-
-		std::cout << "INSERT HERE" << std::endl;
-
-		// pb : construit _root au premier insert -> map.begin() pointe pas encore vers _root
-		if (_root == _end) {
+		if (!_root) {
 			_root = construct_node(val);
 			_root->_right = _end;
 			_root->_left = _rend;
@@ -300,12 +292,6 @@ public:
 			_rend->_father = _root;
 			return ft::pair<node_pointer, bool>(_root, true);
 		}
-
-
-		std::cout << "begin : " << begin()->_info.first << std::endl;
-
-		std::cout << "position" << position->_info.first << std::endl;
-
 		if (_key_compare(position->_info.first, val.first) && !position->_right) {
 			position->_right = new _Node(val);
 			position->_right->_father = position;
