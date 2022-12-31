@@ -29,6 +29,7 @@ void	ft_erase(MAP &mp, U param, V param2)
 {
 	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
 	mp.erase(param, param2);
+
 	printSize(mp);
 }
 
@@ -41,14 +42,16 @@ int		main(void)
 	TESTED_NAMESPACE::map<T1, T2> mp(lst.begin(), lst.end());
 	printSize(mp);
 
+	//mp.printTree();
+
 	ft_erase(mp, ++mp.begin());
+
+	//mp.printTree();
 
 	ft_erase(mp, mp.begin());
 
 	ft_erase(mp, --mp.end());
-
 	ft_erase(mp, mp.begin(), ++(++(++mp.begin())));
-
 	ft_erase(mp, --(--(--mp.end())), --mp.end());
 
 	mp[10] = "Hello";

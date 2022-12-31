@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/31 13:25:08 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/31 16:38:57 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,6 +221,11 @@ public:
 			_tree.erase( first.get_node());
 			first = tmp;
 		}
+	}
+
+	void printTree()
+	{
+		_tree.printTreeDiagram();
 	}
 
 	void clear() {

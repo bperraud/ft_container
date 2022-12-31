@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/31 14:11:32 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/31 16:38:02 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 #include <cstddef>             // nullptr_t, size_t, ptrdiff_t, byte...
 #include <ostream>             // output streams
 #include "map.hpp"
+
+#include <queue>
+#include <cmath>
 
 #include "pair.hpp"
 
@@ -55,12 +58,14 @@ private:
 			if (node->_right) {
 				// Find leftmost node in right subtree
 				node = node->_right;
-				while (node->_left) node = node->_left;
+				while (node->_left)
+					node = node->_left;
 				return node;
 			}
 			// Go up the tree until we find an ancestor whose left child is also an ancestor
 			_Node *ancestor = node->_father;
 			while (ancestor && ancestor->_left != node) {
+				//std::cout << "ancestor : " << ancestor->_info.second << std::endl;
 				node = ancestor;
 				ancestor = ancestor->_father;
 			}
@@ -72,7 +77,8 @@ private:
 			if (node->_left) {
 				// Find rightmost node in left subtree
 				node = node->_left;
-				while (node->_right) node = node->_right;
+				while (node->_right)
+					node = node->_right;
 				return node;
 			}
 			// Go up the tree until we find an ancestor whose right child is also an ancestor
@@ -307,10 +313,9 @@ public:
 
 	void erase(node_pointer target)
 	{
-		node_pointer const res = target; // save pointer to delete
+		node_pointer const res = target; // save pointer to node being deleted
 		if (target)
 		{
-			// save pointer to node being deleted
 			node_pointer subst = target->_right;
 			if (subst)
 			{
@@ -323,6 +328,9 @@ public:
 				if (father)
 				{
 					father->_left = subst->_right;
+					//add
+					father->_left->_father = father;
+					// add
 					subst->_right = target->_right;
 				}
 				subst->_left = target->_left;
@@ -344,11 +352,9 @@ public:
 			else
 			{
 				_root = subst;
+				_root->_father = 0;
 				_rend->_father = _root;
-				//_rend->_right->_father = _end;
 				_end->_father = _root;
-				if (_end->_left)
-					_end->_left->_father = _end;
 			}
 			// reset pointers of deleted node
 			target->_left = 0;
@@ -359,54 +365,12 @@ public:
 			_size--;
 			_allocator.destroy(res);
 			_allocator.deallocate(res, 1);
-
+			std::cout << "end erase" << std::endl;
 			//std::cout << "begin : " << begin()->_info.second << std::endl;
 			//std::cout << "end : " << end()->_info.second << std::endl;
 		}
 	}
 
-	//void erase(node_pointer node) {
-	//	if (_root == node)
-	//		std::cout << "root" << std::endl;
-	//	if (!node) return;
-	//	// If node has no children or only one child, just delete it
-	//	if (!node->_left || !node->_right) {
-	//		node_pointer child = node->_left ? node->_left : node->_right;
-	//		if (node->_father) {
-	//			// Update parent's child pointer
-	//			if (node->_father->_left == node) {
-	//				node->_father->_left = child;
-	//			} else {
-	//				node->_father->_right = child;
-	//			}
-	//		}
-	//		else // Set root pointer to node's child
-	//			_root = child;
-	//		if (child)
-	//			child->_father = node->_father;
-	//		_size--;
-	//		_allocator.destroy(node);
-    //    	_allocator.deallocate(node, 1);
-	//		return;
-	//	}
-	//	// If node has two children, find inorder successor and swap pointers
-	//	node_pointer succ = node->_right;
-	//	while (succ->_left) succ = succ->_left;
-	//	node_pointer succ_right = succ->_right;
-	//	node_pointer succ_father = succ->_father;
-	//	if (succ->_father->_left == succ) {
-	//		succ->_father->_left = node;
-	//	} else {
-	//		succ->_father->_right = node;
-	//	}
-	//	node->_right = succ_right;
-	//	node->_father = succ_father;
-	//	if (succ_right) succ_right->_father = node;
-	//	// Delete inorder successor(succ);
-	//	_size--;
-	//	_allocator.destroy(succ);
-	//	_allocator.deallocate(succ, 1);
-	//}
 
 	node_pointer lower_bound( const key_type &k ) { return _lower_bound(k); }
 	node_pointer lower_bound( const key_type &k ) const {
@@ -422,13 +386,33 @@ public:
 
 	/* -------------------------------- Allocator ------------------------------ */
 
+
 	allocator_type get_allocator() const {
 		return _allocator;
 	}
 
+
+	void printTreeDiagram() {
+		if (_root == 0) return;
+
+		std::queue<std::pair<_Node*, int> > _q;  // use a queue to store nodes and their depths
+		_q.push({_root, 0});  // start with the root node at depth 0
+
+		while (!_q.empty()) {
+			_Node* _node = _q.front().first;
+			int _depth = _q.front().second;
+			_q.pop();
+
+			std::cout << "Node value: " << _node->_info.second << ", depth: " << _depth << std::endl;
+
+			if (_node->_left) _q.push({_node->_left, _depth + 1});  // add left child to queue
+			if (_node->_right) _q.push({_node->_right, _depth + 1});  // add right child to queue
+		}
+	}
+
     /* -------------------------------- Destructor ------------------------------ */
 
-    virtual ~BST () {
+    ~BST () {
 		//delete _root;
 		//delete _end;
 		//delete _rend;

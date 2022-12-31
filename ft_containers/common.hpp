@@ -24,13 +24,13 @@ void	printSize(T_MAP const &mp, bool print_content = 1)
 	if (print_content)
 	{
 		typename T_MAP::const_iterator it = mp.begin(), ite = mp.end();
-		//typename T_MAP::const_iterator tmp = --(typename T_MAP::const_iterator( (ite) ));
+		typename T_MAP::const_iterator tmp = --(typename T_MAP::const_iterator( (ite) ));
 
 		//std::cout << "map begin : " << it->first << std::endl;
 
-		//std::cout << "map end : " << (tmp)->first << std::endl;
-		//tmp++;
-		//std::cout << "map end : " << (tmp)->first << std::endl;
+		std::cout << "map real end : " << (tmp)->first << std::endl;
+		tmp++;
+		std::cout << "map end() : " << (tmp)->first << std::endl;
 
 		std::cout << std::endl << "Content is:" << std::endl;
 		for (; it != ite; ++it)
