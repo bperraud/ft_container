@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/31 13:16:46 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/31 14:11:32 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -308,11 +308,6 @@ public:
 	void erase(node_pointer target)
 	{
 		node_pointer const res = target; // save pointer to delete
-		if (target == _root)
-		{
-			std::cout << "root erase" << std::endl;
-			return ;
-		}
 		if (target)
 		{
 			// save pointer to node being deleted
@@ -349,11 +344,11 @@ public:
 			else
 			{
 				_root = subst;
-
-				std::cout << "begin : " << begin()->_info.second << std::endl;
-				std::cout << "end : " << end()->_info.second << std::endl;
-				//_rend = _root->_left;
-				//_end = _root->_right;
+				_rend->_father = _root;
+				//_rend->_right->_father = _end;
+				_end->_father = _root;
+				if (_end->_left)
+					_end->_left->_father = _end;
 			}
 			// reset pointers of deleted node
 			target->_left = 0;
@@ -364,6 +359,9 @@ public:
 			_size--;
 			_allocator.destroy(res);
 			_allocator.deallocate(res, 1);
+
+			//std::cout << "begin : " << begin()->_info.second << std::endl;
+			//std::cout << "end : " << end()->_info.second << std::endl;
 		}
 	}
 
@@ -431,9 +429,9 @@ public:
     /* -------------------------------- Destructor ------------------------------ */
 
     virtual ~BST () {
-		delete _root;
-		delete _end;
-		delete _rend;
+		//delete _root;
+		//delete _end;
+		//delete _rend;
 	}  // recursive with BST node
 
     // Associated function
