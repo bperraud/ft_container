@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/30 17:03:31 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/31 13:16:46 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,15 +163,10 @@ public:
 	/* -------------------------------- Iterators ------------------------------- */
 
 	node_pointer	end() {return _end;}
-
 	node_pointer	end() const { return _end;}
-
 	node_pointer	begin() { return _rend->next(); }
-
 	node_pointer	begin() const { return _rend->next();}
-
 	node_pointer	rend() { return _rend; }
-
 	node_pointer	rend() const { return _rend;}
 
 	/* -------------------------------- Capacity -------------------------------- */
@@ -200,9 +195,7 @@ public:
 		if (node)
 			return node;
 		else
-		{
 			return _end;
-		}
 	}
 
 	// true if Key of v is in tree
@@ -240,6 +233,7 @@ public:
 
 	void init_root(const value_type& val) {
 		_root = construct_node(val);
+		_root->_father = 0;
 		_root->_right = _end;
 		_root->_left = _rend;
 		_end->_father = _root;
@@ -259,7 +253,7 @@ public:
 					curr = curr->_left;
 				}
 				else {
-					curr->_left = new _Node(val);
+					curr->_left = construct_node(val);
 					curr->_left->_father = curr;
 					_size += 1;
 					return ft::pair<node_pointer, bool>(curr->_left, true);
@@ -269,7 +263,7 @@ public:
 				if (curr->_right) {
 					curr = curr->_right;
 				} else {
-					curr->_right = new _Node(val);
+					curr->_right = construct_node(val);
 					curr->_right->_father = curr;
 					_size += 1;
 					return ft::pair<node_pointer, bool>(curr->_right, true);
@@ -295,6 +289,126 @@ public:
 		}
 		return insert(val);
 	}
+
+	void swap_node_value(node_pointer first_node, node_pointer second_node)
+	{
+		node_pointer first_node_right = first_node->_right;
+		node_pointer first_node_left = first_node->_left;
+		node_pointer first_node_father = first_node->_father;
+
+		first_node->_right = second_node->_right;
+		first_node->_left = second_node->_left;
+		first_node->_father = second_node->_father;
+
+		second_node->_right = first_node_right;
+		second_node->_left = first_node_left;
+		second_node->_father = first_node_father;
+	}
+
+	void erase(node_pointer target)
+	{
+		node_pointer const res = target; // save pointer to delete
+		if (target == _root)
+		{
+			std::cout << "root erase" << std::endl;
+			return ;
+		}
+		if (target)
+		{
+			// save pointer to node being deleted
+			node_pointer subst = target->_right;
+			if (subst)
+			{
+				node_pointer father = 0;
+				while (subst->_left)
+				{
+					father = subst;
+					subst = subst->_left;
+				}
+				if (father)
+				{
+					father->_left = subst->_right;
+					subst->_right = target->_right;
+				}
+				subst->_left = target->_left;
+			}
+			else
+				subst = target->_left;
+			// update father pointer of substituted node
+			if (subst)
+				subst->_father = target->_father;
+			// update father's child pointer to point to substituted node
+			if (target->_father)
+			{
+				if (target->_father->_left == target)
+					target->_father->_left = subst;
+				else
+					target->_father->_right = subst;
+			}
+			// if node being deleted is root, update _root pointer
+			else
+			{
+				_root = subst;
+
+				std::cout << "begin : " << begin()->_info.second << std::endl;
+				std::cout << "end : " << end()->_info.second << std::endl;
+				//_rend = _root->_left;
+				//_end = _root->_right;
+			}
+			// reset pointers of deleted node
+			target->_left = 0;
+			target->_right = 0;
+			target->_father = 0;
+			target = subst;
+			// destroy and deallocate deleted node
+			_size--;
+			_allocator.destroy(res);
+			_allocator.deallocate(res, 1);
+		}
+	}
+
+	//void erase(node_pointer node) {
+	//	if (_root == node)
+	//		std::cout << "root" << std::endl;
+	//	if (!node) return;
+	//	// If node has no children or only one child, just delete it
+	//	if (!node->_left || !node->_right) {
+	//		node_pointer child = node->_left ? node->_left : node->_right;
+	//		if (node->_father) {
+	//			// Update parent's child pointer
+	//			if (node->_father->_left == node) {
+	//				node->_father->_left = child;
+	//			} else {
+	//				node->_father->_right = child;
+	//			}
+	//		}
+	//		else // Set root pointer to node's child
+	//			_root = child;
+	//		if (child)
+	//			child->_father = node->_father;
+	//		_size--;
+	//		_allocator.destroy(node);
+    //    	_allocator.deallocate(node, 1);
+	//		return;
+	//	}
+	//	// If node has two children, find inorder successor and swap pointers
+	//	node_pointer succ = node->_right;
+	//	while (succ->_left) succ = succ->_left;
+	//	node_pointer succ_right = succ->_right;
+	//	node_pointer succ_father = succ->_father;
+	//	if (succ->_father->_left == succ) {
+	//		succ->_father->_left = node;
+	//	} else {
+	//		succ->_father->_right = node;
+	//	}
+	//	node->_right = succ_right;
+	//	node->_father = succ_father;
+	//	if (succ_right) succ_right->_father = node;
+	//	// Delete inorder successor(succ);
+	//	_size--;
+	//	_allocator.destroy(succ);
+	//	_allocator.deallocate(succ, 1);
+	//}
 
 	node_pointer lower_bound( const key_type &k ) { return _lower_bound(k); }
 	node_pointer lower_bound( const key_type &k ) const {
@@ -395,41 +509,6 @@ private:
 		return *res; //  pointer to place where v is or should be
 	}
 	*/
-
-	node_pointer _erase (_Node*& target) {
-		node_pointer const res = target;  // saved
-		if (target) {
-			node_pointer subst = target->_right;
-			if (subst) {
-				node_pointer father = 0;
-				while (subst->_left) {
-					father = subst;
-					subst = subst->_left;
-				}
-				if (father) {
-					father->_left = subst->_right;
-					if (subst->_right) {  // Update father of subst->_right
-						subst->_right->_father = father;
-					}
-					subst->_right = target->_right;
-				}
-				subst->_left = target->_left;
-				if (target->_left) {  // Update father of target->_left
-					target->_left->_father = subst;
-				}
-			}
-			else {
-				subst = target->_left;
-				if (subst) {  // Update father of target->_left
-					subst->_father = target->_father;
-				}
-			}
-			target->_left = 0;
-			target->_right = 0;
-			target = subst;
-		}
-		return res;  // old isolated _Node (not yet deleted)
-	}
 
 	static node_pointer _cp (const node_pointer r) // recursive
 	{return r ? new _Node(*r) : 0;}

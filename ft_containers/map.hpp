@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/30 17:02:59 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/31 13:16:30 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,16 +69,18 @@ public :
             return *this;
         }
         normal_iterator operator++( int ) {
+			normal_iterator tmp = _current_node;
 			_current_node = _current_node->next();
-			return *this;
+			return tmp;
 		}
         normal_iterator &operator--() {
             _current_node = _current_node->previous();
             return *this;
         }
         normal_iterator operator--( int ) {
-            _current_node = _current_node->previous();
-			return *this;
+            normal_iterator tmp = _current_node;
+			_current_node = _current_node->previous();
+			return tmp;
 		}
 
 		pointer operator->() { return &_current_node->_info; }
@@ -201,18 +203,24 @@ public:
     }
 
 	void erase (iterator position) {
-		//_tree.erase( position.get_node());
-		(void) position;
+		std::cout << "position : " << position.get_node()->_info.second << std::endl;
+		_tree.erase( position.get_node());
 	}
 
 	size_type erase (const key_type& k){
-		(void) k;
+		if (_tree.exists(k)) {
+			_tree.erase( _tree.find(k)) ;
+			return 1;
+		}
 		return 0;
 	}
 
     void erase (iterator first, iterator last){
-		(void) first;
-		(void) last;
+		while (first != last) {
+			iterator tmp = ++( iterator( first ) );
+			_tree.erase( first.get_node());
+			first = tmp;
+		}
 	}
 
 	void clear() {
