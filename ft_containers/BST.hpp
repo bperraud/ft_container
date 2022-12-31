@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/31 17:48:01 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/31 18:07:22 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,21 +136,26 @@ public:
 
 	BST( const key_compare &comp = key_compare(), const allocator_type &alloc = node_allocator_type() () )
 		: _end(construct_node(value_type())), _rend(construct_node(value_type())), _root(0), _allocator(alloc),
-		//: _end(construct_node(_Node())), _rend(construct_node(_Node())), _root(_end), _allocator(alloc),
 		_key_compare( extended_key_compare(_end, _rend, comp)), _size(0) {
 
 	}
 
-	//BST &operator=( const BST &other ) {
-	//	//clear();
-	//	node_pointer first = begin();
-	//	while (first != end())
-	//	{
-	//		insert(*first);
-	//		first++;
-	//	}
-	//	return *this;
-	//}
+	BST( const BST &other )
+		: _end(construct_node(value_type())), _rend(construct_node(value_type())), _root(0), _allocator(other._allocator),
+		_key_compare( other._key_compare), _size(0) {
+		*this = other;
+	}
+
+	BST &operator=( const BST &other ) {
+		clear();
+		node_pointer first = other.begin();
+		while (first != other.end())
+		{
+			insert(first->_info);
+			first = first->next();
+		}
+		return *this;
+	}
 
 	node_pointer construct_node(const value_type &val)
 	{
@@ -406,9 +411,17 @@ public:
 	//	}
 	//}
 
+	void clear()
+	{
+		return;
+		while (_size) {
+			erase(begin());
+		}
+	}
     /* -------------------------------- Destructor ------------------------------ */
 
     ~BST () {
+		clear();
 		_allocator.destroy( _end );
         _allocator.deallocate( _end, 1 );
 		_allocator.destroy( _rend );
