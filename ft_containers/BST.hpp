@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/31 18:07:22 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/31 18:09:20 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ public:
 
 	BST( const BST &other )
 		: _end(construct_node(value_type())), _rend(construct_node(value_type())), _root(0), _allocator(other._allocator),
-		_key_compare( other._key_compare), _size(0) {
+		_key_compare( extended_key_compare(_end, _rend, other._key_compare.key_comp() ) ), _size(0) {
 		*this = other;
 	}
 
