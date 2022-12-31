@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/31 16:43:00 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/31 17:48:01 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,17 +328,17 @@ public:
 				if (father)
 				{
 					father->_left = subst->_right;
-					if (father->_left)
-						father->_left->_father = father;
+					if (father->_left) father->_left->_father = father;
 					subst->_right = target->_right;
+					if (subst->_right) subst->_right->_father = subst;
 				}
 				subst->_left = target->_left;
+				if (subst->_left) subst->_left->_father = subst;
 			}
 			else
 				subst = target->_left;
 			// update father pointer of substituted node
-			if (subst)
-				subst->_father = target->_father;
+			if (subst) subst->_father = target->_father;
 			// update father's child pointer to point to substituted node
 			if (target->_father)
 			{
@@ -409,9 +409,10 @@ public:
     /* -------------------------------- Destructor ------------------------------ */
 
     ~BST () {
-		//delete _root;
-		//delete _end;
-		//delete _rend;
+		_allocator.destroy( _end );
+        _allocator.deallocate( _end, 1 );
+		_allocator.destroy( _rend );
+        _allocator.deallocate( _rend, 1 );
 	}  // recursive with BST node
 
     // Associated function

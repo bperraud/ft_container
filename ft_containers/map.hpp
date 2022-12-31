@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/31 16:38:57 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/31 16:47:02 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,7 +203,6 @@ public:
     }
 
 	void erase (iterator position) {
-		std::cout << "position : " << position.get_node()->_info.second << std::endl;
 		_tree.erase( position.get_node());
 	}
 
