@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/31 19:13:48 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/31 19:31:36 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,22 +194,23 @@ public:
 		return &v == &_NOT_FOUND;
 	}
 
-/*
-	const value_type& find (const value_type& v) const {
-		const _Node *const res = const_cast<BST*>(this)->_findNode(v);
-		return res ? res->_info : _NOT_FOUND;
-	}
-	*/
-
 	node_pointer find (const key_type& key) const {
-		node_pointer node = _findNode(key);
-		if (node)
-			return node;
-		else
-			return _end;
+		node_pointer res = _root;
+		while (res)
+		{
+			if ( _key_compare(key, res->_info.first)) {
+				res = res->_left;
+			}
+			else if (_key_compare(res->_info.first, key)) {
+				res = res->_right;
+			}
+			else {
+				return res;
+			}
+		}
+		return _end; //  if not found return _end
 	}
 
-	// true if Key of v is in tree
 	bool exists (const key_type& key) const {
 		return find(key) != _end;
 	}
@@ -433,22 +434,6 @@ public:
 
 private:
 
-	node_pointer _findNode (const key_type& k) const {
-		node_pointer res = _root;
-		while (res)
-		{
-			if ( _key_compare(k, (res)->_info.first)) {
-				res = res->_left;
-			}
-			else if (_key_compare((res)->_info.first, k)) {
-				res = res->_right;
-			}
-			else {
-				return res;
-			}
-		}
-		return 0; //  if not found return 0
-	}
 
 	node_pointer _lower_bound(const key_type& key) const
 	{
@@ -481,25 +466,6 @@ private:
 		// key was not found, return end iterator
 		return _end;
 	}
-
-	/*
-	_Node*& _findNode (const key_type& k) {
-		_Node **res = &_root;
-		while (*res)
-		{
-			if ( _key_compare(k, (*res)->_info.first)) {
-				res = &(*res)->_left;
-			}
-			else if (_key_compare((*res)->_info.first, k)) {
-				res = &(*res)->_right;
-			}
-			else {
-				break;
-			}
-		}
-		return *res; //  pointer to place where v is or should be
-	}
-	*/
 
 	static node_pointer _cp (const node_pointer r) // recursive
 	{return r ? new _Node(*r) : 0;}
