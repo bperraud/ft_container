@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/31 16:38:02 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/31 16:43:00 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,9 +328,8 @@ public:
 				if (father)
 				{
 					father->_left = subst->_right;
-					//add
-					father->_left->_father = father;
-					// add
+					if (father->_left)
+						father->_left->_father = father;
 					subst->_right = target->_right;
 				}
 				subst->_left = target->_left;
@@ -365,9 +364,6 @@ public:
 			_size--;
 			_allocator.destroy(res);
 			_allocator.deallocate(res, 1);
-			std::cout << "end erase" << std::endl;
-			//std::cout << "begin : " << begin()->_info.second << std::endl;
-			//std::cout << "end : " << end()->_info.second << std::endl;
 		}
 	}
 
@@ -392,23 +388,23 @@ public:
 	}
 
 
-	void printTreeDiagram() {
-		if (_root == 0) return;
+	//void printTreeDiagram() {
+	//	if (_root == 0) return;
 
-		std::queue<std::pair<_Node*, int> > _q;  // use a queue to store nodes and their depths
-		_q.push({_root, 0});  // start with the root node at depth 0
+	//	std::queue<std::pair<_Node*, int> > _q;  // use a queue to store nodes and their depths
+	//	_q.push({_root, 0});  // start with the root node at depth 0
 
-		while (!_q.empty()) {
-			_Node* _node = _q.front().first;
-			int _depth = _q.front().second;
-			_q.pop();
+	//	while (!_q.empty()) {
+	//		_Node* _node = _q.front().first;
+	//		int _depth = _q.front().second;
+	//		_q.pop();
 
-			std::cout << "Node value: " << _node->_info.second << ", depth: " << _depth << std::endl;
+	//		std::cout << "Node value: " << _node->_info.second << ", depth: " << _depth << std::endl;
 
-			if (_node->_left) _q.push({_node->_left, _depth + 1});  // add left child to queue
-			if (_node->_right) _q.push({_node->_right, _depth + 1});  // add right child to queue
-		}
-	}
+	//		if (_node->_left) _q.push({_node->_left, _depth + 1});  // add left child to queue
+	//		if (_node->_right) _q.push({_node->_right, _depth + 1});  // add right child to queue
+	//	}
+	//}
 
     /* -------------------------------- Destructor ------------------------------ */
 
