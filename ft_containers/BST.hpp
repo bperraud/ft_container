@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/31 18:09:20 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/31 19:13:48 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -413,7 +413,6 @@ public:
 
 	void clear()
 	{
-		return;
 		while (_size) {
 			erase(begin());
 		}
