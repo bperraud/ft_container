@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/31 19:31:36 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/01/02 13:58:47 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,18 @@ private:
 			}
 			return ancestor;
 		}
+
+		bool operator==( const _Node &other ) const {
+			return ( _info == other._info );
+		}
+		bool operator<( const _Node &other ) const {
+			return _info < other._info;
+		}
+		bool operator!=( const _Node &other ) const { return !( *this == other ); }
+		bool operator<=( const _Node &other ) const { return !( *this < other ); }
+		bool operator>( const _Node &other ) const { return ( other < *this ); }
+		bool operator>=( const _Node &other ) const { return !( *this < other ); }
+
 	};
 
 	typedef typename Allocator::template rebind< _Node >::other node_allocator_type;
@@ -188,11 +200,7 @@ public:
 
 	size_type size() const {return _size;}
 
-	bool isEmpty () const {return !_root;}
-
-	bool isNotFound (const value_type& v) {
-		return &v == &_NOT_FOUND;
-	}
+	bool isEmpty () const {return _size == 0;}
 
 	node_pointer find (const key_type& key) const {
 		node_pointer res = _root;
@@ -235,10 +243,6 @@ public:
 			current = current->_right;
 		}
 		return current;
-	}
-
-	bool	isEmpty() {
-		return _root->_right == _end && _root->_left == _rend;
 	}
 
 	/* -------------------------------- Modifiers ------------------------------- */
@@ -300,21 +304,6 @@ public:
 			return ft::pair<node_pointer, bool>(position->_right, true);
 		}
 		return insert(val);
-	}
-
-	void swap_node_value(node_pointer first_node, node_pointer second_node)
-	{
-		node_pointer first_node_right = first_node->_right;
-		node_pointer first_node_left = first_node->_left;
-		node_pointer first_node_father = first_node->_father;
-
-		first_node->_right = second_node->_right;
-		first_node->_left = second_node->_left;
-		first_node->_father = second_node->_father;
-
-		second_node->_right = first_node_right;
-		second_node->_left = first_node_left;
-		second_node->_father = first_node_father;
 	}
 
 	void erase(node_pointer target)
@@ -384,33 +373,17 @@ public:
 		return _upper_bound(k);
 	}
 
-    //virtual BST& operator= (const BST&);
+    void swap (BST& x) {
+		BST y = *this;
+		*this = x;
+		x = y;
+	}
 
 	/* -------------------------------- Allocator ------------------------------ */
-
 
 	allocator_type get_allocator() const {
 		return _allocator;
 	}
-
-
-	//void printTreeDiagram() {
-	//	if (_root == 0) return;
-
-	//	std::queue<std::pair<_Node*, int> > _q;  // use a queue to store nodes and their depths
-	//	_q.push({_root, 0});  // start with the root node at depth 0
-
-	//	while (!_q.empty()) {
-	//		_Node* _node = _q.front().first;
-	//		int _depth = _q.front().second;
-	//		_q.pop();
-
-	//		std::cout << "Node value: " << _node->_info.second << ", depth: " << _depth << std::endl;
-
-	//		if (_node->_left) _q.push({_node->_left, _depth + 1});  // add left child to queue
-	//		if (_node->_right) _q.push({_node->_right, _depth + 1});  // add right child to queue
-	//	}
-	//}
 
 	void clear()
 	{
@@ -426,15 +399,54 @@ public:
         _allocator.deallocate( _end, 1 );
 		_allocator.destroy( _rend );
         _allocator.deallocate( _rend, 1 );
-	}  // recursive with BST node
+	}
 
-    // Associated function
-    //template <typename U>
-    //friend inline std::ostream& operator<< (std::ostream&, const BST<U>&);
+	/* -------------------------- Relational operators -------------------------- */
+
+    bool operator==( const BST &other ) const {
+		if (_size != other.size())
+			return false;
+		node_pointer first = begin();
+		node_pointer first_other = other.begin();
+		while (first != end() ){
+			if ( first->_info != first_other->_info ) {
+				return false;
+			}
+			first = first->next();
+			first_other = first_other->next();
+		}
+		return true;
+    }
+
+    bool operator<( const BST &other ) const {
+		node_pointer first = begin();
+		node_pointer first_other = other.begin();
+		while ( first != end() ) {
+			if ( first_other == other.end() || first_other->_info < first->_info) {
+				return false;
+			}
+			else if ( first->_info < first_other->_info ) {
+				return true;
+			}
+			first = first->next();
+			first_other = first_other->next();
+		}
+		return first_other != other.end();
+    }
+
+    bool operator!=( const BST &other ) const {
+        return !( *this == other );
+    }
+    bool operator>( const BST &other ) const { return other < *this; }
+    bool operator<=( const BST &other ) const {
+        return !( other < *this );
+    }
+    bool operator>=( const BST &other ) const {
+        return !( *this < other );
+    }
+
 
 private:
-
-
 	node_pointer _lower_bound(const key_type& key) const
 	{
 		node_pointer current = begin();
@@ -443,10 +455,8 @@ private:
 				// key is not less than current node's key, return current node
 				return current;
 			}
-			//std::cout << "current node lower: " << current->_info.first << std::endl;
 			current = current->next();
 		}
-
 		// key was not found, return end iterator
 		return _end;
 	}
@@ -459,16 +469,11 @@ private:
 				// key is less than current node's key, return current node
 				return current;
 			}
-			//std::cout << "current node upper : " << current->_info.first << std::endl;
 			current =  current->next();
 		}
-
 		// key was not found, return end iterator
 		return _end;
 	}
-
-	static node_pointer _cp (const node_pointer r) // recursive
-	{return r ? new _Node(*r) : 0;}
 
 };
 

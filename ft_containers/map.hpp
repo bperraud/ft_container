@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/31 17:49:58 by bperraud         ###   ########.fr       */
+/*   Updated: 2022/12/31 19:51:57 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -273,6 +273,19 @@ public:
 		return _tree.get_allocator();
 	}
 
+	void swap (map& x) {
+		_tree.swap( x._tree);
+	}
+
+	/* -------------------------- Relational operators -------------------------- */
+
+    bool operator==( const map &other ) const { return _tree == other._tree; }
+    bool operator!=( const map &other ) const { return _tree != other._tree; }
+    bool operator<( const map &other ) const { return _tree < other._tree; }
+    bool operator<=( const map &other ) const { return _tree <= other._tree; }
+    bool operator>( const map &other ) const { return _tree > other._tree; }
+    bool operator>=( const map &other ) const { return _tree >= other._tree; }
+
 	/* -------------------------------- Destructor ------------------------------ */
 
 	~map () {};
@@ -283,7 +296,15 @@ private :
 		return _tree.exists(k);
 	}
 
+
 };
+
+	/* ---------------------------------- Swap ---------------------------------- */
+
+template < class Key, class T, class Compare, class Alloc >
+void swap( map< Key, T, Compare, Alloc > &x, map< Key, T, Compare, Alloc > &y ) {
+	x.swap(y);
+}
 
 } //namespace ft
 
