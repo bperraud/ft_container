@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2023/01/02 13:58:47 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/01/02 14:59:23 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -293,16 +293,7 @@ public:
 	}
 
 	ft::pair<node_pointer, bool> insert(node_pointer position, const value_type& val) {
-		if (!_root) {
-			init_root(val);
-			return ft::pair<node_pointer, bool>(_root, true);
-		}
-		if (_key_compare(position->_info.first, val.first) && !position->_right) {
-			position->_right = construct_node(val);
-			position->_right->_father = position;
-			_size += 1;
-			return ft::pair<node_pointer, bool>(position->_right, true);
-		}
+		(void) position;
 		return insert(val);
 	}
 
