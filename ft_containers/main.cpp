@@ -8,62 +8,43 @@
 
 #include "common.hpp"
 
-#define T1 int
-#define T2 std::string
-typedef TESTED_NAMESPACE::map<T1, T2>::value_type T3;
-typedef TESTED_NAMESPACE::map<T1, T2>::iterator iterator;
+#define T1 char
+#define T2 foo<float>
+typedef TESTED_NAMESPACE::map<T1, T2> _map;
+typedef _map::const_iterator const_it;
 
-static int iter = 0;
+static unsigned int i = 0;
 
-template <typename MAP, typename U>
-void	ft_insert(MAP &mp, U param)
+void	ft_comp(const _map &mp, const const_it &it1, const const_it &it2)
 {
-	_pair<iterator, bool> tmp;
+	bool res[2];
 
-	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
-	tmp = mp.insert(param);
-	std::cout << "insert return: " << printPair(tmp.first);
-	std::cout << "Created new node: " << tmp.second << std::endl;
-	printSize(mp);
-}
-
-template <typename MAP, typename U, typename V>
-void	ft_insert(MAP &mp, U param, V param2)
-{
-	iterator tmp;
-
-	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
-	tmp = mp.insert(param, param2);
-	std::cout << "insert return: " << printPair(tmp);
-	printSize(mp);
+	std::cout << "\t-- [" << ++i << "] --" << std::endl;
+	res[0] = mp.key_comp()(it1->first, it2->first);
+	res[1] = mp.value_comp()(*it1, *it2);
+	std::cout << "with [" << it1->first << " and " << it2->first << "]: ";
+	std::cout << "key_comp: " << res[0] << " | " << "value_comp: " << res[1] << std::endl;
 }
 
 int		main(void)
 {
-	TESTED_NAMESPACE::map<T1, T2> mp, mp2;
+	_map	mp;
 
-	ft_insert(mp, T3(42, "lol"));
-	ft_insert(mp, T3(42, "mdr"));
+	mp['a'] = 2.3;
+	mp['b'] = 1.4;
+	mp['c'] = 0.3;
+	mp['d'] = 4.2;
+	printSize(mp);
 
-	ft_insert(mp, T3(50, "mdr"));
-	ft_insert(mp, T3(35, "funny"));
+	for (const_it it1 = mp.begin(); it1 != mp.end(); ++it1)
+		for (const_it it2 = mp.begin(); it2 != mp.end(); ++it2)
+			ft_comp(mp, it1, it2);
 
-	ft_insert(mp, T3(45, "bunny"));
-	ft_insert(mp, T3(21, "fizz"));
-	ft_insert(mp, T3(38, "buzz"));
-
-	ft_insert(mp, mp.begin(), T3(55, "fuzzy"));
-
-
-	ft_insert(mp2, mp2.begin(), T3(1337, "beauty"));
-
-	return (0);
-
-	ft_insert(mp2, mp2.end(), T3(1000, "Hello"));
-	ft_insert(mp2, mp2.end(), T3(1500, "World"));
-
+	printSize(mp);
 	return (0);
 }
+
+
 
 
 

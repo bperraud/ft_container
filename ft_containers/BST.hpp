@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2023/01/02 17:45:37 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/01/02 21:29:05 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,18 @@ template<
     class Key,														// map::key_type
     class T,														// map::mapped_type
     class Compare = std::less<Key>,									// map::key_compare
-    class Allocator = std::allocator<ft::pair<const Key, T> > >	// map::allocator_type
+    class Allocator = std::allocator<ft::pair<const Key, T> > >		// map::allocator_type
 class BST {
 
 public :
 	typedef Key											key_type;
 	typedef T											mapped_type;
+
 	typedef ft::pair<const Key, T>						value_type;
+
+	//typedef ft::pair<const Key, const T>				const_value_type;
+	//typedef const_value_type*							const_pointer;
+
 	typedef Compare										key_compare;
 	typedef Allocator									allocator_type;
 	typedef typename allocator_type::reference			reference;
@@ -139,9 +144,6 @@ private:
 	extended_key_compare	_key_compare;
 	size_type				_size;
 
-protected:
-	static const value_type _NOT_FOUND;                      // "not found" element
-
 public:
 
     /* ------------------------------ Construction ------------------------------ */
@@ -149,7 +151,6 @@ public:
 	BST( const key_compare &comp = key_compare(), const allocator_type &alloc = node_allocator_type() () )
 		: _end(construct_node(value_type())), _rend(construct_node(value_type())), _root(0), _allocator(alloc),
 		_key_compare( extended_key_compare(_end, _rend, comp)), _size(0) {
-
 	}
 
 	BST( const BST &other )
@@ -157,6 +158,11 @@ public:
 		_key_compare( extended_key_compare(_end, _rend, other._key_compare.key_comp() ) ), _size(0) {
 		*this = other;
 	}
+
+	//operator BST< const_tree_type >() const {
+	//	std::cout << "conversion" << std::endl;
+    //    return ( BST< const_tree_type >( _current_node ) );
+    //}
 
 	BST &operator=( const BST &other ) {
 		clear();

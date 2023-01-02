@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2023/01/02 17:24:48 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/01/02 21:29:45 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,26 +25,26 @@ template<
     class Compare = std::less<Key>,									// map::key_compare
     class Allocator = std::allocator<ft::pair<const Key, T> > >	// map::allocator_type
 class map {
-
 public :
 	typedef BST<Key, T, Compare, Allocator> 				tree_type;
 
 	//typedef const tree_type		const_tree_type;
 	typedef const BST<Key, T, Compare, Allocator>		const_tree_type;
 
-	//typedef const BST<Key, const T, Compare, Allocator>		const_tree_type;
+	//typedef BST<const Key, const T, Compare, Allocator>	const_tree_type;
 
 	// iterator class
     template <typename U>
 	class normal_iterator {
     public:
 
+		//typedef typename map::const_iterator const_iterator;
+
         typedef typename U::value_type			value_type;
         typedef typename U::reference			reference;
 		typedef typename U::const_reference		const_reference;
         typedef typename U::pointer				pointer;
-		typedef	typename U::const_pointer		const_pointer;
-
+		//typedef	typename U::const_pointer		const_pointer;
 
         typedef typename U::difference_type		difference_type;
 		typedef std::bidirectional_iterator_tag iterator_category;
@@ -55,7 +55,8 @@ public :
 
     public:
 		normal_iterator() : _current_node() {}
-		normal_iterator( node_pointer node ) : _current_node( node ) {}
+		//normal_iterator( node_pointer node ) : _current_node( node ) {}
+		normal_iterator( const node_pointer &node ) : _current_node( node ) {}
 		normal_iterator( const normal_iterator &other ) : _current_node( other._current_node ) {}
 
 		const node_pointer &get_node() const { return _current_node; }
@@ -84,22 +85,15 @@ public :
 		}
 
 		pointer operator->() { return &_current_node->_info; }
-		typename normal_iterator< const_tree_type >::pointer operator->() const {
+		//typename normal_iterator< U >::pointer operator->() const {
+		typename normal_iterator< U >::pointer operator->() const {
 			return &_current_node->_info;
 		}
 
-		//typename normal_iterator< const_tree_type >::const_pointer operator->() const {
-		//	return &_current_node->_info;
-		//}
-
 		reference operator*() { return _current_node->_info; }
-		typename normal_iterator< const_tree_type >::reference operator*() const {
+		typename normal_iterator< U >::reference operator*() const {
 			return _current_node->_info;
 		}
-
-		//typename normal_iterator< const_tree_type >::const_reference operator*() const {
-		//	return _current_node->_info;
-		//}
 
 		template < typename P >
 		bool operator==( const normal_iterator< P > &other ) const {
@@ -111,12 +105,22 @@ public :
 		}
 
 		operator U() const { return node_pointer( _current_node ); }
-        operator normal_iterator< const_tree_type >() const {
-            return normal_iterator< const_tree_type >( _current_node );
+
+		// convert T to const T for non-const to const assignation
+		//operator normal_iterator< const U >() const {
+        //    return ( normal_iterator< const U >( _current_node ) );
+        //}
+
+		operator normal_iterator< const_tree_type >() const {
+            return ( normal_iterator< const_tree_type >( _current_node ) );
         }
 
-		//operator normal_iterator< const_tree_type >() const {
-		//	return normal_iterator< const_tree_type >( _current_node );
+		//template <typename Tree>
+		//normal_iterator(const normal_iterator<Tree>& other) : _current_node(other._current_node) {}
+
+		//template<typename U>
+		//operator const_iterator() const {
+		//	return const_iterator(_current_node);
 		//}
 
 	};
@@ -125,6 +129,11 @@ public :
 
 	typedef normal_iterator< tree_type >				iterator;
     typedef normal_iterator< const_tree_type >			const_iterator;
+
+	//typename map<Key, T, Compare, Allocator>::const_iterator map<Key, T, Compare, Allocator>::normal_iterator<BST<Key, T, Compare, Allocator> >::operator const_iterator() const {
+	//	return const_iterator(_current_node);
+	//}
+
     typedef ft::reverse_iterator< iterator >			reverse_iterator;
     typedef ft::reverse_iterator< const_iterator >		const_reverse_iterator;
 
@@ -171,7 +180,7 @@ public:
 
 	iterator 				begin() {return _tree.begin();}
 	iterator 				end() { return _tree.end();}
-	const_iterator 			begin() const {return _tree.begin(); }
+	const_iterator 			begin() const {return const_iterator(_tree.begin()); }
 	const_iterator 			end() const  { return _tree.end();}
 	reverse_iterator 		rbegin() {return iterator(_tree.end());}
 	reverse_iterator 		rend() { return iterator(_tree.begin());}
@@ -320,5 +329,6 @@ void swap( map< Key, T, Compare, Alloc > &x, map< Key, T, Compare, Alloc > &y ) 
 }
 
 } //namespace ft
+
 
 #endif
