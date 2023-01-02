@@ -165,6 +165,97 @@ public:
 
 };
 
+template <typename _It>
+class const_reverse_iterator {
+
+private:
+	_It _it;
+
+public:
+	typedef typename _It::value_type        value_type;
+    typedef typename _It::const_reference         const_reference;
+    typedef typename _It::const_pointer           const_pointer;
+    typedef typename _It::difference_type   difference_type;
+    typedef typename _It::iterator_category iterator_category;
+
+public:
+	const_reverse_iterator() {}
+	const_reverse_iterator( const_pointer p ) : _it( _It( p ) ) {}
+	const_reverse_iterator( const _It &other ) : _it( other ) {}
+
+	template < typename P >
+	const_reverse_iterator( const reverse_iterator< P> &other ) : _it( other.base() ) {}
+
+
+	const_reverse_iterator( const const_reverse_iterator &other ) : _it( other._it ) {}
+	template < typename U >
+    const_reverse_iterator( const const_reverse_iterator< U > &other ) : _it( other.base() ) {}
+
+	_It base() const { return _it; }
+
+	template < typename U >
+    const_reverse_iterator &operator=( const const_reverse_iterator< U > &other ) {
+        _it = other.base();
+        return *this;
+    }
+
+	const_reverse_iterator operator+( difference_type n ) const { return _it - n; }
+    friend const_reverse_iterator operator+( difference_type n, const const_reverse_iterator &other ) {
+		return other + n;
+	};
+    const_reverse_iterator operator-( difference_type n ) const { return _it + n; }
+    difference_type  operator-( const const_reverse_iterator &other ) const {
+        return other.base() - _it;
+    }
+
+    const_reverse_iterator operator++() { return --_it; }
+    const_reverse_iterator operator--() { return ++_it; }
+    const_reverse_iterator operator++( int ) { return _it--; }
+    const_reverse_iterator operator--( int ) { return _it++; }
+
+    const_reverse_iterator &operator+=( difference_type n ) {
+        _it -= n;
+        return *this;
+    };
+    const_reverse_iterator &operator-=( difference_type n ) {
+        _it += n;
+        return *this;
+    };
+
+	const_reference			operator*() { return (--_It( _it )).operator*(); }
+	const const_reference	operator*() const { return (--_It( _it )).operator*(); }
+	const_pointer					operator->() { return (--_It( _it )).operator->(); }
+	const const_pointer			operator->() const { return (--_It( _it )).operator->(); }
+	const_reference			operator[]( difference_type i ) { return *operator+( i ); }
+    const const_reference	operator[]( difference_type i ) const { return *operator+( i );}
+
+	template < typename U >
+    bool operator==( const const_reverse_iterator< U > &other ) const {
+        return ( _it == other.base() );
+    };
+    template < typename U >
+    bool operator!=( const const_reverse_iterator< U > &other ) const {
+        return ( _it != other.base() );
+    };
+    template < typename U >
+    bool operator>( const const_reverse_iterator< U > &other ) const {
+        return ( _it < other.base() );
+    };
+    template < typename U >
+    bool operator<( const const_reverse_iterator< U > &other ) const {
+        return ( _it > other.base() );
+    };
+    template < typename U >
+    bool operator>=( const const_reverse_iterator< U > &other ) const {
+        return ( _it <= other.base() );
+    };
+    template < typename U >
+    bool operator<=( const const_reverse_iterator< U > &other ) const {
+        return ( _it >= other.base() );
+    };
+
+};
+
 
 } // namespace ft
 

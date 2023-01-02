@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2023/01/03 00:22:33 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/01/03 00:26:49 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,8 +216,9 @@ public :
 	//	return const_iterator(_current_node);
 	//}
 
-    typedef ft::reverse_iterator< iterator >			reverse_iterator;
-    typedef ft::reverse_iterator< const_iterator >		const_reverse_iterator;
+    typedef ft::reverse_iterator< iterator >				reverse_iterator;
+    //typedef ft::reverse_iterator< const_iterator >		const_reverse_iterator;
+	typedef ft::const_reverse_iterator< const_iterator >		const_reverse_iterator;
 
 public:
 
