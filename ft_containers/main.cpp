@@ -54,14 +54,18 @@ int		main(void)
 
 	ft_insert(mp, mp.begin(), T3(55, "fuzzy"));
 
-	return 0;
 
 	ft_insert(mp2, mp2.begin(), T3(1337, "beauty"));
+
+	return (0);
+
 	ft_insert(mp2, mp2.end(), T3(1000, "Hello"));
 	ft_insert(mp2, mp2.end(), T3(1500, "World"));
 
 	return (0);
 }
+
+
 
 /*
 int main() {

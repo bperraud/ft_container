@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2023/01/02 14:59:23 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/01/02 17:45:37 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,18 +176,11 @@ public:
 		return node;
 	}
 
-	//node_pointer construct_node(const node_reference other)
-	//{
-	//	node_pointer node = _allocator.allocate(1);
-    //    _allocator.construct(node, other);
-	//	return node;
-	//}
-
 	/* -------------------------------- Iterators ------------------------------- */
 
 	node_pointer	end() {return _end;}
 	node_pointer	end() const { return _end;}
-	node_pointer	begin() { return _rend->next(); }
+	node_pointer	begin() {return _rend->next(); }
 	node_pointer	begin() const { return _rend->next();}
 	node_pointer	rend() { return _rend; }
 	node_pointer	rend() const { return _rend;}
@@ -258,44 +251,15 @@ public:
 	}
 
 	ft::pair<node_pointer, bool> insert(const value_type& val) {
-		_Node *curr = _root;
-		if (!_root) {
-			init_root(val);
-			return ft::pair<node_pointer, bool>(_root, true);
-		}
-		while (curr) {
-			if (_key_compare(val.first, curr->_info.first)) {
-				if (curr->_left) {
-					curr = curr->_left;
-				}
-				else {
-					curr->_left = construct_node(val);
-					curr->_left->_father = curr;
-					_size += 1;
-					return ft::pair<node_pointer, bool>(curr->_left, true);
-				}
-			}
-			else if (_key_compare(curr->_info.first, val.first)) {
-				if (curr->_right) {
-					curr = curr->_right;
-				} else {
-					curr->_right = construct_node(val);
-					curr->_right->_father = curr;
-					_size += 1;
-					return ft::pair<node_pointer, bool>(curr->_right, true);
-				}
-			}
-			else {
-				return ft::pair<node_pointer, bool>(curr, false);
-			}
-		}
-		return ft::pair<node_pointer, bool>(_root, false);
+		return _insert(val, _root);
 	}
 
-	ft::pair<node_pointer, bool> insert(node_pointer position, const value_type& val) {
-		(void) position;
-		return insert(val);
-	}
+	ft::pair< node_pointer, bool > insert( node_pointer hint, const value_type &val ) {
+        if ( _is_upper_bound( hint, val.first) ) {
+            return _insert( val, hint );
+        }
+        return _insert( val, _root );
+    }
 
 	void erase(node_pointer target)
 	{
@@ -438,6 +402,49 @@ public:
 
 
 private:
+
+	ft::pair<node_pointer, bool> _insert(const value_type& val, node_pointer node) {
+		if (!_root) {
+			init_root(val);
+			return ft::pair<node_pointer, bool>(_root, true);
+		}
+		node_pointer curr = node;
+		while (curr) {
+			if (_key_compare(val.first, curr->_info.first)) {
+				if (curr->_left) {
+					curr = curr->_left;
+				}
+				else {
+					curr->_left = construct_node(val);
+					curr->_left->_father = curr;
+					_size += 1;
+					return ft::pair<node_pointer, bool>(curr->_left, true);
+				}
+			}
+			else if (_key_compare(curr->_info.first, val.first)) {
+				if (curr->_right) {
+					curr = curr->_right;
+				} else {
+					curr->_right = construct_node(val);
+					curr->_right->_father = curr;
+					_size += 1;
+					return ft::pair<node_pointer, bool>(curr->_right, true);
+				}
+			}
+			else {
+				return ft::pair<node_pointer, bool>(curr, false);
+			}
+		}
+		return ft::pair<node_pointer, bool>(_root, false);
+	}
+
+	bool _is_upper_bound( node_pointer current, const key_type &k ) const {
+		if ((current && !current->previous()) || !_root)
+			return true;
+		return ( current == begin() || !_key_compare( k, current->previous()->_info.first ) )
+			&& _key_compare( k, current->_info.first );
+	}
+
 	node_pointer _lower_bound(const key_type& key) const
 	{
 		node_pointer current = begin();
