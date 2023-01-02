@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2022/12/08 00:41:38 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/01/02 21:56:48 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ struct Vect {
 
 	virtual void _dsp (std::ostream& out) const {out << *_data ;} ;
 
-
 	void move_back (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
 		if (offset < 0)
         	throw std::length_error("vector::negative offset");
@@ -45,18 +44,14 @@ struct Vect {
 
 	// Constructors
 	Vect () : _size(0), _data(0) {}
-
     const T& operator[] (std::ptrdiff_t) const;
 	inline T& at(std::ptrdiff_t) ;
     inline const T& at(std::ptrdiff_t) const;
-
     // Setters
     virtual T& operator[] (std::ptrdiff_t);
     // Copies & transfers
     Vect (const Vect& v) : _size(v._size), _data(_cp(v)) {}
     inline Vect& operator= (const Vect&);
-    // Destructor
-    //virtual ~Vect ()  {delete[] _data;}
     // Associated function
     template <typename U>
     friend inline std::ostream& operator<< (std::ostream&, const Vect<U>&);

@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2023/01/02 21:29:45 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/01/03 00:18:50 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,32 +28,31 @@ class map {
 public :
 	typedef BST<Key, T, Compare, Allocator> 				tree_type;
 
-	//typedef const tree_type		const_tree_type;
-	typedef const BST<Key, T, Compare, Allocator>		const_tree_type;
-
-	//typedef BST<const Key, const T, Compare, Allocator>	const_tree_type;
+	typedef const tree_type		const_tree_type;
+	//typedef const BST<Key, const T, Compare, Allocator>		const_tree_type;
 
 	// iterator class
     template <typename U>
 	class normal_iterator {
     public:
 
-		//typedef typename map::const_iterator const_iterator;
-
         typedef typename U::value_type			value_type;
         typedef typename U::reference			reference;
-		typedef typename U::const_reference		const_reference;
         typedef typename U::pointer				pointer;
-		//typedef	typename U::const_pointer		const_pointer;
+		typedef typename U::difference_type		difference_type;
+        typedef typename U::iterator_category	iterator_category;
 
-        typedef typename U::difference_type		difference_type;
-		typedef std::bidirectional_iterator_tag iterator_category;
+
+		typedef typename U::const_reference		const_reference;
+		typedef	typename U::const_pointer		const_pointer;
 		typedef typename U::node_pointer		node_pointer;
 
     private:
 		node_pointer	_current_node;
+		// const pointer ?
 
     public:
+
 		normal_iterator() : _current_node() {}
 		//normal_iterator( node_pointer node ) : _current_node( node ) {}
 		normal_iterator( const node_pointer &node ) : _current_node( node ) {}
@@ -84,14 +83,16 @@ public :
 			return tmp;
 		}
 
-		pointer operator->() { return &_current_node->_info; }
-		//typename normal_iterator< U >::pointer operator->() const {
-		typename normal_iterator< U >::pointer operator->() const {
+		pointer operator->() {
+			return &_current_node->_info;
+ 		}
+
+		typename normal_iterator< tree_type >::const_pointer operator->() const {
 			return &_current_node->_info;
 		}
 
 		reference operator*() { return _current_node->_info; }
-		typename normal_iterator< U >::reference operator*() const {
+		typename normal_iterator< tree_type >::const_reference operator*() const {
 			return _current_node->_info;
 		}
 
@@ -106,29 +107,113 @@ public :
 
 		operator U() const { return node_pointer( _current_node ); }
 
-		// convert T to const T for non-const to const assignation
-		//operator normal_iterator< const U >() const {
-        //    return ( normal_iterator< const U >( _current_node ) );
-        //}
-
-		operator normal_iterator< const_tree_type >() const {
-            return ( normal_iterator< const_tree_type >( _current_node ) );
+		operator normal_iterator< tree_type >() const {
+            return ( normal_iterator< tree_type >( _current_node ) );
         }
+	};
 
-		//template <typename Tree>
-		//normal_iterator(const normal_iterator<Tree>& other) : _current_node(other._current_node) {}
+	// 	class const_iterator
+    template <typename U>
+	class const_normal_iterator {
+    public:
 
-		//template<typename U>
-		//operator const_iterator() const {
-		//	return const_iterator(_current_node);
-		//}
+		typedef typename U::value_type			value_type;
+        typedef typename U::reference			reference;
+        typedef typename U::pointer				pointer;
+		typedef typename U::difference_type		difference_type;
+        typedef typename U::iterator_category	iterator_category;
+
+		typedef	typename U::node_pointer		node_pointer;
+
+		typedef typename U::const_reference		const_reference;
+        typedef typename U::const_pointer		const_pointer;
+
+    private:
+		node_pointer	_current_node;
+
+    public:
+		const_normal_iterator() : _current_node() {}
+
+		template < typename P >
+		const_normal_iterator( const normal_iterator< P > &other ) : _current_node( other.get_node() ) {}
+
+		//normal_iterator( node_pointer node ) : _current_node( node ) {}
+		const_normal_iterator( const node_pointer &node ) : _current_node( node ) {}
+		const_normal_iterator( const const_normal_iterator &other ) : _current_node( other._current_node ) {}
+
+		const node_pointer &get_node() const { return _current_node; }
+
+		const_normal_iterator &operator=( const const_normal_iterator &other ) {
+            _current_node = other.get_node();
+            return *this;
+        }
+		const_normal_iterator &operator++() {
+			_current_node = _current_node->next();
+            return *this;
+        }
+        const_normal_iterator operator++( int ) {
+			const_normal_iterator tmp = _current_node;
+			_current_node = _current_node->next();
+			return tmp;
+		}
+        const_normal_iterator &operator--() {
+            _current_node = _current_node->previous();
+            return *this;
+        }
+        const_normal_iterator operator--( int ) {
+            const_normal_iterator tmp = _current_node;
+			_current_node = _current_node->previous();
+			return tmp;
+		}
+
+		//const_pointer operator->() {
+		pointer operator->() {
+			return &_current_node->_info;
+ 		}
+
+		typename const_normal_iterator< const_tree_type >::const_pointer operator->() const {
+			return &_current_node->_info;
+		}
+
+		//const_reference operator*() { return _current_node->_info; }
+		reference operator*() { return _current_node->_info; }
+		typename const_normal_iterator< const_tree_type >::const_reference operator*() const {
+			return _current_node->_info;
+		}
+
+		template < typename P >
+		bool operator==( const const_normal_iterator< P > &other ) const {
+			return _current_node == other.get_node();
+		}
+		template < typename P >
+		bool operator!=( const const_normal_iterator< P > &other ) const {
+			return !( *this == other );
+		}
+
+		template < typename P >
+		bool operator==( const normal_iterator< P > &other ) const {
+			return _current_node == other.get_node();
+		}
+		template < typename P >
+		bool operator!=( const normal_iterator< P > &other ) const {
+			return !( *this == other );
+		}
+
+		operator U() const { return const_node_pointer( _current_node ); }
+
+		//operator const_normal_iterator< const_tree_type >() const {
+		//	std::cout << "conversion operator" << std::endl;
+        //    return const_normal_iterator< const_tree_type >( _current_node );
+        //}
 
 	};
 
 public :
 
 	typedef normal_iterator< tree_type >				iterator;
-    typedef normal_iterator< const_tree_type >			const_iterator;
+    //typedef normal_iterator< const_tree_type >			const_iterator;
+
+	typedef const_normal_iterator< const_tree_type >	const_iterator;
 
 	//typename map<Key, T, Compare, Allocator>::const_iterator map<Key, T, Compare, Allocator>::normal_iterator<BST<Key, T, Compare, Allocator> >::operator const_iterator() const {
 	//	return const_iterator(_current_node);

@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2023/01/02 21:29:05 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/01/03 00:06:24 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,16 +35,18 @@ public :
 
 	typedef ft::pair<const Key, T>						value_type;
 
-	//typedef ft::pair<const Key, const T>				const_value_type;
-	//typedef const_value_type*							const_pointer;
+	//typedef const ft::pair<const Key, T>				const_reference;
+	//typedef const_reference*							const_pointer;
 
 	typedef Compare										key_compare;
 	typedef Allocator									allocator_type;
 	typedef typename allocator_type::reference			reference;
 	typedef typename allocator_type::const_reference	const_reference;
-	typedef	typename allocator_type::pointer			pointer;
 	typedef	typename allocator_type::const_pointer		const_pointer;
+	typedef	typename allocator_type::pointer			pointer;
 
+
+    typedef std::bidirectional_iterator_tag				iterator_category;
 	typedef std::ptrdiff_t								difference_type;
 	typedef std::size_t									size_type;
 
@@ -112,8 +114,8 @@ private:
 
 
 public :
-	typedef _Node&		node_reference;
-	typedef _Node*		node_pointer;
+	typedef _Node&				node_reference;
+	typedef _Node*				node_pointer;
 
 private :
 	class extended_key_compare {
