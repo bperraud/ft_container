@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2023/01/03 00:18:50 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/01/03 00:22:33 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,6 @@ public :
         typedef typename U::iterator_category	iterator_category;
 
 		typedef	typename U::node_pointer		node_pointer;
-
 		typedef typename U::const_reference		const_reference;
         typedef typename U::const_pointer		const_pointer;
 
@@ -166,8 +165,7 @@ public :
 			return tmp;
 		}
 
-		//const_pointer operator->() {
-		pointer operator->() {
+		const_pointer operator->() {
 			return &_current_node->_info;
  		}
 
@@ -175,8 +173,7 @@ public :
 			return &_current_node->_info;
 		}
 
-		//const_reference operator*() { return _current_node->_info; }
-		reference operator*() { return _current_node->_info; }
+		const_reference operator*() { return _current_node->_info; }
 		typename const_normal_iterator< const_tree_type >::const_reference operator*() const {
 			return _current_node->_info;
 		}
