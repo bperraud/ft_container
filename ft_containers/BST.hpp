@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2023/01/03 00:06:24 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/01/03 15:07:46 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,7 @@ class BST {
 public :
 	typedef Key											key_type;
 	typedef T											mapped_type;
-
 	typedef ft::pair<const Key, T>						value_type;
-
-	//typedef const ft::pair<const Key, T>				const_reference;
-	//typedef const_reference*							const_pointer;
 
 	typedef Compare										key_compare;
 	typedef Allocator									allocator_type;
@@ -44,7 +40,6 @@ public :
 	typedef typename allocator_type::const_reference	const_reference;
 	typedef	typename allocator_type::const_pointer		const_pointer;
 	typedef	typename allocator_type::pointer			pointer;
-
 
     typedef std::bidirectional_iterator_tag				iterator_category;
 	typedef std::ptrdiff_t								difference_type;
@@ -112,10 +107,8 @@ private:
 
 	typedef typename Allocator::template rebind< _Node >::other node_allocator_type;
 
-
 public :
-	typedef _Node&				node_reference;
-	typedef _Node*				node_pointer;
+	typedef _Node*		node_pointer;
 
 private :
 	class extended_key_compare {
@@ -160,11 +153,6 @@ public:
 		_key_compare( extended_key_compare(_end, _rend, other._key_compare.key_comp() ) ), _size(0) {
 		*this = other;
 	}
-
-	//operator BST< const_tree_type >() const {
-	//	std::cout << "conversion" << std::endl;
-    //    return ( BST< const_tree_type >( _current_node ) );
-    //}
 
 	BST &operator=( const BST &other ) {
 		clear();
@@ -217,33 +205,11 @@ public:
 				return res;
 			}
 		}
-		return _end; //  if not found return _end
+		return _end; // if not found return _end
 	}
 
 	bool exists (const key_type& key) const {
 		return find(key) != _end;
-	}
-
-	node_pointer findMin() {
-		if (_root == 0)
-			return 0;
-		_Node* current = _root;
-		while (current->_left)
-		{
-			current = current->_left;
-		}
-		return current;
-	}
-
-	node_pointer findMax() {
-		if (_root == 0)
-			return 0;
-		_Node* current = _root;
-		while (current->_right)
-		{
-			current = current->_right;
-		}
-		return current;
 	}
 
 	/* -------------------------------- Modifiers ------------------------------- */
@@ -325,7 +291,6 @@ public:
 		}
 	}
 
-
 	node_pointer lower_bound( const key_type &k ) { return _lower_bound(k); }
 	node_pointer lower_bound( const key_type &k ) const {
 		return _lower_bound(k);
@@ -336,10 +301,18 @@ public:
 		return _upper_bound(k);
 	}
 
+	template < typename Y >
+	void _swap( Y &a, Y &b ) {
+		Y tmp( a );
+		a = b;
+		b = tmp;
+	}
+
     void swap (BST& x) {
-		BST y = *this;
-		*this = x;
-		x = y;
+		_swap(x._root, _root);
+		_swap(x._end, _end);
+		_swap(x._rend, _rend);
+		_swap(x._size, _size);
 	}
 
 	/* -------------------------------- Allocator ------------------------------ */
@@ -356,12 +329,12 @@ public:
 	}
     /* -------------------------------- Destructor ------------------------------ */
 
-    ~BST () {
+	~BST () {
 		clear();
 		_allocator.destroy( _end );
-        _allocator.deallocate( _end, 1 );
+		_allocator.deallocate( _end, 1 );
 		_allocator.destroy( _rend );
-        _allocator.deallocate( _rend, 1 );
+		_allocator.deallocate( _rend, 1 );
 	}
 
 	/* -------------------------- Relational operators -------------------------- */
@@ -451,7 +424,7 @@ private:
 			return true;
 		return ( current == begin() || !_key_compare( k, current->previous()->_info.first ) )
 			&& _key_compare( k, current->_info.first );
-	}
+	} // k est plus petit que le précedent + plus petit que hint
 
 	node_pointer _lower_bound(const key_type& key) const
 	{

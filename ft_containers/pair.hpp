@@ -55,7 +55,7 @@ template< class T1, class T2 >
 inline void swap( pair<T1,T2>& x, pair<T1,T2>& y ) throw() { x.swap(y); }
 
 template< class T1, class T2 >
-pair<T1,T2> make_pair(const T1& first, const T2& second ) { return pair<T1, T2>(first, second);}
+pair<T1,T2> make_pair(T1 first, T2 second ) { return pair<T1, T2>(first, second);}
 
 } //namespace ft
 

@@ -5,55 +5,52 @@
 #include <list>
 #include <map>
 
-
 #include "common.hpp"
 #include <list>
 
-#define T1 float
-#define T2 foo<int>
+#define T1 char
+#define T2 int
 typedef _pair<const T1, T2> T3;
 
-int		main(void)
+int main (void)
 {
 	std::list<T3> lst;
-	unsigned int lst_size = 5;
+
+	unsigned int lst_size = 7;
 	for (unsigned int i = 0; i < lst_size; ++i)
-		lst.push_back(T3(2.5 - i, (i + 1) * 7));
+		lst.push_back(T3('a' + i, lst_size - i));
+	TESTED_NAMESPACE::map<T1, T2> foo(lst.begin(), lst.end());
 
-	TESTED_NAMESPACE::map<T1, T2> mp(lst.begin(), lst.end());
-	TESTED_NAMESPACE::map<T1, T2>::reverse_iterator it(mp.rbegin());
-	TESTED_NAMESPACE::map<T1, T2>::const_reverse_iterator ite(mp.rbegin());
-	printSize(mp);
+	lst.clear(); lst_size = 4;
+	for (unsigned int i = 0; i < lst_size; ++i)
+		lst.push_back(T3('z' - i, i * 5));
+	TESTED_NAMESPACE::map<T1, T2> bar(lst.begin(), lst.end());
 
-	printPair(++ite);
-	printPair(ite++);
-	printPair(ite++);
-	printPair(++ite);
+	TESTED_NAMESPACE::map<T1, T2>::const_iterator it_foo = foo.begin();
+	TESTED_NAMESPACE::map<T1, T2>::const_iterator it_bar = bar.begin();
 
-	it->second.m();
-	ite->second.m();
+	std::cout << "BEFORE SWAP" << std::endl;
 
-	printPair(++it);
-	printPair(it++);
-	printPair(it++);
-	printPair(++it);
+	std::cout << "foo contains:" << std::endl;
+	printSize(foo);
+	std::cout << "bar contains:" << std::endl;
+	printSize(bar);
 
-	printPair(--ite);
-	printPair(ite--);
-	printPair(--ite);
-	printPair(ite--);
+	foo.swap(bar);
 
-	(*it).second.m();
-	(*ite).second.m();
+	std::cout << "AFTER SWAP" << std::endl;
 
-	printPair(--it);
-	printPair(it--);
-	printPair(it--);
-	printPair(--it);
+	std::cout << "foo contains:" << std::endl;
+	printSize(foo);
+	std::cout << "bar contains:" << std::endl;
+	printSize(bar);
+
+	std::cout << "Iterator validity:" << std::endl;
+	std::cout << (it_foo == bar.begin()) << std::endl;
+	std::cout << (it_bar == foo.begin()) << std::endl;
 
 	return (0);
 }
-
 
 
 
