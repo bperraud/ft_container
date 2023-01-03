@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2023/01/03 15:13:29 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/01/03 15:16:00 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -260,7 +260,7 @@ public:
 
 	iterator 				begin() {return _tree.begin();}
 	iterator 				end() { return _tree.end();}
-	const_iterator 			begin() const {return const_iterator(_tree.begin()); }
+	const_iterator 			begin() const {return _tree.begin(); }
 	const_iterator 			end() const  { return _tree.end();}
 	reverse_iterator 		rbegin() {return iterator(_tree.end());}
 	reverse_iterator 		rend() { return iterator(_tree.begin());}

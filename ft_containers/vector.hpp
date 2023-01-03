@@ -16,6 +16,7 @@
 #include "Vect.hpp"
 #include "Iterator.hpp"
 #include "type_traits.hpp" // for enable_if
+#include "utility.hpp" // for equal and lexicalcompare
 #include <memory>
 
 namespace ft {
@@ -336,11 +337,11 @@ public:
 	/* -------------------------- Relational operators -------------------------- */
 
 	bool operator==( const vector &other ) const {
-		return size() == other.size() && std::equal( begin(), end(), other.begin() );
+		return size() == other.size() && ft::equal( begin(), end(), other.begin() );
 	}
 	bool operator!=( const vector &other ) const { return !( *this == other ); }
 	bool operator<( const vector &other ) const {
-		return std::lexicographical_compare( begin(), end(), other.begin(), other.end() );
+		return ft::lexicographical_compare( begin(), end(), other.begin(), other.end() );
 	}
 	bool operator<=( const vector &other ) const { return *this == other || *this < other;}
 	bool operator>( const vector &other ) const { return !( *this <= other ); }
@@ -359,6 +360,7 @@ private:
 			// si inferieur a la taille : delete ?
 			//_allocator.destroy(it.operator->());
 			_allocator.construct( it.operator->(), *input);
+
 			input--;
 		}
 	}

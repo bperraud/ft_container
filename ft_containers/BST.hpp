@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2023/01/03 15:11:42 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/01/03 17:43:10 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 
 #include "Iterator.hpp"
 #include "pair.hpp"
+#include "utility.hpp"
 
 template<
     class Key,														// map::key_type
@@ -103,7 +104,6 @@ private:
 		bool operator<=( const _Node &other ) const { return !( *this < other ); }
 		bool operator>( const _Node &other ) const { return ( other < *this ); }
 		bool operator>=( const _Node &other ) const { return !( *this < other ); }
-
 	};
 
 	typedef typename Allocator::template rebind< _Node >::other node_allocator_type;
@@ -303,10 +303,10 @@ public:
 	}
 
     void swap (BST& x) {
-		_swap(x._root, _root);
-		_swap(x._end, _end);
-		_swap(x._rend, _rend);
-		_swap(x._size, _size);
+		ft::swap(x._root, _root);
+		ft::swap(x._end, _end);
+		ft::swap(x._rend, _rend);
+		ft::swap(x._size, _size);
 	}
 
 	/* -------------------------------- Allocator ------------------------------ */
@@ -381,7 +381,7 @@ private:
 	ft::pair<node_pointer, bool> _insert(const value_type& val, node_pointer node) {
 		if (!_root) {
 			init_root(val);
-			return ft::pair<node_pointer, bool>(_root, true);
+			return ft::make_pair(_root, true);
 		}
 		node_pointer curr = node;
 		while (curr) {
@@ -393,7 +393,7 @@ private:
 					curr->_left = construct_node(val);
 					curr->_left->_father = curr;
 					_size += 1;
-					return ft::pair<node_pointer, bool>(curr->_left, true);
+					return ft::make_pair(curr->_left, true);
 				}
 			}
 			else if (_key_compare(curr->_info.first, val.first)) {
@@ -403,14 +403,14 @@ private:
 					curr->_right = construct_node(val);
 					curr->_right->_father = curr;
 					_size += 1;
-					return ft::pair<node_pointer, bool>(curr->_right, true);
+					return ft::make_pair(curr->_right, true);
 				}
 			}
 			else {
-				return ft::pair<node_pointer, bool>(curr, false);
+				return ft::make_pair(curr, false);
 			}
 		}
-		return ft::pair<node_pointer, bool>(_root, false);
+		return ft::make_pair(_root, false);
 	}
 
 	bool _is_upper_bound( node_pointer current, const key_type &k ) const {
@@ -446,13 +446,6 @@ private:
 		}
 		// key was not found, return end iterator
 		return _end;
-	}
-
-	template <typename Y>
-	void _swap(Y &a, Y &b) {
-		Y tmp( a );
-		a = b;
-		b = tmp;
 	}
 
 };
