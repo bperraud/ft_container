@@ -38,6 +38,7 @@ class vector {
 		typedef U*								pointer;
 		typedef std::ptrdiff_t					difference_type;
 		typedef std::random_access_iterator_tag	iterator_category;
+		//typedef std::random_access_iterator_tag	iterator_category;
 
 	public:
 		normal_iterator() : _it(0) {}
@@ -195,7 +196,7 @@ public:
 		if (n < 0 || n > this->max_size())
 			throw std::length_error("vector::reserve");
 		if (n > _capacity)
-			reallocate(n);
+			_reallocate(n);
 	}
 
 	void resize (size_type n, value_type val = value_type()) {
@@ -250,7 +251,7 @@ public:
 
 	void push_back (const value_type& val) {
 		if (_capacity < _vector._size + 1)
-			reallocate(increase_capacity(1));
+			_reallocate(_increase_capacity(1));
 		_vector._size += 1;
 		_allocator.construct(_vector._data + _vector._size - 1, val);
 	}
@@ -271,11 +272,11 @@ public:
 			throw std::length_error("vector::insert");
 		size_type offset = position - begin();
 		if (_capacity < _vector._size + n)
-			reallocate(increase_capacity(n));
+			_reallocate(_increase_capacity(n));
 		iterator new_position = begin() + offset;
 		if ( new_position != end())
 		{
-			insert_construct(new_position, n);
+			_insert_construct(new_position, n);
 		}
 		std::uninitialized_fill_n(new_position, n, val);
 		_vector._size += n;
@@ -287,11 +288,11 @@ public:
 		const size_type n = std::distance( first, last );
 		size_type offset = position - begin();
 		if (_capacity < _vector._size + n)
-			reallocate(increase_capacity(n));
+			_reallocate(_increase_capacity(n));
 		iterator new_position = begin() + offset;
 		if ( new_position != end())
 		{
-			insert_construct(new_position, n);
+			_insert_construct(new_position, n);
 		}
 		std::copy_backward(first, last, new_position + n);
 		_vector._size += n;
@@ -352,7 +353,7 @@ private:
 
 	/* ------------------------------ Private Method ---------------------------- */
 
-	inline void insert_construct(iterator new_position, size_type n)
+	inline void _insert_construct(iterator new_position, size_type n)
 	{
 		iterator input = end() - 1;
 		for (iterator it = end() - 1 + n ; it != new_position + n - 1 ; it--)
@@ -360,12 +361,11 @@ private:
 			// si inferieur a la taille : delete ?
 			//_allocator.destroy(it.operator->());
 			_allocator.construct( it.operator->(), *input);
-
 			input--;
 		}
 	}
 
-	inline void	reallocate(size_type n) {	// reallocate n _capacity
+	inline void	_reallocate(size_type n) {	// reallocate n _capacity
 		pointer ptr = _allocator.allocate(n);
 		std::uninitialized_copy(begin(), end(), ptr);
 		_allocator.deallocate(_vector._data, _capacity);
@@ -373,7 +373,7 @@ private:
 		_capacity = n;
 	}
 
-	inline size_type	increase_capacity(size_type n) {	// increase capacity to add n element
+	inline size_type _increase_capacity(size_type n) {	// increase capacity to add n element
 		if (n < 0)
 			throw std::length_error("vector::increase_capacity");
 		size_t new_capacity = _capacity;

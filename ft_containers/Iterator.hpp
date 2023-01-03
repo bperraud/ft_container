@@ -13,8 +13,6 @@
 #ifndef ITERATOR_HPP
 #define ITERATOR_HPP
 
-//#include <iterator>
-
 namespace ft {
 
 /*
@@ -25,45 +23,45 @@ namespace ft {
    *  different operations supported by different iterator types.
 */
 
-  ///  Marking input iterators.
-  struct input_iterator_tag {};
-  ///  Marking output iterators.
-  struct output_iterator_tag {};
-  /// Forward iterators support a superset of input iterator operations.
-  struct forward_iterator_tag : public input_iterator_tag {};
-  /// Bidirectional iterators support a superset of forward iterator
-  /// operations.
-  struct bidirectional_iterator_tag : public forward_iterator_tag {};
-  /// Random-access iterators support a superset of bidirectional iterator
-  /// operations.
-  struct random_access_iterator_tag : public bidirectional_iterator_tag {};
+///  Marking input iterators.
+struct input_iterator_tag {};
+///  Marking output iterators.
+struct output_iterator_tag {};
+/// Forward iterators support a superset of input iterator operations.
+struct forward_iterator_tag : public input_iterator_tag {};
+/// Bidirectional iterators support a superset of forward iterator
+/// operations.
+struct bidirectional_iterator_tag : public forward_iterator_tag {};
+/// Random-access iterators support a superset of bidirectional iterator
+/// operations.
+struct random_access_iterator_tag : public bidirectional_iterator_tag {};
 
-	template < typename I >
-	struct iterator_traits {
-		typedef typename I::iterator_category iterator_category;
-		typedef typename I::value_type        value_type;
-		typedef typename I::difference_type   difference_type;
-		typedef typename I::pointer           pointer;
-		typedef typename I::reference         reference;
-	};
+template < typename I >
+struct iterator_traits {
+	typedef typename I::iterator_category iterator_category;
+	typedef typename I::value_type        value_type;
+	typedef typename I::difference_type   difference_type;
+	typedef typename I::pointer           pointer;
+	typedef typename I::reference         reference;
+};
 
-	template < typename T >
-	struct iterator_traits< T * > {
-		typedef std::random_access_iterator_tag iterator_category;
-		typedef T                               value_type;
-		typedef T *                             pointer;
-		typedef T &                             reference;
-		typedef std::ptrdiff_t                  difference_type;
-	};
+template < typename T >
+struct iterator_traits< T * > {
+	typedef std::random_access_iterator_tag iterator_category;
+	typedef T                               value_type;
+	typedef T *                             pointer;
+	typedef T &                             reference;
+	typedef std::ptrdiff_t                  difference_type;
+};
 
-	template < typename T >
-	struct iterator_traits< const T * > {
-		typedef std::random_access_iterator_tag iterator_category;
-		typedef T                               value_type;
-		typedef const T *                       pointer;
-		typedef const T &                       reference;
-		typedef std::ptrdiff_t                  difference_type;
-	};
+template < typename T >
+struct iterator_traits< const T * > {
+	typedef std::random_access_iterator_tag iterator_category;
+	typedef T                               value_type;
+	typedef const T *                       pointer;
+	typedef const T &                       reference;
+	typedef std::ptrdiff_t                  difference_type;
+};
 
 
 /*
@@ -182,11 +180,8 @@ public:
 	const_reverse_iterator() {}
 	const_reverse_iterator( const_pointer p ) : _it( _It( p ) ) {}
 	const_reverse_iterator( const _It &other ) : _it( other ) {}
-
 	template < typename P >
 	const_reverse_iterator( const reverse_iterator< P> &other ) : _it( other.base() ) {}
-
-
 	const_reverse_iterator( const const_reverse_iterator &other ) : _it( other._it ) {}
 	template < typename U >
     const_reverse_iterator( const const_reverse_iterator< U > &other ) : _it( other.base() ) {}
