@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2023/01/03 00:26:49 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/01/03 15:13:29 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,6 @@ public :
 		template < typename P >
 		const_normal_iterator( const normal_iterator< P > &other ) : _current_node( other.get_node() ) {}
 
-		//normal_iterator( node_pointer node ) : _current_node( node ) {}
 		const_normal_iterator( const node_pointer &node ) : _current_node( node ) {}
 		const_normal_iterator( const const_normal_iterator &other ) : _current_node( other._current_node ) {}
 
@@ -207,10 +206,8 @@ public :
 
 public :
 
-	typedef normal_iterator< tree_type >				iterator;
-    //typedef normal_iterator< const_tree_type >			const_iterator;
-
-	typedef const_normal_iterator< const_tree_type >	const_iterator;
+	typedef normal_iterator< tree_type >					iterator;
+	typedef const_normal_iterator< const_tree_type >		const_iterator;
 
 	//typename map<Key, T, Compare, Allocator>::const_iterator map<Key, T, Compare, Allocator>::normal_iterator<BST<Key, T, Compare, Allocator> >::operator const_iterator() const {
 	//	return const_iterator(_current_node);
@@ -218,7 +215,7 @@ public :
 
     typedef ft::reverse_iterator< iterator >				reverse_iterator;
     //typedef ft::reverse_iterator< const_iterator >		const_reverse_iterator;
-	typedef ft::const_reverse_iterator< const_iterator >		const_reverse_iterator;
+	typedef ft::const_reverse_iterator< const_iterator >	const_reverse_iterator;
 
 public:
 

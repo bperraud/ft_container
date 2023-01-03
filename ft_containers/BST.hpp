@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2023/01/03 15:07:46 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/01/03 15:11:42 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <queue>
 #include <cmath>
 
+#include "Iterator.hpp"
 #include "pair.hpp"
 
 template<
@@ -41,7 +42,8 @@ public :
 	typedef	typename allocator_type::const_pointer		const_pointer;
 	typedef	typename allocator_type::pointer			pointer;
 
-    typedef std::bidirectional_iterator_tag				iterator_category;
+    //typedef std::bidirectional_iterator_tag				iterator_category;
+	typedef ft::bidirectional_iterator_tag				iterator_category;
 	typedef std::ptrdiff_t								difference_type;
 	typedef std::size_t									size_type;
 
@@ -67,7 +69,6 @@ private:
 			// Go up the tree until we find an ancestor whose left child is also an ancestor
 			_Node *ancestor = node->_father;
 			while (ancestor && ancestor->_left != node) {
-				//std::cout << "ancestor : " << ancestor->_info.second << std::endl;
 				node = ancestor;
 				ancestor = ancestor->_father;
 			}
@@ -229,10 +230,10 @@ public:
 	}
 
 	ft::pair< node_pointer, bool > insert( node_pointer hint, const value_type &val ) {
-        if ( _is_upper_bound( hint, val.first) ) {
-            return _insert( val, hint );
+        if ( _is_upper_bound(hint, val.first) ) {
+            return _insert(val, hint);
         }
-        return _insert( val, _root );
+        return _insert(val, _root);
     }
 
 	void erase(node_pointer target)
@@ -301,13 +302,6 @@ public:
 		return _upper_bound(k);
 	}
 
-	template < typename Y >
-	void _swap( Y &a, Y &b ) {
-		Y tmp( a );
-		a = b;
-		b = tmp;
-	}
-
     void swap (BST& x) {
 		_swap(x._root, _root);
 		_swap(x._end, _end);
@@ -331,10 +325,10 @@ public:
 
 	~BST () {
 		clear();
-		_allocator.destroy( _end );
-		_allocator.deallocate( _end, 1 );
-		_allocator.destroy( _rend );
-		_allocator.deallocate( _rend, 1 );
+		_allocator.destroy(_end);
+		_allocator.deallocate(_end, 1);
+		_allocator.destroy(_rend);
+		_allocator.deallocate(_rend, 1);
 	}
 
 	/* -------------------------- Relational operators -------------------------- */
@@ -452,6 +446,13 @@ private:
 		}
 		// key was not found, return end iterator
 		return _end;
+	}
+
+	template <typename Y>
+	void _swap(Y &a, Y &b) {
+		Y tmp( a );
+		a = b;
+		b = tmp;
 	}
 
 };
