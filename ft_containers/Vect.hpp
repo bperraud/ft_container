@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2023/01/02 21:56:48 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/02/05 20:31:09 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ struct Vect {
     T *_data;
     inline static T* _cp (const Vect&);
 
-	virtual void _dsp (std::ostream& out) const {out << *_data ;} ;
+	//virtual void _dsp (std::ostream& out) const {out << *_data ;} ;
 
 	void move_back (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
 		if (offset < 0)

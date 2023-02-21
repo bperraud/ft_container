@@ -21,44 +21,87 @@
 
 #include "common.hpp"
 
-#define TESTED_TYPE int
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <ctime>
+#include <stdlib.h>
 
-int		main(void)
-{
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(7);
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct_two(4);
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct_three;
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct_four;
+#define MAX_RAM 4294967296
+#define BUFFER_SIZE 4096
 
-	for (unsigned long int i = 0; i < vct.size(); ++i)
-		vct[i] = (vct.size() - i) * 3;
-	for (unsigned long int i = 0; i < vct_two.size(); ++i)
-		vct_two[i] = (vct_two.size() - i) * 5;
-	printSize(vct);
-	printSize(vct_two);
 
-	vct_three.assign(vct.begin(), vct.end());
-	vct.assign(vct_two.begin(), vct_two.end());
-	vct_two.assign(2, 42);
-	vct_four.assign(4, 21);
+template <typename T>
+void rand_erase(T &container, unsigned int n) {
+	unsigned int pos;
+	unsigned int second_pos;
+	for (std::size_t i = 0; i < n; i++)
+	{
+		pos = rand() % (container.size() == 0 ? 1 : container.size());
+		if (rand() % 2 == 0)
+			container.erase(container.begin() + pos);
+		else
+		{
+			second_pos = rand() % (container.size() - pos <= 0 ? 1 : container.size() - pos);
+			container.erase(container.begin() + pos, container.begin() + pos + second_pos);
+		}
+	}
+}
 
-	std::cout << "\t### After assign(): ###" << std::endl;
+template <typename T>
+void rand_insert(T &container, unsigned int n) {
+	unsigned int pos;
+	unsigned int second_pos;
+	for (std::size_t i = 0; i < n; i++)
+	{
+		pos = rand() % (container.size() == 0 ? 1 : container.size());
+		if (rand() % 2 == 0)
+			container.insert(container.begin() + pos, rand());
+		else
+		{
+			second_pos = rand() % (container.size() - pos <= 0 ? 1 : container.size() - pos);
+			container.insert(container.begin() + pos, container.begin() + pos, container.begin() + pos + second_pos);
+		}
+	}
+}
 
-	printSize(vct);
-	printSize(vct_two);
-	printSize(vct_three);
-	printSize(vct_four);
+template <typename T>
+void printContainer(T &cont) {
+	typename T::iterator it;
+	it = cont.begin();
+	while (it != cont.end())
+	{
+		std::cout << *it ;
+		it++;
+	}
+}
 
-	vct_four.assign(6, 84);
-	printSize(vct_four);
+int main(int argc, char **argv) {
 
-	std::cout << "\t### assign() on enough capacity and low size: ###" << std::endl;
+	ft::vector<std::string> vector_str;
+	ft::vector<int> vector_int;
+	ft::stack<int> stack_int;
 
-	vct.assign(5, 53);
-	vct_two.assign(vct_three.begin(), vct_three.begin() + 3);
+	ft::map<int, int> map_int;
 
-	printSize(vct);
-	printSize(vct_two);
+	int seed;
 
+	if (argc == 2)
+		seed = atoi(argv[1]);
+	else
+		seed = 19;
+
+	std::srand(seed);
+
+	//std::vector<int> v(1000);
+	//std::generate(v.begin(), v.end(), std::rand);
+
+	std::vector<int> vect;
+	rand_insert(vect, 10);
+	printContainer(vect);
+
+
+	std::cout << std::endl;
 	return (0);
 }

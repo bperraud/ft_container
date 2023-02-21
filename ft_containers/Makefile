@@ -1,25 +1,41 @@
-NAME = cont
-
-SRC = $(wildcard *.cpp)
-
 CXX = c++
 
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
-OBJ = $(SRC:.cpp=.o)
+SRC = main.cpp
 
-$(NAME): $(OBJ)
-	$(CXX) $(CXXFLAGS) $(OBJ) -o $@
+OBJ_STD = std.o
+OBJ_FT = ft.o
 
-all: $(NAME)
+NAME_STD = std
+NAME_FT = ft
+
+STD_OUTPUT = std.output
+FT_OUTPUT = ft.output
+
+OUTPUT_DIFF = output.diff
+
+all: $(NAME_STD) $(NAME_FT)
+
+$(OBJ_STD): $(SRC)
+	$(CXX) $(CXXFLAGS) $(SRC) -D NS=std -c -o $@
+$(OBJ_FT): $(SRC)
+	$(CXX) $(CXXFLAGS) $(SRC) -D NS=ft -c -o $@
+
+$(NAME_STD): $(OBJ_STD)
+	$(CXX) $(CXXFLAGS) $(OBJ_STD) -o $@
+$(NAME_FT): $(OBJ_FT)
+	$(CXX) $(CXXFLAGS) $(OBJ_FT) -o $@
+
+run: all
+	time --quiet ./$(NAME_STD) > $(STD_OUTPUT)
+	time --quiet ./$(NAME_FT) > $(FT_OUTPUT)
+	diff $(STD_OUTPUT) $(FT_OUTPUT) > $(OUTPUT_DIFF)
 
 clean:
-	$(RM) $(OBJ)
+	$(RM) $(OBJ_STD) $(OBJ_FT) $(STD_OUTPUT) $(FT_OUTPUT) $(OUTPUT_DIFF)
 
 fclean: clean
-	$(RM) $(NAME)
+	$(RM) $(NAME_STD) $(NAME_FT)
 
 re: fclean all
-
-run: $(NAME)
-	./$(NAME)

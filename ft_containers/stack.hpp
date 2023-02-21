@@ -28,7 +28,7 @@ public:
 	typedef Container	container_type;
 	typedef std::size_t	size_type;
 
-private :
+protected :
 	Container _container;
 
 public:
