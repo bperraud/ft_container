@@ -33,7 +33,7 @@
 	  "**/.vscode",
 	  "**/.vscode/**"
 	],
-	"C_Cpp_Runner.useAddressSanitizer": false,
+	"C_Cpp_Runner.useAddressSanitizer": true,
 	"files.associations": {
 		"array": "cpp",
 		"initializer_list": "cpp",
@@ -75,4 +75,5 @@
 		"tuple": "cpp",
 		"typeinfo": "cpp"
 	}
+
   }
