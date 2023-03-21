@@ -26,6 +26,7 @@ const int INIT_CAPA = 10;
 template <typename T, typename Allocator = std::allocator<T> >
 class vector {
 
+private :
 	// iterator class
 	template <typename U>
 	class normal_iterator {
@@ -182,8 +183,6 @@ public:
 	const_reverse_iterator 	rend() const { return _vector._data; }
 	const_iterator 			cbegin() const { return _vector._data; }
 	const_iterator 			cend() const { return begin() + _vector._size; }
-	const_reverse_iterator 	crbegin() const {return begin() + _vector._size ;}
-	const_reverse_iterator 	crend() const { return _vector._data ; }
 
 	/* -------------------------------- Capacity -------------------------------- */
 
@@ -200,7 +199,7 @@ public:
 	}
 
 	void resize (size_type n, value_type val = value_type()) {
-		if (n < 0 || n > this->max_size())
+		if (n > this->max_size())
 			throw std::length_error("vector::resize");
 		if (n <= _vector._size)
 		{
@@ -268,7 +267,7 @@ public:
 	}
 
 	void insert (iterator position, size_type n, const value_type& val) {
-		if (n < 0 || n > max_size())
+		if (n > max_size())
 			throw std::length_error("vector::insert");
 		size_type offset = position - begin();
 		if (_capacity < _vector._size + n)
@@ -374,8 +373,6 @@ private:
 	}
 
 	inline size_type _increase_capacity(size_type n) {	// increase capacity to add n element
-		if (n < 0)
-			throw std::length_error("vector::increase_capacity");
 		size_t new_capacity = _capacity;
 		while (_vector._size + n > new_capacity)
 			new_capacity *= 2;

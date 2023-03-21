@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2023/02/25 16:49:55 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/03/21 01:41:14 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ public :
 	typedef BST<Key, T, Compare, Allocator> 		tree_type;
 	typedef const tree_type							const_tree_type;
 
+private:
 	// iterator class
     template <typename U>
 	class normal_iterator {
@@ -192,11 +193,6 @@ public :
 
 		operator U() const { return const_node_pointer( _current_node ); }
 
-		//operator const_normal_iterator< const_tree_type >() const {
-		//	std::cout << "conversion operator" << std::endl;
-        //    return const_normal_iterator< const_tree_type >( _current_node );
-        //}
-
 	};
 
 public :
@@ -257,8 +253,6 @@ public:
 	const_reverse_iterator 	rend() const { return iterator(_tree.begin()); }
 	const_iterator 			cbegin() const { return _tree.begin(); }
 	const_iterator 			cend() const { return _tree.end();}
-	const_reverse_iterator 	crbegin() const {return iterator(_tree.end());}
-	const_reverse_iterator 	crend() const { return iterator(_tree.begin());}
 
 	/* -------------------------------- Capacity -------------------------------- */
 
@@ -272,21 +266,32 @@ public:
 		return _tree.insert( value_type( k, mapped_type() ) ).first->_info.second;
 	}
 
-	mapped_type& at (const key_type& k);
-	const mapped_type& at (const key_type& k) const;
+	mapped_type& at (const key_type& k) {
+		iterator find_value = _tree.find(k);
+		if (find_value == end())
+			throw std::out_of_range("map at()");
+		return find_value->second;
+	}
+
+	const mapped_type& at (const key_type& k) const {
+		const_iterator find_value = _tree.find(k);
+		if (find_value == end())
+			throw std::out_of_range("map at()");
+		return find_value->second;
+	}
 
 	/* -------------------------------- Modifiers ------------------------------- */
 
-	ft::pair<iterator, bool> insert( const value_type &val ) {
-		return _tree.insert( val );
+	ft::pair<iterator, bool> insert(const value_type &val) {
+		return _tree.insert(val);
     }
 
-	iterator insert( iterator position, const value_type &val ) {
-		return _tree.insert( position.get_node(), val ).first;
+	iterator insert(iterator position, const value_type &val) {
+		return _tree.insert(position.get_node(), val).first;
     }
 
 	template < class InputIterator >
-    void insert( InputIterator first, InputIterator last ) {
+    void insert(InputIterator first, InputIterator last) {
 		while (first != last) {
 			insert (*first);
 			first++;

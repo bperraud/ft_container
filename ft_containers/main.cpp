@@ -19,7 +19,7 @@
 #include "map.hpp"
 #include <time.h>
 
-#include "common.hpp"
+//#include "common.hpp"
 
 #include <iostream>
 #include <string>
@@ -91,6 +91,11 @@ int main(int argc, char **argv) {
 		seed = atoi(argv[1]);
 	else
 		seed = 19;
+
+
+	map_int.insert(ft::make_pair(4, 5));
+
+	std::cout << map_int[4] << std::endl;
 
 	std::srand(seed);
 

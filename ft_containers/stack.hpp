@@ -13,7 +13,6 @@
 #ifndef STACK_H
 #define STACK_H
 
-
 #include "vector.hpp"
 #include "Iterator.hpp"
 #include "type_traits.hpp" // for enable_if
@@ -29,7 +28,7 @@ public:
 	typedef std::size_t	size_type;
 
 protected :
-	Container _container;
+	container_type _container;
 
 public:
 
