@@ -19,8 +19,6 @@
 #include "map.hpp"
 #include <time.h>
 
-#include "common.hpp"
-
 #include <iostream>
 #include <string>
 #include <vector>
