@@ -273,7 +273,7 @@ public:
 		iterator new_position = begin() + offset;
 		if ( new_position != end())
 		{
-			_vector.move_up(std::distance( begin(), new_position ), n, std::distance(new_position, end()));
+			_vector.move_up(std::distance(begin(), new_position), n, std::distance(new_position, end()));
 			std::fill_n(new_position, n, val);
 		}
 		else
@@ -298,9 +298,7 @@ public:
 	}
 
 	iterator erase (iterator position) {
-		const size_type start = std::distance(begin(), position);
-		erase(position, position + 1);
-		return (begin() + start);
+		return erase(position, position + 1);
 	}
 
 	iterator erase (iterator first, iterator last) {

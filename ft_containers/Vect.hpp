@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/10 18:20:46 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/10 20:26:08 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ struct Vect {
     inline static T* _cp (const Vect&);
 
 	void move_back (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
-		for (std::size_t n = start; n < start + left; ++n){
+		for (std::size_t n = start ; n < start + left; ++n){
 			*(_data + n) = *(_data + n + offset);
 		}
 	}
