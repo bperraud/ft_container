@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2023/03/21 01:41:14 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/03/30 22:54:20 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,7 +263,7 @@ public:
 	/* ----------------------------- Element access ----------------------------- */
 
 	mapped_type& operator[] (const key_type& k) {
-		return _tree.insert( value_type( k, mapped_type() ) ).first->_info.second;
+		return _tree.insert(value_type(k, mapped_type())).first->_info.second;
 	}
 
 	mapped_type& at (const key_type& k) {
