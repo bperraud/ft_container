@@ -235,8 +235,7 @@ public:
 		InputIterator input = first;
 		for (iterator it = begin() ; it != end() ; ++it)
 		{
-			_allocator.destroy(it.operator->());
-			_allocator.construct(it.operator->(), *input);
+			*it = *input;
 			input++;
 		}
 	}
@@ -245,8 +244,7 @@ public:
 		resize(n, val);
 		for (iterator it = begin() ; it != end() ; ++it)
 		{
-			_allocator.destroy(it.operator->());
-			_allocator.construct(it.operator->(), val);
+			*it = val;
 		}
 	}
 
@@ -276,8 +274,10 @@ public:
 		if ( new_position != end())
 		{
 			_vector.move_up(std::distance( begin(), new_position ), n, std::distance(new_position, end()));
+			std::fill_n(new_position, n, val);
 		}
-		std::uninitialized_fill_n(new_position, n, val);
+		else
+			std::uninitialized_fill_n(new_position, n, val);
 		_vector._size += n;
 	}
 
@@ -292,7 +292,6 @@ public:
 		if ( new_position != end()) // move up element
 		{
 			_vector.move_up(std::distance( begin(), new_position ), n, std::distance(new_position, end()));
-
 		}
 		std::copy_backward(first, last, new_position + n);
 		_vector._size += n;
@@ -352,19 +351,6 @@ public:
 private:
 
 	/* ------------------------------ Private Method ---------------------------- */
-
-	inline void _insert_construct(iterator new_position, size_type n)
-	{
-		iterator input = end() - 1;
-		for (iterator it = end() - 1 + n ; it != new_position + n - 1 ; it--)
-		{
-			// si inferieur a la taille : delete ?
-			//_allocator.destroy(it.operator->());
-			_allocator.construct( it.operator->(), *input);
-			//*it = *input;
-			input--;
-		}
-	}
 
 	inline void	_reallocate(size_type n) {	// reallocate n _capacity
 		if (n > max_size())
