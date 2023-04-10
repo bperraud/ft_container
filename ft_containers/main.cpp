@@ -102,17 +102,25 @@ int main(int argc, char **argv) {
 	rand_insert(vect, 10);
 	printContainer(vect);
 
-	ft::vector<int> data;
+	ft::map<int, int> m;
 
-    for (std::size_t i = 0; i < MAXSIZE; ++i) {
-        data.push_back(rand());
-    }
+	m.insert(ft::make_pair(1, 1));
+	m.insert(ft::make_pair(2, 2));
+	m.insert(ft::make_pair(3, 3));
+
+	ft::map<int, int>::iterator it = m.begin();
+
+	std::advance(it, 2);
+
+    //for (std::size_t i = 0; i < MAXSIZE; ++i) {
+    //    data.push_back(rand());
+    //}
 
 
-    ft::vector<int> v(data.begin(), data.end());
-    while (!v.empty()) {
-        v.erase(v.end() - 1);
-    }
+    //ft::vector<int> v(data.begin(), data.end());
+    //while (!v.empty()) {
+    //    v.erase(v.end() - 1);
+    //}
 
 	std::cout << std::endl;
 	return (0);

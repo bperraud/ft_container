@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2023/02/25 16:22:56 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/11 00:28:27 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ public :
         typedef typename U::reference			reference;
         typedef typename U::pointer				pointer;
 		typedef typename U::difference_type		difference_type;
-        typedef typename U::iterator_category	iterator_category;
+        typedef typename std::random_access_iterator_tag	iterator_category;
 
 		typedef typename U::const_reference		const_reference;
 		typedef	typename U::const_pointer		const_pointer;
@@ -54,6 +54,18 @@ public :
 		normal_iterator( const normal_iterator &other ) : _current_node( other._current_node ) {}
 
 		const node_pointer &get_node() const { return _current_node; }
+
+		normal_iterator operator+=(difference_type n) {
+			while (n--)
+				_current_node = _current_node->next();
+			return *this;
+		}
+
+		normal_iterator operator-=(difference_type n) {
+			while (n--)
+				_current_node = _current_node->previous();
+			return *this;
+		}
 
 		normal_iterator &operator=( const normal_iterator &other ) {
             _current_node = other.get_node();
@@ -243,6 +255,15 @@ public:
 	map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
 	const allocator_type& alloc = allocator_type()) : _tree( tree_type(comp, alloc)) {
 		insert(first, last);
+	}
+
+	map( const map &other ) : _tree(other._tree) {
+	}
+
+	map &operator=( const map &other ) {
+		clear();
+		_tree = other._tree;
+		return *this;
 	}
 
 	/* -------------------------------- Iterators ------------------------------- */

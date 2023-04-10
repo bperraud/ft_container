@@ -39,7 +39,6 @@ class vector {
 		typedef U*								pointer;
 		typedef std::ptrdiff_t					difference_type;
 		typedef std::random_access_iterator_tag	iterator_category;
-		//typedef std::random_access_iterator_tag	iterator_category;
 
 	public:
 		normal_iterator() : _it(0) {}
