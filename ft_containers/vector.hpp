@@ -18,6 +18,7 @@
 #include "type_traits.hpp" // for enable_if
 #include "utility.hpp" // for equal and lexicalcompare
 #include <memory>
+#include <algorithm>
 
 namespace ft {
 
@@ -274,7 +275,7 @@ public:
 		iterator new_position = begin() + offset;
 		if ( new_position != end())
 		{
-			_insert_construct(new_position, n);
+			_vector.move_up(std::distance( begin(), new_position ), n, std::distance(new_position, end()));
 		}
 		std::uninitialized_fill_n(new_position, n, val);
 		_vector._size += n;
@@ -288,9 +289,10 @@ public:
 		if (_capacity < _vector._size + n)
 			_reallocate(_increase_capacity(n));
 		iterator new_position = begin() + offset;
-		if ( new_position != end())
+		if ( new_position != end()) // move up element
 		{
-			_insert_construct(new_position, n);
+			_vector.move_up(std::distance( begin(), new_position ), n, std::distance(new_position, end()));
+
 		}
 		std::copy_backward(first, last, new_position + n);
 		_vector._size += n;
@@ -359,6 +361,7 @@ private:
 			// si inferieur a la taille : delete ?
 			//_allocator.destroy(it.operator->());
 			_allocator.construct( it.operator->(), *input);
+			//*it = *input;
 			input--;
 		}
 	}

@@ -1,7 +1,6 @@
 CXX = c++
 
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
-
 SRC = main.cpp
 
 OBJ_STD = std.o

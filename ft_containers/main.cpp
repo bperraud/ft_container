@@ -25,9 +25,12 @@
 #include <algorithm>
 #include <ctime>
 #include <stdlib.h>
+#include <limits>
 
-#define MAX_RAM 4294967296
 #define BUFFER_SIZE 4096
+
+#define MAXRAM (std::numeric_limits<int>::max())
+#define MAXSIZE ((std::size_t)(std::numeric_limits<int>::max()) / sizeof(int))
 
 
 template <typename T>
@@ -99,6 +102,17 @@ int main(int argc, char **argv) {
 	rand_insert(vect, 10);
 	printContainer(vect);
 
+	ft::vector<int> data;
+
+    for (std::size_t i = 0; i < MAXSIZE; ++i) {
+        data.push_back(rand());
+    }
+
+
+    ft::vector<int> v(data.begin(), data.end());
+    while (!v.empty()) {
+        v.erase(v.end() - 1);
+    }
 
 	std::cout << std::endl;
 	return (0);
