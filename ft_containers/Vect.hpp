@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/10 20:26:08 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/11 13:01:59 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,37 +31,11 @@ struct Vect {
 		}
 	}
 
-	#if 1
 	void move_up (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
 		for (std::size_t n = start + offset + left - 1; n > start + offset - 1; --n){
 			*(_data + n) = *(_data + n - offset);
 		}
 	}
-	#else
-	void move_up(T* start, std::size_t offset, std::size_t left) {
-		T* end = start - left;
-		for (T* p = start; p != end; --p) {
-			*(p) = *(p - offset);
-		}
-	}
-	#endif
-	#if 0
-	void move_back(std::ptrdiff_t start, std::size_t offset, std::size_t left) {
-		// Use pointers instead of integer indices
-		T* src = _data + start;
-		T* dest = _data + start + offset;
-
-		for (std::size_t i = 0; i < left; ++i) {
-			*(dest + i) = *(src + i);
-		}
-	}
-	void move_up(T* start, std::size_t offset, std::size_t left) {
-		T* end = start - left;
-		for (T* p = start; p != end; --p) {
-			*(p) = *(p - offset);
-		}
-	}
-	#endif
 
 	// Constructors
 	Vect () : _size(0), _data(0) {}

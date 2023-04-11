@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/11 00:28:27 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/11 14:52:32 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ template<
     class Key,														// map::key_type
     class T,														// map::mapped_type
     class Compare = std::less<Key>,									// map::key_compare
-    class Allocator = std::allocator<ft::pair<const Key, T> > >	// map::allocator_type
+    class Allocator = std::allocator<ft::pair<const Key, T> > >		// map::allocator_type
 class map {
 public :
 	typedef BST<Key, T, Compare, Allocator> 		tree_type;
@@ -261,7 +261,6 @@ public:
 	}
 
 	map &operator=( const map &other ) {
-		clear();
 		_tree = other._tree;
 		return *this;
 	}

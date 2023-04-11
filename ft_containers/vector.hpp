@@ -148,6 +148,8 @@ public:
 
 	explicit vector( size_type n, const value_type &val = value_type(), const allocator_type &alloc = allocator_type() )
 		: _allocator(alloc), _capacity(n), _vector() {
+		if (n > max_size())
+			throw std::length_error("vector");
 		_vector._data = _allocator.allocate(n);
 		assign( n, val );
 	}
@@ -181,7 +183,7 @@ public:
 	const_reverse_iterator 	rbegin() const {return begin() + _vector._size;}
 	const_reverse_iterator 	rend() const { return _vector._data; }
 	const_iterator 			cbegin() const { return _vector._data; }
-	const_iterator 			cend() const { return begin() + _vector._size; }
+	const_iterator 			cend() const { return begin() + _vector._size;}
 	const_reverse_iterator 	crbegin() const {return begin() + _vector._size ;}
 	const_reverse_iterator 	crend() const { return _vector._data ; }
 
@@ -288,7 +290,7 @@ public:
 		if (_capacity < _vector._size + n)
 			_reallocate(_increase_capacity(n));
 		iterator new_position = begin() + offset;
-		if ( new_position != end()) // move up element
+		if ( new_position != end())
 		{
 			_vector.move_up(std::distance( begin(), new_position ), n, std::distance(new_position, end()));
 		}

@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/11 00:25:18 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/11 14:54:35 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,50 +156,20 @@ public:
 		*this = other;
 	}
 
-	#if 0
 	BST &operator=( const BST &other ) {
-		clear();
-		node_pointer first = other.begin();
-		while (first != other.end())
-		{
-			insert(first->_info);
-			first = first->next();
-		}
-		return *this;
-	}
-	#else
-	BST& operator=(const BST& other) {
-		if (this != &other) { // Check for self-assignment
-			clear(); // Clear the existing tree
-			if (other._root == 0) { // If the other tree is empty, return an empty tree
-				return *this;
-			}
-			_root = new _Node(other._root->_info); // Create a new root node for the tree
-			std::stack<std::pair<_Node*, _Node*> > nodes_to_copy; // A stack of pairs of (original node, copied node)
-			nodes_to_copy.push(std::make_pair(other._root, _root)); // Push the root nodes onto the stack
-			while (!nodes_to_copy.empty()) {
-				std::pair<_Node*, _Node*> curr_pair = nodes_to_copy.top(); // Get the top node and its copy from the stack
-				nodes_to_copy.pop();
-				_Node* curr_node = curr_pair.first;
-				_Node* curr_copy = curr_pair.second;
-				if (curr_node->_right) { // Copy right child
-					_Node* new_right = new _Node(curr_node->_right->_info);
-					curr_copy->_right = new_right;
-					new_right->_father = curr_copy;
-					nodes_to_copy.push(std::make_pair(curr_node->_right, new_right)); // Push right child onto stack
-				}
-				if (curr_node->_left) { // Copy left child
-					_Node* new_left = new _Node(curr_node->_left->_info);
-					curr_copy->_left = new_left;
-					new_left->_father = curr_copy;
-					nodes_to_copy.push(std::make_pair(curr_node->_left, new_left)); // Push left child onto stack
-				}
+		if (this != &other) {
+			clear();
+			_allocator = other._allocator;
+			_key_compare = extended_key_compare(_end, _rend, other._key_compare.key_comp());
+			node_pointer first = other.begin();
+			while (first != other.end())
+			{
+				insert(first->_info);
+				first = first->next();
 			}
 		}
 		return *this;
 	}
-
-	#endif
 
 	node_pointer construct_node(const value_type &val)
 	{
@@ -469,6 +439,7 @@ private:
 		return _end;
 	}
 
+	#if 1
 	node_pointer _upper_bound(const key_type& key) const
 	{
 		node_pointer current = begin();
@@ -482,6 +453,21 @@ private:
 		// key was not found, return end iterator
 		return _end;
 	}
+	#else
+	node_pointer _upper_bound(const key_type& key) const
+	{
+		node_pointer current = begin();
+		node_pointer result = _end;
+		while (current != 0) {
+			if (_key_compare(key, current->_info.first)) {
+				return current;
+			} else {
+				current = current->right();
+			}
+		}
+		return result;
+	}
+	#endif
 
 };
 
