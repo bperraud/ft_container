@@ -14,7 +14,7 @@
 #define VECT_H
 
 
-#include "_val.hpp"
+//#include "_val.hpp"
 
 #include "Vect.hpp"
 #include "Iterator.hpp"
@@ -154,7 +154,11 @@ public:
 		if (n > max_size())
 			throw std::length_error("vector");
 		_vector._data = _allocator.allocate(n);
-		assign( n, val );
+		_vector._size = n;
+		for (size_type i = 0 ; i < n; ++i)
+		{
+			_allocator.construct(_vector._data + i, val);
+		}
 	}
 
 	template < class InputIterator >
@@ -245,7 +249,7 @@ public:
 	}
 
 	void assign (size_type n, const value_type& val) {
-		resize(n, val);
+		resize(n);
 		for (iterator it = begin() ; it != end() ; ++it)
 		{
 			*it = val;
@@ -270,8 +274,6 @@ public:
 		return begin() + range;
 	}
 
-
-	#if 1
 	void insert (iterator position, size_type n, const value_type& val) {
 		size_type offset = position - begin();
 		if (_capacity < _vector._size + n)
@@ -279,41 +281,13 @@ public:
 		iterator new_position = begin() + offset;
 		if ( new_position != end())
 		{
-			_vector.move_up(std::distance(begin(), new_position), n, std::distance(new_position, end()));
-			if (offset + n > _vector._size)
-			{
-				std::fill_n(new_position, _vector._size - offset, val);
-				std::uninitialized_fill_n(begin() + _vector._size, n - (_vector._size  - offset) , val);
-			}
-			else
-				std::fill_n(new_position, n, val);
+			_vector.move_up(offset, n, _vector._size - offset);
+			std::fill_n(new_position, n, val);
 		}
 		else
 			std::uninitialized_fill_n(new_position, n, val);
 		_vector._size += n;
 	}
-	#else
-	void insert( iterator position, size_type n, const value_type &val ) {
-        typename iterator::difference_type i = position - begin();
-        if ( _vector._size + n > _capacity ) {
-            reserve( std::max( _vector._size << 1, _vector._size + n ) );
-        }
-        size_type x = std::min( n, _vector._size - i );
-        ft::_uninitialized_copy_a( begin() + _vector._size - x,
-                                   begin() + _vector._size,
-                                   begin() + _vector._size - x + n,
-                                   _allocator );
-        std::copy_backward( begin() + i,
-                            begin() + _vector._size - x,
-                            begin() + _vector._size - x + n );
-        ft::_uninitialized_fill_a( begin() + _vector._size,
-                                   begin() + _vector._size - x + n,
-                                   val,
-                                   _allocator );
-        std::fill( begin() + i, begin() + i + x, val );
-        _vector._size += n;
-    }
-	#endif
 
 	template <class InputIterator>
 	void insert (iterator position, InputIterator first, InputIterator last,
@@ -325,7 +299,7 @@ public:
 		iterator new_position = begin() + offset;
 		if ( new_position != end())
 		{
-			_vector.move_up(std::distance( begin(), new_position ), n, std::distance(new_position, end()));
+			_vector.move_up(offset, n, _vector._size - offset);
 		}
 		std::copy_backward(first, last, new_position + n);
 		_vector._size += n;

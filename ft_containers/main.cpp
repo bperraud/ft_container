@@ -29,10 +29,14 @@
 #define MAXRAM (std::numeric_limits<int>::max())
 #define MAXSIZE ((std::size_t)(std::numeric_limits<int>::max()) / sizeof(int))
 
+#define YELLOW  "\033[33m"
+#define CYAN    "\033[36m"
+#define RESET   "\033[0m"
+
 // ------------------ TIMER ------------------
 #define PRINT_TIME(t)                                                                              \
     {                                                                                              \
-        std::cout << t.get_time() << "ms" << std::endl;                                            \
+        std::cout << CYAN << t.get_time() << "ms" <<  RESET << std::endl;                                            \
     }
 
 #define SETUP                                                                                      \
@@ -43,7 +47,7 @@
 
 #define PRINT_SUM()                                                                                \
     {                                                                                              \
-        std::cout << sum << "ms" << std::endl;                                                     \
+        std::cout << CYAN << sum << "ms" << RESET << std::endl;                                                     \
     }
 
 timer::timer()
@@ -144,7 +148,7 @@ int main(int argc, char **argv) {
 
 	// ------------------ push_back ------------------
 
-	std::cout << "push_back" << std::endl;
+	std::cout << YELLOW << "push_back" << RESET << std::endl;
 	SETUP;
 	timer t;
 
@@ -158,16 +162,16 @@ int main(int argc, char **argv) {
 	PRINT_SUM();
 
 	// ------------------ insert ------------------
-	std::cout << "insert" << std::endl;
+
+	std::cout << "--------------------" << std::endl;
+	std::cout << YELLOW << "insert" <<  RESET << std::endl;
 
 	t.reset();
-
-    //rand_insert(vect,  MAXSIZE / 50000);
 
 	for (int i = 0; i < 2; ++i) {
         NS::vector<int> v;
 
-        for (std::size_t i = 0; i < MAXSIZE / 100; ++i) {
+        for (std::size_t i = 0; i < MAXSIZE / 1000; ++i) {
             v.insert(v.end(), rand());
         }
     }
@@ -193,59 +197,116 @@ int main(int argc, char **argv) {
 
 	PRINT_TIME(t);
 
-	//------------------ erase ------------------
+    // ------------------ erase ------------------
+
+	std::cout << "--------------------" << std::endl;
+	std::cout << YELLOW <<  "erase" <<  RESET << std::endl;
+
+	t.reset();
+
+	for (int i = 0; i < 2; ++i) {
+		NS::vector<int> v;
 
 
-    for (int i = 0; i < 5; ++i) {
-        NS::vector<int> v = vect;
+		for (std::size_t i = 0; i < MAXSIZE / 1000; ++i) {
+			v.push_back(rand());
+		}
 
-        while (!v.empty()) {
-            v.pop_back();
-        }
-    }
+		for (std::size_t i = 0; i < 5000; ++i) {
+			v.erase(v.begin() + (rand() % v.size()));
+		}
+	}
+
+	PRINT_TIME(t);
+
+// ------------------ assign ------------------
+	std::cout << "--------------------" << std::endl;
+	std::cout << YELLOW << "assign" << RESET << std::endl;
+
+	t.reset();
+
+	for (std::size_t i = 0; i < MAXSIZE / 10000; ++i) {
+	NS::vector<int> v;
+	v.assign(1000, rand());
+	}
+
+	PRINT_TIME(t);
+
+// ------------------ resize ------------------
+
+	std::cout << "--------------------" << std::endl;
+	std::cout << YELLOW << "resize" << RESET << std::endl;
+
+	t.reset();
+
+	for (std::size_t i = 0; i < MAXSIZE / 10000; ++i) {
+	NS::vector<int> v(1000);
+	v.resize(2000);
+	}
+
+	PRINT_TIME(t);
+
+// ------------------ clear ------------------
+
+	std::cout << "--------------------" << std::endl;
+	std::cout << YELLOW << "clear" << RESET << std::endl;
+
+	t.reset();
+
+	for (std::size_t i = 0; i < MAXSIZE / 10000; ++i) {
+		NS::vector<int> v(1000);
+		v.clear();
+	}
+
+	PRINT_TIME(t);
 
 	return (0);
 }
 #else
-#define TESTED_TYPE int
+
 #include "common.hpp"
 
 #define TESTED_NAMESPACE ft
 
+#define TESTED_TYPE std::string
+
+void	checkErase(TESTED_NAMESPACE::vector<TESTED_TYPE> const &vct,
+					TESTED_NAMESPACE::vector<TESTED_TYPE>::const_iterator const &it)
+{
+	static int i = 0;
+	std::cout << "[" << i++ << "] " << "erase: " << it - vct.begin() << std::endl;
+	printSize(vct);
+}
+
 int		main(void)
 {
 	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(10);
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct2;
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct3;
 
 	for (unsigned long int i = 0; i < vct.size(); ++i)
-		vct[i] = (vct.size() - i) * 3;
+		vct[i] = std::string((vct.size() - i), i + 65);
 	printSize(vct);
 
-	vct2.insert(vct2.end(), 42);
-	vct2.insert(vct2.begin(), 2, 21);
-	printSize(vct2);
+	checkErase(vct, vct.erase(vct.begin() + 2));
 
-	vct2.insert(vct2.end() - 2, 42);
-	printSize(vct2);
+	checkErase(vct, vct.erase(vct.begin()));
+	checkErase(vct, vct.erase(vct.end() - 1));
 
-	vct2.insert(vct2.end(), 2, 84);
-	printSize(vct2);
+	checkErase(vct, vct.erase(vct.begin(), vct.begin() + 3));
+	checkErase(vct, vct.erase(vct.end() - 3, vct.end() - 1));
 
-	vct2.resize(4);
-	printSize(vct2);
-
-	vct2.insert(vct2.begin() + 2, vct.begin(), vct.end());
-	vct.clear();
-	printSize(vct2);
-
+	vct.push_back("Hello");
+	vct.push_back("Hi there");
 	printSize(vct);
+	checkErase(vct, vct.erase(vct.end() - 3, vct.end()));
 
-	for (int i = 0; i < 5; ++i)
-		vct3.insert(vct3.end(), i);
-	vct3.insert(vct3.begin() + 1, 2, 111);
-	printSize(vct3);
+	vct.push_back("ONE");
+	vct.push_back("TWO");
+	vct.push_back("THREE");
+	vct.push_back("FOUR");
+	printSize(vct);
+	checkErase(vct, vct.erase(vct.begin(), vct.end()));
 
 	return (0);
 }
+
 #endif

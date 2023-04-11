@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/11 13:01:59 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/11 19:58:58 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include  <exception>
 #include  <stdexcept>           // standard exceptions
 #include  <ostream>             // output streams
-#include <cstring>             // memcpy, memmove
 
 template <typename T>
 struct Vect {
