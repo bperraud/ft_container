@@ -6,7 +6,7 @@
 		"name": "(gdb) Launch",
 		"type": "cppdbg",
 		"request": "launch",
-		"program": "${workspaceFolder}/ft_containers/main",
+		"program": "${workspaceFolder}/ft_containers/ft",
 		"args": [],
 		"stopAtEntry": false,
 		"cwd": "${workspaceFolder}",
@@ -14,7 +14,9 @@
 		"externalConsole": false,
 		"MIMode": "gdb",
 		"miDebuggerPath": "/usr/bin/gdb",
-		"miDebuggerArgs": "${workspaceFolder}/ft_containers/main" ,
+		"miDebuggerArgs": "${workspaceFolder}/ft_containers/ft" ,
+		"stopOnEntry": true,
+        "justMyCode": false,
 		"setupCommands": [
 		  {
 			"description": "Enable pretty-printing for gdb",
