@@ -14,23 +14,60 @@
 #include <stack>
 #include <map>
 #include <iostream>
+
 #include "vector.hpp"
 #include "stack.hpp"
 #include "map.hpp"
-#include <time.h>
+#include "timer.hpp"
 
-#include <iostream>
 #include <string>
-#include <vector>
 #include <algorithm>
-#include <ctime>
 #include <stdlib.h>
 #include <limits>
 
 #define BUFFER_SIZE 4096
-
 #define MAXRAM (std::numeric_limits<int>::max())
 #define MAXSIZE ((std::size_t)(std::numeric_limits<int>::max()) / sizeof(int))
+
+// ------------------ TIMER ------------------
+#define PRINT_TIME(t)                                                                              \
+    {                                                                                              \
+        std::cout << t.get_time() << "ms" << std::endl;                                            \
+    }
+
+#define SETUP                                                                                      \
+    srand(64);                                                                                     \
+    volatile int x = 0;                                                                            \
+    (void)x;                                                                                       \
+    long sum = 0;                                                                                  \
+
+#define PRINT_SUM()                                                                                \
+    {                                                                                              \
+        std::cout << sum << "ms" << std::endl;                                                     \
+    }
+
+timer::timer()
+{
+    reset();
+}
+
+long timer::get_time()
+{
+    struct timeval now;
+    struct timeval diff;
+
+    gettimeofday(&now, NULL);
+    timersub(&now, &stamp, &diff);
+
+    return diff.tv_sec * 1000 + diff.tv_usec / 1000;
+}
+
+void timer::reset()
+{
+    gettimeofday(&stamp, NULL);
+}
+
+// ------------------ END TIMER ------------------
 
 
 template <typename T>
@@ -102,6 +139,12 @@ int main(int argc, char **argv) {
 	rand_insert(vect, 10);
 	printContainer(vect);
 
+
+	SETUP;
+	timer t;
+	t.reset();
+	sum += t.get_time();
+	PRINT_SUM();
 
     ft::vector<int> data;
 
