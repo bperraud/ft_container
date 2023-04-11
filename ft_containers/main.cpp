@@ -32,22 +32,17 @@
 #define YELLOW  "\033[33m"
 #define CYAN    "\033[36m"
 #define RESET   "\033[0m"
+#define GREEN   "\033[32m"
 
 // ------------------ TIMER ------------------
 #define PRINT_TIME(t)                                                                              \
     {                                                                                              \
-        std::cout << CYAN << t.get_time() << "ms" <<  RESET << std::endl;                                            \
-    }
-
-#define SETUP                                                                                      \
-    srand(64);                                                                                     \
-    volatile int x = 0;                                                                            \
-    (void)x;                                                                                       \
-    long sum = 0;                                                                                  \
+        std::cout << GREEN << t.get_time() << "ms" <<  RESET << std::endl;                                            \
+    }                                                                               \
 
 #define PRINT_SUM()                                                                                \
     {                                                                                              \
-        std::cout << CYAN << sum << "ms" << RESET << std::endl;                                                     \
+        std::cout << GREEN << sum << "ms" << RESET << std::endl;                                                     \
     }
 
 timer::timer()
@@ -125,10 +120,8 @@ void printContainer(T &cont) {
 int main(int argc, char **argv) {
 
 	NS::vector<std::string> vector_str;
-	NS::vector<int> vector_int;
+	NS::vector<int> vect;
 	NS::stack<int> stack_int;
-
-	NS::map<int, int> map_int;
 
 	int seed;
 
@@ -139,27 +132,29 @@ int main(int argc, char **argv) {
 
 	std::srand(seed);
 
-	//std::vector<int> v(1000);
-	//std::generate(v.begin(), v.end(), std::rand);
-
-	NS::vector<int> vect;
 	//rand_insert(vect, 10);
 	//printContainer(vect);
+
+	// ------------------- VECTOR -------------------
+
+	std::cout << "--------------------" << std::endl;
+
+	std::cout  << "VECTOR"  << std::endl;
+
+	std::cout << "--------------------" << std::endl;
 
 	// ------------------ push_back ------------------
 
 	std::cout << YELLOW << "push_back" << RESET << std::endl;
-	SETUP;
 	timer t;
 
 	t.reset();
 
-    for (std::size_t i = 0; i < MAXSIZE / 10000; ++i) {
+    for (std::size_t i = 0; i < MAXSIZE / 100; ++i) {
         vect.push_back(rand());
-		sum += t.get_time();
     }
 
-	PRINT_SUM();
+	PRINT_TIME(t);
 
 	// ------------------ insert ------------------
 
@@ -204,14 +199,12 @@ int main(int argc, char **argv) {
 
 	t.reset();
 
-	for (int i = 0; i < 2; ++i) {
+	for (int i = 0; i < 1; ++i) {
 		NS::vector<int> v;
-
-
 		for (std::size_t i = 0; i < MAXSIZE / 1000; ++i) {
 			v.push_back(rand());
 		}
-
+		t.reset();
 		for (std::size_t i = 0; i < 5000; ++i) {
 			v.erase(v.begin() + (rand() % v.size()));
 		}
@@ -222,52 +215,157 @@ int main(int argc, char **argv) {
 // ------------------ assign ------------------
 	std::cout << "--------------------" << std::endl;
 	std::cout << YELLOW << "assign" << RESET << std::endl;
-
 	t.reset();
-
 	for (std::size_t i = 0; i < MAXSIZE / 10000; ++i) {
-	NS::vector<int> v;
-	v.assign(1000, rand());
+		NS::vector<int> v;
+		v.assign(1000, rand());
 	}
-
 	PRINT_TIME(t);
 
 // ------------------ resize ------------------
 
 	std::cout << "--------------------" << std::endl;
 	std::cout << YELLOW << "resize" << RESET << std::endl;
-
 	t.reset();
-
 	for (std::size_t i = 0; i < MAXSIZE / 10000; ++i) {
-	NS::vector<int> v(1000);
-	v.resize(2000);
+		NS::vector<int> v(1000);
+		v.resize(2000);
 	}
-
 	PRINT_TIME(t);
 
 // ------------------ clear ------------------
 
 	std::cout << "--------------------" << std::endl;
 	std::cout << YELLOW << "clear" << RESET << std::endl;
-
 	t.reset();
-
 	for (std::size_t i = 0; i < MAXSIZE / 10000; ++i) {
 		NS::vector<int> v(1000);
 		v.clear();
 	}
+	PRINT_TIME(t);
+
+	// ------------------- MAP -------------------
+
+	std::cout << "--------------------" << std::endl;
+
+	std::cout  << "MAP"  << std::endl;
+
+	std::cout << "--------------------" << std::endl;
+
+	// ------------------ insert ------------------
+
+	std::cout << YELLOW << "insert" <<  RESET << std::endl;
+
+	t.reset();
+
+	for (int i = 0; i < 2; ++i) {
+		NS::map<int, int> map;
+
+		for (std::size_t i = 0; i < MAXSIZE / 1000; ++i) {
+			map.insert(NS::make_pair(rand(), rand()));
+		}
+	}
+
+	for (int i = 0; i < 2; ++i) {
+		NS::map<int, int> map;
+
+		for (std::size_t i = 0; i < 20000; ++i) {
+			map.insert(NS::make_pair(rand(), rand()));
+		}
+	}
+
+	for (int i = 0; i < 2; ++i) {
+		NS::map<int, int> map;
+
+		for (std::size_t i = 0; i < 5000; ++i) {
+			map.insert(NS::make_pair(rand(), rand()));
+		}
+		for (std::size_t i = 0; i < 20000; ++i) {
+			map.insert(NS::make_pair(rand(), rand()));
+		}
+	}
 
 	PRINT_TIME(t);
 
-	return (0);
+	// ------------------ erase ------------------
+
+	std::cout << "--------------------" << std::endl;
+	std::cout << YELLOW <<  "erase" <<  RESET << std::endl;
+
+	t.reset();
+
+	for (int i = 0; i < 1; ++i) {
+		NS::map<int, int> map;
+		for (std::size_t i = 0; i < MAXSIZE / 500; ++i) {
+			map.insert(NS::make_pair(rand(), rand()));
+		}
+		t.reset();
+		while (!map.empty()) {
+			map.erase(map.begin());
+		}
+	}
+
+	PRINT_TIME(t);
+
+	// ------------------ clear ------------------
+
+	std::cout << "--------------------" << std::endl;
+	std::cout << YELLOW << "clear" << RESET << std::endl;
+
+	for (std::size_t i = 0; i < 1; ++i) {
+		NS::map<int, int> map;
+		for (std::size_t i = 0; i < MAXSIZE / 500; ++i) {
+			map.insert(NS::make_pair(rand(), rand()));
+		}
+		t.reset();
+		map.clear();
+	}
+	PRINT_TIME(t);
+
+	// ------------------ find ------------------
+
+	std::cout << "--------------------" << std::endl;
+	std::cout << YELLOW << "find" << RESET << std::endl;
+
+
+
+	for (int i = 0; i < 1; ++i) {
+		NS::map<int, int> map;
+		for (std::size_t i = 0; i < MAXSIZE / 1000; ++i) {
+			map.insert(NS::make_pair(rand(), rand()));
+		}
+
+		t.reset();
+		for (std::size_t i = 0; i < 1000; ++i) {
+			map.find(rand() % map.size());
+		}
+	}
+
+	PRINT_TIME(t);
+
+	std::cout << "--------------------" << std::endl;
+	std::cout << YELLOW << "equal_range" << RESET << std::endl;
+
+
+	for (int i = 0; i < 1; ++i) {
+		NS::map<int, int> map;
+		for (std::size_t i = 0; i < MAXSIZE / 1000; ++i) {
+			map.insert(NS::make_pair(rand(), rand()));
+		}
+		t.reset();
+		for (std::size_t i = 0; i < 1000; ++i) {
+			map.equal_range(rand() % map.size());
+		}
+	}
+
+	PRINT_TIME(t);
+	return 0;
 }
 #else
 
 #include "common.hpp"
 
 #define TESTED_NAMESPACE ft
-
 #define TESTED_TYPE std::string
 
 void	checkErase(TESTED_NAMESPACE::vector<TESTED_TYPE> const &vct,

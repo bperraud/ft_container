@@ -50,7 +50,7 @@ struct iterator_traits {
 
 template < typename T >
 struct iterator_traits< T * > {
-	typedef std::random_access_iterator_tag iterator_category;
+	typedef random_access_iterator_tag iterator_category;
 	typedef T                               value_type;
 	typedef T *                             pointer;
 	typedef T &                             reference;
@@ -59,25 +59,12 @@ struct iterator_traits< T * > {
 
 template < typename T >
 struct iterator_traits< const T * > {
-	typedef std::random_access_iterator_tag iterator_category;
+	typedef random_access_iterator_tag iterator_category;
 	typedef T                               value_type;
 	typedef const T *                       pointer;
 	typedef const T &                       reference;
 	typedef std::ptrdiff_t                  difference_type;
 };
-
-
-/*
-template <class Category, class T, class Distance = std::ptrdiff_t,
-          class Pointer = T*, class Reference = T&>
-  struct iterator {
-    typedef T         value_type;
-    typedef Distance  difference_type;
-    typedef Pointer   pointer;
-    typedef Reference reference;
-    typedef Category  iterator_category;
-  };
-*/
 
 
 template <typename _It>

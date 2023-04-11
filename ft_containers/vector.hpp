@@ -13,7 +13,6 @@
 #ifndef VECT_H
 #define VECT_H
 
-
 //#include "_val.hpp"
 
 #include "Vect.hpp"

@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/11 14:54:35 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/11 23:48:48 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ public :
 	typedef	typename allocator_type::const_pointer		const_pointer;
 	typedef	typename allocator_type::pointer			pointer;
 
-    //typedef std::bidirectional_iterator_tag				iterator_category;
+    //typedef std::random_access_iterator_tag				iterator_category;
+
 	typedef ft::bidirectional_iterator_tag				iterator_category;
 	typedef std::ptrdiff_t								difference_type;
 	typedef std::size_t									size_type;

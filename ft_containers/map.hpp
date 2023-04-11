@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/11 14:52:32 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/12 01:02:10 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ public :
         typedef typename U::reference			reference;
         typedef typename U::pointer				pointer;
 		typedef typename U::difference_type		difference_type;
-        typedef typename std::random_access_iterator_tag	iterator_category;
+
+		typedef std::random_access_iterator_tag	iterator_category;
 
 		typedef typename U::const_reference		const_reference;
 		typedef	typename U::const_pointer		const_pointer;
@@ -331,11 +332,6 @@ public:
 			_tree.erase( first.get_node());
 			first = tmp;
 		}
-	}
-
-	void printTree()
-	{
-		_tree.printTreeDiagram();
 	}
 
 	void clear() {
