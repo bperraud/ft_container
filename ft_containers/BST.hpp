@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/11 23:48:48 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/12 22:09:26 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -440,7 +440,6 @@ private:
 		return _end;
 	}
 
-	#if 1
 	node_pointer _upper_bound(const key_type& key) const
 	{
 		node_pointer current = begin();
@@ -454,21 +453,6 @@ private:
 		// key was not found, return end iterator
 		return _end;
 	}
-	#else
-	node_pointer _upper_bound(const key_type& key) const
-	{
-		node_pointer current = begin();
-		node_pointer result = _end;
-		while (current != 0) {
-			if (_key_compare(key, current->_info.first)) {
-				return current;
-			} else {
-				current = current->right();
-			}
-		}
-		return result;
-	}
-	#endif
 
 };
 

@@ -116,7 +116,7 @@ void printContainer(T &cont) {
 	}
 }
 
-#if 1
+#if 0
 int main(int argc, char **argv) {
 
 	NS::vector<std::string> vector_str;
@@ -166,28 +166,24 @@ int main(int argc, char **argv) {
 	for (int i = 0; i < 2; ++i) {
         NS::vector<int> v;
 
-        for (std::size_t i = 0; i < MAXSIZE / 1000; ++i) {
-            v.insert(v.end(), rand());
-        }
-    }
-
-    for (int i = 0; i < 2; ++i) {
-        NS::vector<int> v;
-
-        for (std::size_t i = 0; i < 20000; ++i) {
+        for (std::size_t i = 0; i < MAXSIZE / 100000; ++i) {
             v.insert(v.begin(), rand());
         }
     }
+	PRINT_TIME(t);
+
+	t.reset();
 
     for (int i = 0; i < 2; ++i) {
         NS::vector<int> v;
 
-        for (std::size_t i = 0; i < 5000; ++i) {
-            v.insert(v.end(), rand());
-        }
+        //for (std::size_t i = 0; i < 5000; ++i) {
+        //    v.insert(v.end(), rand());
+        //}
         for (std::size_t i = 0; i < 20000; ++i) {
-            v.insert(v.begin() + 450, rand());
-        }
+			std::size_t index = rand() % (v.size() + 1); // generate random index
+			v.insert(v.begin() + index, rand());
+		}
     }
 
 	PRINT_TIME(t);
@@ -248,7 +244,7 @@ int main(int argc, char **argv) {
 
 	std::cout << "--------------------" << std::endl;
 
-	std::cout  << "MAP"  << std::endl;
+	std::cout  << "MAP" << std::endl;
 
 	std::cout << "--------------------" << std::endl;
 
@@ -366,43 +362,35 @@ int main(int argc, char **argv) {
 #include "common.hpp"
 
 #define TESTED_NAMESPACE ft
-#define TESTED_TYPE std::string
+#define TESTED_TYPE int
 
-void	checkErase(TESTED_NAMESPACE::vector<TESTED_TYPE> const &vct,
-					TESTED_NAMESPACE::vector<TESTED_TYPE>::const_iterator const &it)
+int main ()
 {
-	static int i = 0;
-	std::cout << "[" << i++ << "] " << "erase: " << it - vct.begin() << std::endl;
-	printSize(vct);
-}
+	TESTED_NAMESPACE::vector<TESTED_TYPE> foo(3, 15);
+	TESTED_NAMESPACE::vector<TESTED_TYPE> bar(5, 42);
 
-int		main(void)
-{
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(10);
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::const_iterator it_foo = foo.begin();
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::const_iterator it_bar = bar.begin();
 
-	for (unsigned long int i = 0; i < vct.size(); ++i)
-		vct[i] = std::string((vct.size() - i), i + 65);
-	printSize(vct);
+	std::cout << "BEFORE SWAP" << std::endl;
 
-	checkErase(vct, vct.erase(vct.begin() + 2));
+	std::cout << "foo contains:" << std::endl;
+	printSize(foo);
+	std::cout << "bar contains:" << std::endl;
+	printSize(bar);
 
-	checkErase(vct, vct.erase(vct.begin()));
-	checkErase(vct, vct.erase(vct.end() - 1));
+	foo.swap(bar);
 
-	checkErase(vct, vct.erase(vct.begin(), vct.begin() + 3));
-	checkErase(vct, vct.erase(vct.end() - 3, vct.end() - 1));
+	std::cout << "AFTER SWAP" << std::endl;
 
-	vct.push_back("Hello");
-	vct.push_back("Hi there");
-	printSize(vct);
-	checkErase(vct, vct.erase(vct.end() - 3, vct.end()));
+	std::cout << "foo contains:" << std::endl;
+	printSize(foo);
+	std::cout << "bar contains:" << std::endl;
+	printSize(bar);
 
-	vct.push_back("ONE");
-	vct.push_back("TWO");
-	vct.push_back("THREE");
-	vct.push_back("FOUR");
-	printSize(vct);
-	checkErase(vct, vct.erase(vct.begin(), vct.end()));
+	std::cout << "Iterator validity:" << std::endl;
+	std::cout << (it_foo == bar.begin()) << std::endl;
+	std::cout << (it_bar == foo.begin()) << std::endl;
 
 	return (0);
 }

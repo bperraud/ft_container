@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/11 19:58:58 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/12 22:30:37 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,25 +17,15 @@
 #include  <exception>
 #include  <stdexcept>           // standard exceptions
 #include  <ostream>             // output streams
+#include <cstring>			// std::memmove()
 
 template <typename T>
 struct Vect {
     std::size_t _size;
     T *_data;
     inline static T* _cp (const Vect&);
-
-	void move_back (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
-		for (std::size_t n = start ; n < start + left; ++n){
-			*(_data + n) = *(_data + n + offset);
-		}
-	}
-
-	void move_up (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
-		for (std::size_t n = start + offset + left - 1; n > start + offset - 1; --n){
-			*(_data + n) = *(_data + n - offset);
-		}
-	}
-
+	inline void move_back (std::ptrdiff_t start, std::size_t offset, std::size_t left);
+	inline void move_up (std::ptrdiff_t start, std::size_t offset, std::size_t left) ;
 	// Constructors
 	Vect () : _size(0), _data(0) {}
     const T& operator[] (std::ptrdiff_t) const;
@@ -84,7 +74,6 @@ T& Vect<T>::operator[] (std::ptrdiff_t idx) {
 // Copies & transfers ========================================================
 
 
-// utile ?
 template <typename T>
 T* Vect<T>::_cp (const Vect<T>& v) {
 	T *res = new T[v._size];
@@ -98,6 +87,20 @@ Vect<T>& Vect<T>::operator= (const Vect& v) {
     return *this;
 }
 
+template <typename T>
+void Vect<T>::move_back (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
+		for (std::size_t n = start ; n < start + left; ++n){
+			*(_data + n) = *(_data + n + offset);
+		}
+	}
+
+template <typename T>
+void Vect<T>::move_up (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
+	for (std::size_t n = start + offset + left - 1; n > start + offset - 1; --n){
+		*(_data + n) = *(_data + n - offset);
+	}
+}
+
 // Associated functions =========================================================
 
 template <typename T>
@@ -108,11 +111,5 @@ inline std::ostream& operator<< (std::ostream& out, const Vect<T>& v)
 	out << " ]" << std::endl;
 	return out;
 }
-
-
-//out << "[ ";
-//	for (std::size_t i = 0; i < v._size; ++i) out << v._data[i] << " , ";
-//	out << " ]" << std::endl;
-//	return out;
 
 #endif // _VECT_H_

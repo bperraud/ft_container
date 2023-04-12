@@ -13,8 +13,6 @@
 #ifndef VECT_H
 #define VECT_H
 
-//#include "_val.hpp"
-
 #include "Vect.hpp"
 #include "Iterator.hpp"
 #include "type_traits.hpp" // for enable_if
@@ -270,14 +268,14 @@ public:
 	iterator insert (iterator position, const value_type& val) {
 		const size_type range = std::distance(begin(), position);
 		insert(position, 1, val);
-		return begin() + range;
+		return _vector._data + range;
 	}
 
 	void insert (iterator position, size_type n, const value_type& val) {
-		size_type offset = position - begin();
+		size_type offset = position - _vector._data;
 		if (_capacity < _vector._size + n)
 			_reallocate(_increase_capacity(n));
-		iterator new_position = begin() + offset;
+		iterator new_position = _vector._data + offset;
 		if ( new_position != end())
 		{
 			_vector.move_up(offset, n, _vector._size - offset);
@@ -321,9 +319,10 @@ public:
 	}
 
 	void swap (vector& x) {
-		vector y = *this;
-		*this = x;
-		x = y;
+		ft::swap(_capacity, x._capacity);
+		ft::swap(_vector._size, x._vector._size);
+		ft::swap(_allocator, x._allocator);
+		ft::swap(_vector._data, x._vector._data);
 	}
 
 	void clear() {
@@ -370,7 +369,7 @@ private:
 	inline size_type _increase_capacity(size_type n) {	// increase capacity to add n element
 		size_t new_capacity = _capacity;
 		while (_vector._size + n > new_capacity && new_capacity < max_size())
-			new_capacity *= 2;
+			new_capacity *= 10;
 		return new_capacity;
 	}
 };
