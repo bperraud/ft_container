@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/12 22:30:37 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/12 22:40:32 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,14 @@ const T& Vect<T>::operator[] (std::ptrdiff_t idx) const {
 template<typename T>
 const T &Vect<T>::at(std::ptrdiff_t idx) const {
     if (std::size_t(idx) >= _size)
-        throw std::domain_error("Vect::at(i): index out of range");
+        throw std::out_of_range("Vect::at(i): index out of range");
     return _data[idx];
 }
 
 template<typename T>
 T &Vect<T>::at(std::ptrdiff_t idx) {
     if (std::size_t(idx) >= _size)
-        throw std::domain_error("Vect::at(i): index out of range");
+        throw std::out_of_range("Vect::at(i): index out of range");
     return _data[idx];
 }
 
@@ -66,8 +66,6 @@ T &Vect<T>::at(std::ptrdiff_t idx) {
 
 template <typename T>
 T& Vect<T>::operator[] (std::ptrdiff_t idx) {
-    if (std::size_t(idx) >= _size)
-		throw std::domain_error("Vect::op[]: index out of range");
     return _data[idx];
 }
 
