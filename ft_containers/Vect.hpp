@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/07 16:24:23 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/12 22:40:32 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/13 15:37:53 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ T& Vect<T>::operator[] (std::ptrdiff_t idx) {
 
 // Copies & transfers ========================================================
 
-
 template <typename T>
 T* Vect<T>::_cp (const Vect<T>& v) {
 	T *res = new T[v._size];
@@ -87,15 +86,18 @@ Vect<T>& Vect<T>::operator= (const Vect& v) {
 
 template <typename T>
 void Vect<T>::move_back (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
-		for (std::size_t n = start ; n < start + left; ++n){
-			*(_data + n) = *(_data + n + offset);
-		}
+	T *next = _data + offset;
+	for (std::size_t n = start ; n < start + left; ++n){
+		*(_data + n) = *(next + n);
 	}
+}
 
 template <typename T>
 void Vect<T>::move_up (std::ptrdiff_t start, std::size_t offset, std::size_t left) {
-	for (std::size_t n = start + offset + left - 1; n > start + offset - 1; --n){
-		*(_data + n) = *(_data + n - offset);
+	std::size_t n = start + offset + left - 1;
+	T *prev = _data - offset;
+	for (; n > start + offset - 1; --n){
+		*(_data + n) = *(prev + n);
 	}
 }
 

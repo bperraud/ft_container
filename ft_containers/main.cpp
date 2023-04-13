@@ -116,7 +116,7 @@ void printContainer(T &cont) {
 	}
 }
 
-#if 0
+#if 1
 int main(int argc, char **argv) {
 
 	NS::vector<std::string> vector_str;
@@ -161,12 +161,13 @@ int main(int argc, char **argv) {
 	std::cout << "--------------------" << std::endl;
 	std::cout << YELLOW << "insert" <<  RESET << std::endl;
 
+
 	t.reset();
 
 	for (int i = 0; i < 2; ++i) {
         NS::vector<int> v;
 
-        for (std::size_t i = 0; i < MAXSIZE / 100000; ++i) {
+        for (std::size_t i = 0; i < MAXSIZE / 10000; ++i) {
             v.insert(v.begin(), rand());
         }
     }
@@ -177,10 +178,10 @@ int main(int argc, char **argv) {
     for (int i = 0; i < 2; ++i) {
         NS::vector<int> v;
 
-        //for (std::size_t i = 0; i < 5000; ++i) {
-        //    v.insert(v.end(), rand());
-        //}
-        for (std::size_t i = 0; i < 20000; ++i) {
+        for (std::size_t i = 0; i < 5000; ++i) {
+            v.insert(v.end(), rand());
+        }
+        for (std::size_t i = 0; i < 200000; ++i) {
 			std::size_t index = rand() % (v.size() + 1); // generate random index
 			v.insert(v.begin() + index, rand());
 		}
@@ -366,31 +367,82 @@ int main(int argc, char **argv) {
 
 int main ()
 {
-	TESTED_NAMESPACE::vector<TESTED_TYPE> foo(3, 15);
-	TESTED_NAMESPACE::vector<TESTED_TYPE> bar(5, 42);
+	std::cout << "--------------------" << std::endl;
+	std::cout << YELLOW << "insert" <<  RESET << std::endl;
 
-	TESTED_NAMESPACE::vector<TESTED_TYPE>::const_iterator it_foo = foo.begin();
-	TESTED_NAMESPACE::vector<TESTED_TYPE>::const_iterator it_bar = bar.begin();
+	std::cout << "std : " << std::endl;
+	timer t;
 
-	std::cout << "BEFORE SWAP" << std::endl;
+	t.reset();
 
-	std::cout << "foo contains:" << std::endl;
-	printSize(foo);
-	std::cout << "bar contains:" << std::endl;
-	printSize(bar);
+	for (int i = 0; i < 2; ++i) {
+        std::vector<int> v;
 
-	foo.swap(bar);
+        for (std::size_t i = 0; i < MAXSIZE / 10000; ++i) {
+            v.insert(v.begin(), rand());
+        }
+    }
+	PRINT_TIME(t);
 
-	std::cout << "AFTER SWAP" << std::endl;
+	long std_time = t.get_time();
 
-	std::cout << "foo contains:" << std::endl;
-	printSize(foo);
-	std::cout << "bar contains:" << std::endl;
-	printSize(bar);
+	t.reset();
 
-	std::cout << "Iterator validity:" << std::endl;
-	std::cout << (it_foo == bar.begin()) << std::endl;
-	std::cout << (it_bar == foo.begin()) << std::endl;
+	std::cout << "ft : " << std::endl;
+
+	t.reset();
+
+	for (int i = 0; i < 2; ++i) {
+        ft::vector<int> v;
+
+        for (std::size_t i = 0; i < MAXSIZE / 5000; ++i) {
+            v.insert(v.begin(), rand());
+        }
+    }
+	PRINT_TIME(t);
+
+	std::cout << std_time / t.get_time() << " faster" << std::endl;
+
+
+	std::cout << "std : " << std::endl;
+
+	t.reset();
+
+
+    for (int i = 0; i < 2; ++i) {
+        std::vector<int> v;
+
+        for (std::size_t i = 0; i < 5000; ++i) {
+            v.insert(v.end(), rand());
+        }
+        for (std::size_t i = 0; i < 200000; ++i) {
+			std::size_t index = rand() % (v.size() + 1); // generate random index
+			v.insert(v.begin() + index, rand());
+		}
+    }
+
+	PRINT_TIME(t);
+
+	std::cout << "ft : " << std::endl;
+
+	t.reset();
+
+
+    for (int i = 0; i < 2; ++i) {
+        ft::vector<int> v;
+
+        for (std::size_t i = 0; i < 5000; ++i) {
+            v.insert(v.end(), rand());
+        }
+        for (std::size_t i = 0; i < 200000; ++i) {
+			std::size_t index = rand() % (v.size() + 1); // generate random index
+			v.insert(v.begin() + index, rand());
+		}
+    }
+
+	PRINT_TIME(t);
+
+
 
 	return (0);
 }
