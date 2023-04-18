@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/18 14:47:39 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/19 00:20:39 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 //#include "BST.hpp"
 
 #include "RBT.hpp"
-
-
 #include "Iterator.hpp"
 #include "pair.hpp"
 
@@ -400,6 +398,11 @@ public:
 	/* -------------------------------- Destructor ------------------------------ */
 
 	~map () {};
+
+
+	void print() {
+		_tree.printTreeDiagram();
+	}
 
 private :
 	bool _exists (const key_type &k) {

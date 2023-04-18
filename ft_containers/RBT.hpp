@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/18 15:59:36 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/19 00:33:17 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,7 @@ public:
 	}
 
 	RBT &operator=( const RBT &other ) {
+		return *this;
 		clear();
 		node_pointer first = other.begin();
 		while (first != other.end())
@@ -230,16 +231,18 @@ public:
 	}
 
 	ft::pair<node_pointer, bool> insert(const value_type& val) {
-		return _insert(val, _root);
+		//return _insert_bst(val, _root);
+		return _insert_rbt(val, _root);
 	}
 
 	ft::pair< node_pointer, bool > insert( node_pointer hint, const value_type &val ) {
 		if ( _is_upper_bound(hint, val.first) ) {
-			return _insert(val, hint);
+			return _insert_bst(val, hint);
 		}
-		return _insert(val, _root);
+		return _insert_bst(val, _root);
 	}
 
+	#if 1
 	void erase(node_pointer target)
 	{
 		node_pointer const res = target; // save pointer to node being deleted
@@ -295,6 +298,108 @@ public:
 			_allocator.deallocate(res, 1);
 		}
 	}
+	#else
+	void erase(node_pointer node) {
+		if (!node) {
+			return;
+		}
+		node_pointer child, x;
+		if (node->_left && node->_right) {
+			node_pointer temp = node->_right;
+			while (temp->_left) {
+				temp = temp->_left;
+			}
+			node->_info.~value_type();
+       		new (&node->_info) value_type(temp->_info);
+			node = temp;
+		}
+		if (!node->_left) {
+			child = node->_right;
+		} else {
+			child = node->_left;
+		}
+		x = node->_father;
+		if (child) {
+			child->_father = node->_father;
+		}
+		if (!x) {
+			_root = child;
+		} else if (node == x->_left) {
+			x->_left = child;
+		} else {
+			x->_right = child;
+		}
+		if (node->_color == BLACK) {
+			while (child != _root && (!child || child->_color == BLACK)) {
+				if (child == x->_left) {
+					node_pointer w = x->_right;
+					if (w->_color == RED) {
+						w->_color = BLACK;
+						x->_color = RED;
+						_rotate_left(x);
+						w = x->_right;
+					}
+					if ((!w->_left || w->_left->_color == BLACK) && (!w->_right || w->_right->_color == BLACK)) {
+						w->_color = RED;
+						child = x;
+						x = x->_father;
+					} else {
+						if (!w->_right || w->_right->_color == BLACK) {
+							if (w->_left) {
+								w->_left->_color = BLACK;
+							}
+							w->_color = RED;
+							_rotate_right(w);
+							w = x->_right;
+						}
+						w->_color = x->_color;
+						x->_color = BLACK;
+						if (w->_right) {
+							w->_right->_color = BLACK;
+						}
+						_rotate_left(x);
+						break;
+					}
+				} else {
+					node_pointer w = x->_left;
+					if (w->_color == RED) {
+						w->_color = BLACK;
+						x->_color = RED;
+						_rotate_right(x);
+						w = x->_left;
+					}
+					if ((!w->_right || w->_right->_color == BLACK) && (!w->_left || w->_left->_color == BLACK)) {
+						w->_color = RED;
+						child = x;
+						x = x->_father;
+					} else {
+						if (!w->_left || w->_left->_color == BLACK) {
+							if (w->_right) {
+								w->_right->_color = BLACK;
+							}
+							w->_color = RED;
+							_rotate_left(w);
+							w = x->_left;
+						}
+						w->_color = x->_color;
+						x->_color = BLACK;
+						if (w->_left) {
+							w->_left->_color = BLACK;
+						}
+						_rotate_right(x);
+						break;
+					}
+				}
+			}
+			if (child) {
+				child->_color = BLACK;
+			}
+		}
+		_allocator.destroy(node);
+		_allocator.deallocate(node, 1);
+		_size -= 1;
+	}
+	#endif
 
 	node_pointer lower_bound( const key_type &k ) { return _lower_bound(k); }
 	node_pointer lower_bound( const key_type &k ) const {
@@ -380,9 +485,84 @@ public:
 	}
 
 
+	//void printTreeDiagram() {
+	//	if (_root == 0) return;
+
+	//	std::queue<std::pair<_Node*, int> > _q;  // use a queue to store nodes and their depths
+	//	_q.push({_root, 0});  // start with the root node at depth 0
+
+	//	while (!_q.empty()) {
+	//		_Node* _node = _q.front().first;
+	//		int _depth = _q.front().second;
+	//		_q.pop();
+
+	//		std::cout << "Node value: " << _node->_info.second << ", depth: " << _depth << std::endl;
+
+	//		if (_node->_left) _q.push({_node->_left, _depth + 1});  // add left child to queue
+	//		if (_node->_right) _q.push({_node->_right, _depth + 1});  // add right child to queue
+	//	}
+	//}
+
 private:
 
-	ft::pair<node_pointer, bool> _insert(const value_type& val, node_pointer node) {
+	ft::pair<node_pointer, bool> _insert_rbt(const value_type& val, node_pointer node) {
+		ft::pair<node_pointer, bool> res = _insert_bst(val, node);
+		node_pointer x = res.first;
+
+		// If the node is not inserted, return
+		if (!res.second) {
+			return ft::make_pair(x, false);
+		}
+
+		// Color the new node red
+		x->_color = RED;
+
+		balance_insertion(x);
+
+		return res;
+	}
+
+	void balance_insertion(node_pointer node) {
+		node_pointer uncle;
+		while (node->_father && node->_father->_color == RED) {
+			if (node->_father == node->_father->_father->_left) {
+				uncle = node->_father->_father->_right;
+				if (uncle && uncle->_color == RED) {
+					node->_father->_color = BLACK;
+					uncle->_color = BLACK;
+					node->_father->_father->_color = RED;
+					node = node->_father->_father;
+				} else {
+					if (node == node->_father->_right) {
+						node = node->_father;
+						_rotate_left(node);
+					}
+					node->_father->_color = BLACK;
+					node->_father->_father->_color = RED;
+					_rotate_right(node->_father->_father);
+				}
+			} else {
+				uncle = node->_father->_father->_left;
+				if (uncle && uncle->_color == RED) {
+					node->_father->_color = BLACK;
+					uncle->_color = BLACK;
+					node->_father->_father->_color = RED;
+					node = node->_father->_father;
+				} else {
+					if (node == node->_father->_left) {
+						node = node->_father;
+						_rotate_right(node);
+					}
+					node->_father->_color = BLACK;
+					node->_father->_father->_color = RED;
+					_rotate_left(node->_father->_father);
+				}
+			}
+		}
+		_root->_color = BLACK;
+	}
+
+	ft::pair<node_pointer, bool> _insert_bst(const value_type& val, node_pointer node) {
 		if (!_root) {
 			init_root(val);
 			return ft::make_pair(_root, true);
@@ -397,7 +577,6 @@ private:
 					curr->_left = construct_node(val);
 					curr->_left->_father = curr;
 					_size += 1;
-					curr->_left->_color = RED;
 					return ft::make_pair(curr->_left, true);
 				}
 			}
@@ -408,17 +587,65 @@ private:
 					curr->_right = construct_node(val);
 					curr->_right->_father = curr;
 					_size += 1;
-					curr->_right->_color = RED;
 					return ft::make_pair(curr->_right, true);
 				}
 			}
 			else {
-				curr->_color = RED;
 				return ft::make_pair(curr, false);
 			}
 		}
 		return ft::make_pair(_root, false);
 	}
+
+	// Helper function to flip the colors of a node and its children
+	void flip_colors(node_pointer node) {
+		node->_color = RED;
+		node->_left->_color = BLACK;
+		node->_right->_color = BLACK;
+	}
+
+	void _rotate_right(node_pointer x) {
+		node_pointer y = x->_left;
+		if (y == 0) {
+			return; // Nothing to do if y is null
+		}
+		x->_left = y->_right;
+		if (y->_right) {
+			y->_right->_father = x;
+		}
+		y->_father = x->_father;
+		if (!x->_father) {
+			_root = y;
+		} else if (x == x->_father->_right) {
+			x->_father->_right = y;
+		} else {
+			x->_father->_left = y;
+		}
+		y->_right = x;
+		x->_father = y;
+	}
+
+	void _rotate_left(node_pointer x) {
+		node_pointer y = x->_right;
+		if (y == 0) {
+			return; // Nothing to do if y is null
+		}
+		x->_right = y->_left;
+		if (y->_left) {
+			y->_left->_father = x;
+		}
+		y->_father = x->_father;
+		if (!x->_father) {
+			_root = y;
+		} else if (x == x->_father->_left) {
+			x->_father->_left = y;
+		} else {
+			x->_father->_right = y;
+		}
+		y->_left = x;
+		x->_father = y;
+	}
+
 
 
 
@@ -495,6 +722,8 @@ private:
 		// key was not found, return end iterator
 		return _end;
 	}
+
+
 
 };
 

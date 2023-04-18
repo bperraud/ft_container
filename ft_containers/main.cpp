@@ -116,7 +116,7 @@ void printContainer(T &cont) {
 	}
 }
 
-#if 1
+#if 0
 int main(int argc, char **argv) {
 
 	NS::vector<std::string> vector_str;
@@ -360,91 +360,39 @@ int main(int argc, char **argv) {
 }
 #else
 
-#include "common.hpp"
-
-#define TESTED_NAMESPACE ft
-#define TESTED_TYPE int
+#include "map.hpp"
+#include "RBT.hpp"
 
 int main ()
 {
-	std::cout << "--------------------" << std::endl;
-	std::cout << YELLOW << "insert" <<  RESET << std::endl;
 
-	std::cout << "std : " << std::endl;
-	timer t;
+	ft::map<int, int> rbt;
+	rbt.insert(ft::make_pair(5, 10));
+	rbt.insert(ft::make_pair(3, 6));
+	rbt.insert(ft::make_pair(2, 4));
+	rbt.insert(ft::make_pair(4, 8));
 
-	t.reset();
+	std::map<int, int> m;
+	m.insert(std::make_pair(5, 10));
+	m.insert(std::make_pair(3, 6));
+	m.insert(std::make_pair(2, 4));
+	m.insert(std::make_pair(4, 8));
 
-	for (int i = 0; i < 2; ++i) {
-        std::vector<int> v;
+	auto rbt_it = rbt.begin();
+    auto m_it = m.begin();
 
-        for (std::size_t i = 0; i < MAXSIZE / 10000; ++i) {
-            v.insert(v.begin(), rand());
+    while (rbt_it != rbt.end() && m_it != m.end()) {
+        if (rbt_it->second != m_it->second) {
+            std::cout << "Value mismatch: " << rbt_it->second << " vs " << m_it->second << std::endl;
+            return 1;
         }
+        ++rbt_it;
+        ++m_it;
     }
-	PRINT_TIME(t);
-
-	long std_time = t.get_time();
-
-	t.reset();
-
-	std::cout << "ft : " << std::endl;
-
-	t.reset();
-
-	for (int i = 0; i < 2; ++i) {
-        ft::vector<int> v;
-
-        for (std::size_t i = 0; i < MAXSIZE / 5000; ++i) {
-            v.insert(v.begin(), rand());
-        }
-    }
-	PRINT_TIME(t);
-
-	std::cout << std_time / t.get_time() << " faster" << std::endl;
-
-
-	std::cout << "std : " << std::endl;
-
-	t.reset();
-
-
-    for (int i = 0; i < 2; ++i) {
-        std::vector<int> v;
-
-        for (std::size_t i = 0; i < 5000; ++i) {
-            v.insert(v.end(), rand());
-        }
-        for (std::size_t i = 0; i < 200000; ++i) {
-			std::size_t index = rand() % (v.size() + 1); // generate random index
-			v.insert(v.begin() + index, rand());
-		}
-    }
-
-	PRINT_TIME(t);
-
-	std::cout << "ft : " << std::endl;
-
-	t.reset();
-
-
-    for (int i = 0; i < 2; ++i) {
-        ft::vector<int> v;
-
-        for (std::size_t i = 0; i < 5000; ++i) {
-            v.insert(v.end(), rand());
-        }
-        for (std::size_t i = 0; i < 200000; ++i) {
-			std::size_t index = rand() % (v.size() + 1); // generate random index
-			v.insert(v.begin() + index, rand());
-		}
-    }
-
-	PRINT_TIME(t);
-
-
 
 	return (0);
 }
+
+
 
 #endif
