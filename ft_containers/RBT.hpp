@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/19 00:33:17 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/19 01:03:56 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ public:
 	}
 
 	RBT &operator=( const RBT &other ) {
-		return *this;
+		//return *this;
 		clear();
 		node_pointer first = other.begin();
 		while (first != other.end())
@@ -242,7 +242,7 @@ public:
 		return _insert_bst(val, _root);
 	}
 
-	#if 1
+	#if 0
 	void erase(node_pointer target)
 	{
 		node_pointer const res = target; // save pointer to node being deleted
@@ -298,7 +298,6 @@ public:
 			_allocator.deallocate(res, 1);
 		}
 	}
-	#else
 	void erase(node_pointer node) {
 		if (!node) {
 			return;
@@ -399,7 +398,62 @@ public:
 		_allocator.deallocate(node, 1);
 		_size -= 1;
 	}
+	#else
+	void erase(node_pointer node) {
+		if (!node) {
+			return;
+		}
+
+		// Find the node to replace the deleted node with
+		node_pointer child;
+		if (!node->_left) {
+			child = node->_right;
+		} else if (!node->_right) {
+			child = node->_left;
+		} else {
+			node_pointer temp = node->_right;
+			while (temp->_left) {
+				temp = temp->_left;
+			}
+			child = temp->_right;
+			if (temp->_father == node) {
+				child->_father = temp;
+			} else {
+				_transplant(temp, temp->_right);
+				temp->_right = node->_right;
+				temp->_right->_father = temp;
+			}
+			_transplant(node, temp);
+			temp->_left = node->_left;
+			temp->_left->_father = temp;
+			temp->_color = node->_color;
+		}
+
+		// Update the tree structure
+		node_pointer parent = node->_father;
+		if (!parent) {
+			_root = child;
+		} else if (node == parent->_left) {
+			parent->_left = child;
+		} else {
+			parent->_right = child;
+		}
+		if (child) {
+			child->_father = parent;
+		}
+
+		// Fix any violations in the tree structure
+		if (node->_color == BLACK) {
+			_delete_fixup(child, parent);
+		}
+
+		// Destroy the node and update the size
+		_allocator.destroy(node);
+		_allocator.deallocate(node, 1);
+		_size--;
+	}
 	#endif
+
 
 	node_pointer lower_bound( const key_type &k ) { return _lower_bound(k); }
 	node_pointer lower_bound( const key_type &k ) const {
@@ -597,12 +651,91 @@ private:
 		return ft::make_pair(_root, false);
 	}
 
+	void _delete_fixup(node_pointer x, node_pointer x_parent) {
+		while (x != _root && (!x || x->_color == BLACK)) {
+			if (x == x_parent->_left) {
+				node_pointer w = x_parent->_right;
+				if (w->_color == RED) {
+					w->_color = BLACK;
+					x_parent->_color = RED;
+					_rotate_left(x_parent);
+					w = x_parent->_right;
+				}
+				if ((!w->_left || w->_left->_color == BLACK) && (!w->_right || w->_right->_color == BLACK)) {
+					w->_color = RED;
+					x = x_parent;
+					x_parent = x_parent->_father;
+				} else {
+					if (!w->_right || w->_right->_color == BLACK) {
+						if (w->_left) {
+							w->_left->_color = BLACK;
+						}
+						w->_color = RED;
+						_rotate_right(w);
+						w = x_parent->_right;
+					}
+					w->_color = x_parent->_color;
+					x_parent->_color = BLACK;
+					if (w->_right) {
+						w->_right->_color = BLACK;
+					}
+					_rotate_left(x_parent);
+					break;
+				}
+			} else {
+				node_pointer w = x_parent->_left;
+				if (w->_color == RED) {
+					w->_color = BLACK;
+					x_parent->_color = RED;
+					_rotate_right(x_parent);
+					w = x_parent->_left;
+				}
+				if ((!w->_right || w->_right->_color == BLACK) && (!w->_left || w->_left->_color == BLACK)) {
+					w->_color = RED;
+					x = x_parent;
+					x_parent = x_parent->_father;
+				} else {
+					if (!w->_left || w->_left->_color == BLACK) {
+						if (w->_right) {
+							w->_right->_color = BLACK;
+						}
+						w->_color = RED;
+						_rotate_left(w);
+						w = x_parent->_left;
+					}
+					w->_color = x_parent->_color;
+					x_parent->_color = BLACK;
+					if (w->_left) {
+						w->_left->_color = BLACK;
+					}
+					_rotate_right(x_parent);
+					break;
+				}
+			}
+		}
+		if (x) {
+			x->_color = BLACK;
+		}
+	}
+
+
 	// Helper function to flip the colors of a node and its children
-	void flip_colors(node_pointer node) {
+	void _flip_colors(node_pointer node) {
 		node->_color = RED;
 		node->_left->_color = BLACK;
 		node->_right->_color = BLACK;
 	}
+
+	void _transplant(node_pointer u, node_pointer v) {
+        if ( u == _root ) {
+            _root = v;
+        } else if ( u == u->_father->_left ) {
+            u->_father->_left = v;
+        } else {
+            u->_father->_right = v;
+        }
+        v->_father = u->_father;
+    }
 
 	void _rotate_right(node_pointer x) {
 		node_pointer y = x->_left;
