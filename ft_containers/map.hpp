@@ -6,14 +6,18 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 16:51:50 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/12 01:02:10 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/18 14:47:39 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAP_H
 #define MAP_H
 
-#include "BST.hpp"
+//#include "BST.hpp"
+
+#include "RBT.hpp"
+
+
 #include "Iterator.hpp"
 #include "pair.hpp"
 
@@ -26,7 +30,7 @@ template<
     class Allocator = std::allocator<ft::pair<const Key, T> > >		// map::allocator_type
 class map {
 public :
-	typedef BST<Key, T, Compare, Allocator> 		tree_type;
+	typedef RBT<Key, T, Compare, Allocator> 		tree_type;
 	typedef const tree_type							const_tree_type;
 
 	// iterator class
