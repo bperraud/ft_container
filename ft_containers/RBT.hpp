@@ -6,7 +6,7 @@
 /*   By: bperraud <bperraud@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/06 23:11:31 by bperraud          #+#    #+#             */
-/*   Updated: 2023/04/19 01:03:56 by bperraud         ###   ########.fr       */
+/*   Updated: 2023/04/19 13:02:27 by bperraud         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,18 @@ private:
 			return ancestor;
 		}
 
+		_Node *min_child() {
+            _Node *tmp( this );
+            while ( tmp->_left && tmp->_left != 0 ) { tmp = tmp->_left; }
+            return tmp;
+        }
+
+        _Node *max_child() {
+            _Node *tmp( this );
+            while ( tmp->_right && tmp->_right != 0 ) { tmp = tmp->_right; }
+            return tmp;
+        }
+
 		bool operator==( const _Node &other ) const {
 			return ( _info == other._info );
 		}
@@ -159,7 +171,6 @@ public:
 	}
 
 	RBT &operator=( const RBT &other ) {
-		//return *this;
 		clear();
 		node_pointer first = other.begin();
 		while (first != other.end())
@@ -242,7 +253,7 @@ public:
 		return _insert_bst(val, _root);
 	}
 
-	#if 0
+	#if 1
 	void erase(node_pointer target)
 	{
 		node_pointer const res = target; // save pointer to node being deleted
@@ -298,6 +309,7 @@ public:
 			_allocator.deallocate(res, 1);
 		}
 	}
+	#else
 	void erase(node_pointer node) {
 		if (!node) {
 			return;
@@ -398,61 +410,98 @@ public:
 		_allocator.deallocate(node, 1);
 		_size -= 1;
 	}
-	#else
-	void erase(node_pointer node) {
-		if (!node) {
-			return;
-		}
-
-		// Find the node to replace the deleted node with
-		node_pointer child;
-		if (!node->_left) {
-			child = node->_right;
-		} else if (!node->_right) {
-			child = node->_left;
-		} else {
-			node_pointer temp = node->_right;
-			while (temp->_left) {
-				temp = temp->_left;
-			}
-			child = temp->_right;
-			if (temp->_father == node) {
-				child->_father = temp;
-			} else {
-				_transplant(temp, temp->_right);
-				temp->_right = node->_right;
-				temp->_right->_father = temp;
-			}
-			_transplant(node, temp);
-			temp->_left = node->_left;
-			temp->_left->_father = temp;
-			temp->_color = node->_color;
-		}
-
-		// Update the tree structure
-		node_pointer parent = node->_father;
-		if (!parent) {
-			_root = child;
-		} else if (node == parent->_left) {
-			parent->_left = child;
-		} else {
-			parent->_right = child;
-		}
-		if (child) {
-			child->_father = parent;
-		}
-
-		// Fix any violations in the tree structure
-		if (node->_color == BLACK) {
-			_delete_fixup(child, parent);
-		}
-
-		// Destroy the node and update the size
-		_allocator.destroy(node);
-		_allocator.deallocate(node, 1);
-		_size--;
-	}
+	//size_type erase( const key_type &k ) { return _remove( _find_node( k ) ); }
+    //size_type erase( node_pointer it ) { return _remove( it ); }
 	#endif
+
+	size_type _remove( node_pointer z ) {
+        if ( z == _end ) { return 0; }
+        node_pointer y = z;
+        node_pointer x;
+        int         y_orig_color = y->_color;
+        if ( z->_left == 0 ) {
+            x = z->_right;
+            _transplant( z, x );
+        } else if ( z->_right == 0 ) {
+            x = z->_left;
+            _transplant( z, x );
+        } else {
+            y            = z->_right->min_child();
+            y_orig_color = y->_color;
+            x            = y->_right;
+            if ( y->_father == z ) {
+                x->_father = y;
+            } else {
+                _transplant( y, y->_right );
+                y->_right    = z->_right;
+                y->_right->_father = y;
+            }
+            _transplant( z, y );
+            y->_left    = z->_left;
+            y->_left->_father = y;
+            y->_color     = z->_color;
+        }
+        if ( !y_orig_color ) { _remove_fixup( x ); }
+        _allocator.destroy( z );
+        _allocator.deallocate( z, 1 );
+        _size--;
+        return 1;
+    }
+
+	void _remove_fixup( node_pointer x ) {
+        while ( x != _root and x->_color == BLACK ) {
+            if ( x == x->_father->_left ) {
+                node_pointer w = x->_father->_right;
+                if ( w->_color ) {
+                    w->_color    = BLACK;
+                    x->_father->_color = RED;
+                    _rotate_left( x->_father );
+                    w = x->_father->_right;
+                }
+                if ( w->_left->_color == BLACK and w->_right->_color == BLACK ) {
+                    w->_color = RED;
+                    x      = x->_father;
+                } else {
+                    if ( w->_right->_color == BLACK ) {
+                        w->_left->_color = BLACK;
+                        w->_color       = RED;
+                        _rotate_right( w );
+                        w = x->_father->_right;
+                    }
+                    w->_color        = x->_father->_color;
+                    x->_father->_color     = BLACK;
+                    w->_right->_color = BLACK;
+                    _rotate_left( x->_father );
+                    x = _root;
+                }
+            } else {
+                node_pointer w = x->_father->_left;
+                if ( w->_color ) {
+                    w->_color    = BLACK;
+                    x->_father->_color = RED;
+                    _rotate_right( x->_father );
+                    w = x->_father->_left;
+                }
+                if ( w->_right->_color == BLACK and w->_left->_color == BLACK ) {
+                    w->_color = RED;
+                    x      = x->_father;
+                } else {
+                    if ( w->_left->_color == BLACK ) {
+                        w->_right->_color = BLACK;
+                        w->_color        = RED;
+                        _rotate_left( w );
+                        w = x->_father->_left;
+                    }
+                    w->_color       = x->_father->_color;
+                    x->_father->_color    = BLACK;
+                    w->_left->_color = BLACK;
+                    _rotate_right( x->_father );
+                    x = _root;
+                }
+            }
+        }
+        x->_color = BLACK;
+    }
 
 
 	node_pointer lower_bound( const key_type &k ) { return _lower_bound(k); }
@@ -778,8 +827,6 @@ private:
 		y->_left = x;
 		x->_father = y;
 	}
-
-
 
 
 	void fixInsert(node_pointer node) {
