@@ -208,13 +208,13 @@ public:
 	void resize (size_type n, value_type val = value_type()) {
 		if ( n > max_size())
 			throw std::length_error("vector::resize");
-		if (n <= _vector._size)
+		if (n < _vector._size)
 		{
-			for (size_type i = 0; i < n; ++i)
+			for (size_type i = _vector._size - 1; i > n; --i)
 				_allocator.destroy(_vector._data + i);
 			_vector._size = n;
 		}
-		else
+		else if (n > _vector._size)
 			insert(end(), n - _vector._size, val);
 	}
 
