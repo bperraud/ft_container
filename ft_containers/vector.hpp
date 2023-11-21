@@ -206,16 +206,22 @@ public:
 	}
 
 	void resize (size_type n, value_type val = value_type()) {
+		if (n == _vector._size)
+			return;
+		reserve(n);
 		if ( n > max_size())
 			throw std::length_error("vector::resize");
 		if (n < _vector._size)
 		{
-			for (size_type i = _vector._size - 1; i > n; --i)
+			for (size_type i = n; i < _vector._size; ++i)
 				_allocator.destroy(_vector._data + i);
 			_vector._size = n;
 		}
-		else if (n > _vector._size)
-			insert(end(), n - _vector._size, val);
+		else {
+			for (size_type i = _vector._size; i < n; ++i)
+				_allocator.construct(_vector._data + i, val);
+			_vector._size = n;
+		}
 	}
 
 	/* ----------------------------- Element access ----------------------------- */
@@ -240,13 +246,18 @@ public:
 		InputIterator input = first;
 		for (iterator it = begin() ; it != end() ; ++it)
 		{
+			//new (it.operator->()) std::iterator_traits<InputIterator>::value_type(*input);
 			*it = *input;
 			input++;
 		}
+		//std::uninitialized_fill_n(begin(), end(), *input);
+		//std::uninitialized_copy(first, last, begin());
 	}
 
 	void assign (size_type n, const value_type& val) {
 		resize(n);
+		//std::uninitialized_fill_n(begin(), n, val);
+		//std::uninitialized_fill(begin(), end(), val);
 		for (iterator it = begin() ; it != end() ; ++it)
 		{
 			*it = val;
@@ -295,9 +306,7 @@ public:
 			_reallocate(_increase_capacity(n));
 		iterator new_position = begin() + offset;
 		if ( new_position != end())
-		{
 			_vector.move_up(offset, n, _vector._size - offset);
-		}
 		std::copy_backward(first, last, new_position + n);
 		_vector._size += n;
 	}
@@ -360,7 +369,10 @@ private:
 		if (n > max_size())
 			throw std::length_error("vector::_reallocate");
 		pointer ptr = _allocator.allocate(n);
-		std::uninitialized_copy(begin(), end(), ptr);
+		for (size_type i = 0; i < _vector._size; ++i)
+			_allocator.construct(ptr + i, *(_vector._data + i));
+		for (size_type i = 0; i < _vector._size; ++i)
+			_allocator.destroy(_vector._data + i);
 		_allocator.deallocate(_vector._data, _capacity);
 		_vector._data = ptr;
 		_capacity = n;
