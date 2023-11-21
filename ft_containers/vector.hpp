@@ -178,24 +178,24 @@ public:
 
 	/* -------------------------------- Iterators ------------------------------- */
 
-	iterator 				begin() {return _vector._data; }
-	iterator 				end() { return _vector._data + _vector._size; }
+	iterator 				begin() {return _vector._data;}
+	iterator 				end() { return _vector._data + _vector._size;}
 	const_iterator 			begin() const { return _vector._data; }
-	const_iterator 			end() const  { return begin() + _vector._size; }
-	reverse_iterator 		rbegin() {return begin() + _vector._size ;}
-	reverse_iterator 		rend() { return _vector._data ; }
-	const_reverse_iterator 	rbegin() const {return begin() + _vector._size;}
+	const_iterator 			end() const { return begin() + _vector._size;}
+	reverse_iterator 		rbegin() { return begin() + _vector._size; }
+	reverse_iterator 		rend() { return _vector._data; }
+	const_reverse_iterator 	rbegin() const { return begin() + _vector._size; }
 	const_reverse_iterator 	rend() const { return _vector._data; }
 	const_iterator 			cbegin() const { return _vector._data; }
 	const_iterator 			cend() const { return begin() + _vector._size;}
-	const_reverse_iterator 	crbegin() const {return begin() + _vector._size ;}
+	const_reverse_iterator 	crbegin() const { return begin() + _vector._size;}
 	const_reverse_iterator 	crend() const { return _vector._data ; }
 
 	/* -------------------------------- Capacity -------------------------------- */
 
 	size_type	size () const { return _vector._size;}
-	size_type	max_size () const {return _allocator.max_size();}
-	bool		empty () const {return _vector._size == 0;}
+	size_type	max_size () const { return _allocator.max_size(); }
+	bool		empty () const { return _vector._size == 0; }
 	size_type	capacity() const { return _capacity; }
 
 	void reserve (size_type n) {
@@ -209,19 +209,17 @@ public:
 		if (n == _vector._size)
 			return;
 		reserve(n);
-		if ( n > max_size())
+		if (n > max_size())
 			throw std::length_error("vector::resize");
-		if (n < _vector._size)
-		{
+		if (n < _vector._size) {
 			for (size_type i = n; i < _vector._size; ++i)
 				_allocator.destroy(_vector._data + i);
-			_vector._size = n;
 		}
 		else {
 			for (size_type i = _vector._size; i < n; ++i)
 				_allocator.construct(_vector._data + i, val);
-			_vector._size = n;
 		}
+		_vector._size = n;
 	}
 
 	/* ----------------------------- Element access ----------------------------- */
@@ -244,22 +242,15 @@ public:
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
 		resize(std::distance(first, last));
 		InputIterator input = first;
-		for (iterator it = begin() ; it != end() ; ++it)
-		{
-			//new (it.operator->()) std::iterator_traits<InputIterator>::value_type(*input);
+		for (iterator it = begin() ; it != end() ; ++it) {
 			*it = *input;
 			input++;
 		}
-		//std::uninitialized_fill_n(begin(), end(), *input);
-		//std::uninitialized_copy(first, last, begin());
 	}
 
 	void assign (size_type n, const value_type& val) {
 		resize(n);
-		//std::uninitialized_fill_n(begin(), n, val);
-		//std::uninitialized_fill(begin(), end(), val);
-		for (iterator it = begin() ; it != end() ; ++it)
-		{
+		for (iterator it = begin(); it != end(); ++it) {
 			*it = val;
 		}
 	}
@@ -284,28 +275,30 @@ public:
 
 	void insert (iterator position, size_type n, const value_type& val) {
 		size_type offset = position - _vector._data;
-		if (_capacity < _vector._size + n)
-			_reallocate(_increase_capacity(n));
+		reserve(_vector._size + n);
 		iterator new_position = _vector._data + offset;
-		if ( new_position != end())
-		{
+		if (new_position != end()) {
+			for (size_type i = _vector._size; i < n + _vector._size; ++i)
+				_allocator.construct(_vector._data + i, val);
 			_vector.move_up(offset, n, _vector._size - offset);
 			std::fill_n(new_position, n, val);
 		}
-		else
-			std::uninitialized_fill_n(new_position, n, val);
+		else {
+			for (size_type i = offset; i < n + offset; ++i)
+				_allocator.construct(_vector._data + i, val);
+		}
 		_vector._size += n;
 	}
 
 	template <class InputIterator>
 	void insert (iterator position, InputIterator first, InputIterator last,
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
-		const size_type n = std::distance( first, last );
+		const size_type n = std::distance(first, last);
 		size_type offset = position - begin();
 		if (_capacity < _vector._size + n)
 			_reallocate(_increase_capacity(n));
 		iterator new_position = begin() + offset;
-		if ( new_position != end())
+		if (new_position != end())
 			_vector.move_up(offset, n, _vector._size - offset);
 		std::copy_backward(first, last, new_position + n);
 		_vector._size += n;
@@ -318,8 +311,8 @@ public:
 	iterator erase (iterator first, iterator last) {
 		if (first > last)
 			throw std::length_error("vector::erase");
-		const size_type start = std::distance( begin(), first );
-		const size_type range = std::distance( first, last );
+		const size_type start = std::distance(begin(), first);
+		const size_type range = std::distance(first, last);
 		for (iterator it = first; it != last; ++it)
 			_allocator.destroy(it.operator->());
 		_vector.move_back(start, range, std::distance(last, end()));
