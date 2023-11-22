@@ -13,6 +13,8 @@
 #ifndef VECT_H
 #define VECT_H
 
+#include <iostream>
+
 #include "Vect.hpp"
 #include "Iterator.hpp"
 #include "type_traits.hpp" // for enable_if
@@ -313,7 +315,7 @@ public:
 			throw std::length_error("vector::erase");
 		const size_type start = std::distance(begin(), first);
 		const size_type range = std::distance(first, last);
-		for (iterator it = first; it != last; ++it)
+		for (iterator it = end() - range; it != end(); ++it)
 			_allocator.destroy(it.operator->());
 		_vector.move_back(start, range, std::distance(last, end()));
 		_vector._size -= range;
