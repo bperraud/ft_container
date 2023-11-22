@@ -240,13 +240,6 @@ public:
 	/* -------------------------------- Modifiers ------------------------------- */
 
 	template <class InputIterator>
-		struct ListNode {
-			ListNode *node;
-			ListNode *next;
-			typename std::iterator_traits<InputIterator>::value_type val;
-		};
-
-	template <class InputIterator>
 	void assign (InputIterator first, InputIterator last,
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
 		if (ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value) {
@@ -257,31 +250,15 @@ public:
 			}
 		} else {
 			size_t size = 0;
+			_reallocate(_increase_capacity(_capacity + 1));
 			for (InputIterator input = first; input != last ; ++input) {
-				if (size >= _vector._size)
-					resize(size + 1);
-				_vector._data[size] = *input;
+				if (size >= _capacity)
+					_reallocate(_increase_capacity(_capacity + 1));
+				_allocator.construct(_vector._data + size, *input);
 				size++;
-			}
-			size_t s = size;
-			while (s < _vector._size) {
-				_allocator.destroy(_vector._data + s);
-				s++;
 			}
 			_vector._size = size;
 		}
-
-		//ListNode<InputIterator> linked_list;
-		//ListNode<InputIterator> head = &linked_list;
-
-		//for (InputIterator input = first; input != last ; ++input) {
-		//	linked_list.val = *input;
-		//	ListNode<InputIterator> newNode;
-		//	linked_list.next = newNode;
-
-		//	size++;
-		//}
-
 	}
 
 	void assign (size_type n, const value_type& val) {
