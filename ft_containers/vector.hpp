@@ -201,7 +201,7 @@ public:
 	size_type	capacity() const { return _capacity; }
 
 	void reserve (size_type n) {
-		if ( n > max_size())
+		if (n > max_size())
 			throw std::length_error("vector::reserve");
 		if (n > _capacity)
 			_reallocate(n);
@@ -240,14 +240,48 @@ public:
 	/* -------------------------------- Modifiers ------------------------------- */
 
 	template <class InputIterator>
+		struct ListNode {
+			ListNode *node;
+			ListNode *next;
+			typename std::iterator_traits<InputIterator>::value_type val;
+		};
+
+	template <class InputIterator>
 	void assign (InputIterator first, InputIterator last,
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
-		resize(std::distance(first, last));
-		InputIterator input = first;
-		for (iterator it = begin() ; it != end() ; ++it) {
-			*it = *input;
-			input++;
+		if (ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value) {
+			resize(std::distance(first, last));
+			for (iterator it = begin() ; it != end() ; ++it) {
+				*it = *first;
+				first++;
+			}
+		} else {
+			size_t size = 0;
+			for (InputIterator input = first; input != last ; ++input) {
+				if (size >= _vector._size)
+					resize(size + 1);
+				_vector._data[size] = *input;
+				size++;
+			}
+			size_t s = size;
+			while (s < _vector._size) {
+				_allocator.destroy(_vector._data + s);
+				s++;
+			}
+			_vector._size = size;
 		}
+
+		//ListNode<InputIterator> linked_list;
+		//ListNode<InputIterator> head = &linked_list;
+
+		//for (InputIterator input = first; input != last ; ++input) {
+		//	linked_list.val = *input;
+		//	ListNode<InputIterator> newNode;
+		//	linked_list.next = newNode;
+
+		//	size++;
+		//}
+
 	}
 
 	void assign (size_type n, const value_type& val) {
@@ -296,6 +330,10 @@ public:
 	void insert (iterator position, InputIterator first, InputIterator last,
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
 		const size_type n = std::distance(first, last);
+
+		//for (size_type i = _vector._size; i < n + _vector._size; ++i)
+		//	_allocator.construct(_vector._data + i, val);
+
 		size_type offset = position - begin();
 		if (_capacity < _vector._size + n)
 			_reallocate(_increase_capacity(n));

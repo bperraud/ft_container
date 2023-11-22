@@ -80,43 +80,6 @@ void timer::reset()
 
 // ------------------ END TIMER ------------------
 
-
-template <typename T>
-void rand_erase(T &container, unsigned int n) {
-	unsigned int pos;
-	unsigned int second_pos;
-	for (std::size_t i = 0; i < n; i++)
-	{
-		pos = rand() % (container.size() == 0 ? 1 : container.size());
-		if (rand() % 2 == 0)
-			container.erase(container.begin() + pos);
-		else
-		{
-			second_pos = rand() % (container.size() - pos <= 0 ? 1 : container.size() - pos);
-			container.erase(container.begin() + pos, container.begin() + pos + second_pos);
-		}
-	}
-}
-
-template <typename T>
-void rand_insert(T &container, unsigned int n) {
-	unsigned int pos;
-	unsigned int second_pos;
-	for (std::size_t i = 0; i < n; i++)
-	{
-		pos = rand() % container.size();
-        second_pos = rand() % (container.size() - pos);
-
-		if (rand() % 2 == 0)
-			container.insert(container.begin() + pos, rand());
-		else
-		{
-			//container.insert(container.begin() + pos, container.begin() + second_pos, container.begin() + second_pos);
-			container.insert(container.begin() + pos, 3);
-		}
-	}
-}
-
 template <typename T>
 void printContainer(T &cont) {
 	typename T::iterator it;
@@ -128,7 +91,68 @@ void printContainer(T &cont) {
 	}
 }
 
+#include <sstream>
+
 int main(int argc, char **argv) {
+
+
+	//ft::vector<char> v(10, 'a');
+	std::string b_string[64] = {                                                                   \
+        "uvg6KqtcgduR31n3ajsv", "wbiAcjgojb9JOagZwyMn", "ATZKCzaPOqgkhPjwuGlf",                    \
+        "MOhaJs56yjOw8f6nLPRA", "0gyB2Tr42v6awMw2nK7J", "e6GsiLFUuoDpVFEhJKZ1",                    \
+        "z0jXAhiV9keBsaLOY0Xf", "P68p2ZAosHJdmoZh1C7N", "Pu3EuZVeY0TCO3ojdK0t",                    \
+        "z7jCHMooHCS73M8GygKB", "uT4KoK83JrZxZjkul7ty", "g8gfrZoY5XwfzRusvHvv",                    \
+        "7PGmkM0OSRnYREt9mFIP", "q1od7mBIpPEsCtpF9kdw", "XQo0LWId5TdZnLnpUNOb",                    \
+        "U0m1R0kFFhAFyS6hmHHw", "K0lPKfxJxIOnE8QB90xn", "cZ5xyQifMJhrKxqBK9A7",                    \
+        "cFBiwjfYw7Js6qEGy5Kt", "1tW0KWfXxeFO69tByqcE", "3Fvq9NxBrhPXHe0IlIVx",                    \
+        "MSRDjdFRvHAhFGhiMtDe", "zGm2joMh71jQkYzg5L4V", "Mq4RRaeLvSAO0z2ibp8Q",                    \
+        "WnLFYnQKP8TNJkqVVbUg", "E98UphbbVSzrW5Mzurmg", "F8HRxeEcaTZDkFPkioij",                    \
+        "jmUVl4Q8X5BwVNzXN219", "n7Xp4w4FwzGKit7AI4SO", "4MxXYr6rKOcXLt9UkVd2",                    \
+        "4RVTDsADtRyboaai9d29", "XaSqsrrtdhAfFoJIc5KK", "9Z9jdVCrTT09bg348ceb",                    \
+        "I6uqLG9dO5mfNdSMwOYm", "UwMTzJPlbnhgwbHpDi6w", "DebjMP9afncYE6GhhO00",                    \
+        "YGPuscYDiGfAjY1UWST0", "K6gbvgGjVZgEFUDlkdSk", "8xCBPI0w6TpC0RA62c2W",                    \
+        "fYMxkNwmKg3moP8KvD9v", "QpPdhwhEYjIugg3OPcPH", "qQBXjSn43I3EMP54SyxZ",                    \
+        "7qvdKwoW1CQEZTWPvuSC", "rCT212rdYO0zTGHXesKg", "dBHvlHsBwcR9MkkenYYG",                    \
+        "NQiSlergqR8fVbOeivLj", "xYVqsV147UIe7jVBVwXo", "tcxayO4DdEJ885TbqUMy",                    \
+        "9TGSMTD8U8ksRpHqq0cL", "TIJ16jCv9BSUiWvhbF9T", "BM9GL2ig1hePkA6lM6Ck",                    \
+        "TfJTYB9JQMU6CGcYg20Q", "Fg6e5YT2FQbpTZNTDqdo", "LI5q6ml40MeE9H1dPb93",                    \
+        "OaxJUSm3nYN9Y8Ela7sS", "BgBeODAwXz7xJo50Rwqd", "xdkgKj1dEoJ6zuVhkvvo",                    \
+        "olIewtUEvXJgs1lB9bCn", "dTsPDS0x2uXtcgOIJHb8", "DYvJ2phLppGNZKboTBrd",                    \
+        "DjNFMtt9PxkzqvWBHI6j", "1Z3YkeTFlPniKnzFhzgu", "76XqQg6hqMf5IXxKPOEs",                    \
+        "gzaapTWW7i9EZjjzLeK6"                                                                     \
+    };
+
+	//ft::vector<std::string> v;
+
+    //std::istringstream str("1 2 3 4 5 6 7");
+    //std::istreambuf_iterator<char> it(str), end;
+
+	//std::cout << *it << std::endl;
+
+	//v.assign(it, end);
+
+	//std::cout << "v[0] : " << v[0] << std::endl;
+	//std::cout << "v[1] : " << v[2] << std::endl;
+
+    //v.assign(b_string, b_string + 64);
+
+	//std::cout << "v[0] : " << v[0] << std::endl;
+	//std::cout << "v[1] : " << v[2] << std::endl;
+
+	ft::vector<int> v(10, 0);
+
+    //CHECK_AND_PRINT_ALL(v);
+
+    v.push_back(64);
+	v.push_back(3);
+	v.push_back(2);
+    v.assign(v.begin(), v.begin() + 12);
+
+
+
+
+
+	return 1;
 
 	NS::vector<std::string> vector_str;
 	NS::vector<int> vect;
