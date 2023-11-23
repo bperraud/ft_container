@@ -291,7 +291,8 @@ public:
 		reserve(_vector._size + n);
 		iterator new_position = _vector._data + offset;
 		if (new_position != end()) {
-			for (size_type i = _vector._size; i < n + _vector._size; ++i)
+			// pas opti du tout
+			for (size_type i = _vector._size; i < n + _vector._size; ++i)  // construct on unitialized memory
 				_allocator.construct(_vector._data + i, val);
 			_vector.move_up(offset, n, _vector._size - offset);
 			std::fill_n(new_position, n, val);
@@ -306,19 +307,28 @@ public:
 	template <class InputIterator>
 	void insert (iterator position, InputIterator first, InputIterator last,
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, bool>::type = true) {
-		const size_type n = std::distance(first, last);
-
-		//for (size_type i = _vector._size; i < n + _vector._size; ++i)
-		//	_allocator.construct(_vector._data + i, val);
-
-		size_type offset = position - begin();
-		if (_capacity < _vector._size + n)
-			_reallocate(_increase_capacity(n));
-		iterator new_position = begin() + offset;
-		if (new_position != end())
-			_vector.move_up(offset, n, _vector._size - offset);
-		std::copy_backward(first, last, new_position + n);
-		_vector._size += n;
+		if (ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value) {
+			const size_type n = std::distance(first, last);
+			size_type start = position - begin();
+			reserve(_vector._size + n);
+			iterator new_position = begin() + start;
+			if (new_position != end()) {
+				for (size_type i = _vector._size; i < n + _vector._size; ++i) // construct on unitialized memory
+					_allocator.construct(_vector._data + i, value_type());
+				_vector.move_up(start, n, _vector._size - start);
+				//std::copy_backward(first, last, new_position + n);
+				std::copy(first, last, new_position);
+			}
+			else {
+				for (size_type i = start; i < n + start; ++i) {
+					_allocator.construct(_vector._data + i, *first);
+					first++;
+				}
+			}
+			_vector._size += n;
+		}
+		else
+			std::cout << "input tag iterator" << std::endl;
 	}
 
 	iterator erase (iterator position) {
@@ -411,6 +421,6 @@ inline std::ostream& operator<< (std::ostream& out, const vector<T,Alloc>& v)
 	return out;
 }
 
-} //namespace ft
+}; //namespace ft
 
 #endif
